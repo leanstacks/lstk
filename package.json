@@ -1,0 +1,30 @@
+{
+  "name": "lstk",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "LeanStacks Agentic Toolkit: a Claude Code plugin marketplace.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leanstacks/lstk.git"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:plugins": "node scripts/lint-plugins.mjs",
+    "validate": "claude plugin validate . --strict && claude plugin validate plugins/lstk --strict && claude plugin validate plugins/lstk-guardrails --strict",
+    "check": "npm run lint && npm run format:check && npm test && npm run lint:plugins"
+  },
+  "devDependencies": {
+    "oxlint": "1.92.0",
+    "prettier": "3.9.10",
+    "vitest": "5.1.0"
+  }
+}
