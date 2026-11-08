@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Lint plugins
+        run: npm run lint:plugins
+
+      # Pinned to the version the contract was last verified against (see docs/ARCHITECTURE.md).
+      # `claude plugin validate` runs offline and needs no credentials.
+      - name: Install Claude Code CLI
+        run: npm install --global @anthropic-ai/claude-code@2.1.319
+
+      - name: Validate plugins
+        run: npm run validate
