@@ -1,0 +1,17 @@
+{
+  "name": "lstk",
+  "description": "LeanStacks Agentic Toolkit: a Claude Code plugin marketplace.",
+  "owner": { "name": "LeanStacks", "url": "https://leanstacks.com" },
+  "plugins": [
+    {
+      "name": "lstk",
+      "source": "./plugins/lstk",
+      "description": "LeanStacks Agentic Toolkit: research, design, develop, review, harden, prototype."
+    },
+    {
+      "name": "lstk-guardrails",
+      "source": "./plugins/lstk-guardrails",
+      "description": "Deterministic guardrail hooks and a settings bootstrap for safer agentic coding."
+    }
+  ]
+}
