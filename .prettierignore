@@ -1,0 +1,10 @@
+# Ignore files and directories for Prettier formatting
+
+# GitHub configuration files
+.github/CODEOWNERS
+
+# Lockfile
+package-lock.json
+
+# Test fixtures
+tests/fixtures
