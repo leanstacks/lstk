@@ -957,5 +957,95 @@
         "gitlink": ".git"
       }
     }
+  },
+  {
+    "id": "cdk-diverge-echo",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy regex matches the text anywhere in the line; target only inspects the command word of each simple command."
+  },
+  {
+    "id": "cdk-diverge-echo-quoted",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo \"cdk deploy\""
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy regex matches the text anywhere in the line; target only inspects the command word of each simple command."
+  },
+  {
+    "id": "cdk-diverge-commit-message",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "git commit -m \"cdk deploy docs\""
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy regex matches the text anywhere in the line; target only inspects the command word of each simple command."
+  },
+  {
+    "id": "cdk-diverge-comment",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk synth # cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "A shell comment is not executed; legacy matches the text after #."
+  },
+  {
+    "id": "cdk-diverge-synth-arg",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk synth deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "The subcommand is synth; deploy is a stack name argument, which legacy treats as the subcommand."
+  },
+  {
+    "id": "cdk-diverge-ls-arg",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk ls deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "The subcommand is ls; deploy is a stack name argument, which legacy treats as the subcommand."
   }
 ]

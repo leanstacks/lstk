@@ -5,7 +5,16 @@ const rows = JSON.parse(readFileSync(new URL('./fixtures/hook-matrix.json', impo
 
 const DECISIONS = ['allow', 'ask', 'deny'];
 const HOOKS = ['block-cdk-mutate', 'protect-files'];
-const GROUPS = ['cdk-deny', 'cdk-deny-wrapper', 'cdk-ask', 'cdk-allow', 'protect-block', 'protect-allow', 'divergence'];
+const GROUPS = [
+  'cdk-deny',
+  'cdk-deny-wrapper',
+  'cdk-ask',
+  'cdk-allow',
+  'cdk-divergence',
+  'protect-block',
+  'protect-allow',
+  'divergence',
+];
 
 const commands = (group) => rows.filter((r) => r.group === group).map((r) => r.input.tool_input.command);
 const paths = (group) => rows.filter((r) => r.group === group).map((r) => r.input.tool_input.file_path);
