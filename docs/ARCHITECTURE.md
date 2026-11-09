@@ -93,6 +93,16 @@ flowchart TB
   `context`, `agent`, `hooks`, `paths`.
 - The opening `---` must be the first line of the file, or the whole file is treated as content.
 - Keep `SKILL.md` under 500 lines.
+- Path variables in plugin skills (verified in M1 against the skills and plugin reference docs):
+  - `${CLAUDE_PLUGIN_ROOT}` is substituted as text in the Markdown body and in Bash rules in `allowed-tools`. It is
+    substituted only in plugin skills. `${CLAUDE_PROJECT_DIR}` is substituted in the same two places.
+  - `${CLAUDE_SKILL_DIR}` resolves to the skill's own directory, not the plugin root.
+  - `CLAUDE_PLUGIN_ROOT` is **not** exported as an environment variable to Bash commands that Claude runs. It is
+    exported only to hook commands, MCP stdio servers, and LSP servers. A script cannot read it from the shell.
+  - `allowed-tools` uses the space form, `Bash(cmd *)`. The `:*` suffix is accepted as an equivalent.
+  - The docs do not say whether a double-quoted path in an `allowed-tools` rule matches the same command. The `init`
+    skill uses `Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/merge-settings.mjs" *)` and relies on the M1 smoke test to
+    confirm there is no permission prompt.
 
 ### Agent frontmatter
 
