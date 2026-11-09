@@ -169,6 +169,8 @@ function checkPlugin(rootDir, entry, problems) {
 
   checkSkills(rootDir, pluginDir, problems);
   checkAgents(rootDir, pluginDir, problems);
+  checkHooks(rootDir, pluginDir, problems);
+  checkNoShellScripts(rootDir, pluginDir, problems);
   checkParentReferences(rootDir, pluginDir, problems);
 }
 
@@ -244,6 +246,57 @@ function* walk(dir) {
       if (!SKIP_DIRS.has(dirent.name)) yield* walk(path.join(dir, dirent.name));
     } else if (dirent.isFile()) {
       yield path.join(dir, dirent.name);
+    }
+  }
+}
+
+const PLUGIN_ROOT_REFERENCE = /\$\{CLAUDE_PLUGIN_ROOT\}\/([^\s"'`]+)/g;
+
+/** hooks/hooks.json must be valid and every ${CLAUDE_PLUGIN_ROOT}/... path it uses must exist. */
+function checkHooks(rootDir, pluginDir, problems) {
+  const file = path.join(pluginDir, 'hooks', 'hooks.json');
+  if (!existsSync(file)) return;
+  const display = rel(rootDir, file);
+  const manifest = readJson(file, display, problems);
+  if (manifest === undefined) return;
+  const add = (message) => problems.push({ file: display, message });
+
+  if (
+    typeof manifest !== 'object' ||
+    manifest === null ||
+    typeof manifest.hooks !== 'object' ||
+    manifest.hooks === null
+  ) {
+    add('must be an object with a top-level "hooks" object');
+    return;
+  }
+  for (const [event, groups] of Object.entries(manifest.hooks)) {
+    if (!Array.isArray(groups)) {
+      add(`"hooks.${event}" must be an array`);
+      continue;
+    }
+    for (const group of groups) {
+      const handlers = Array.isArray(group?.hooks) ? group.hooks : [];
+      if (handlers.length === 0) add(`"hooks.${event}" has a matcher group with no "hooks" array`);
+      for (const handler of handlers) {
+        const strings = [handler?.command, ...(Array.isArray(handler?.args) ? handler.args : [])];
+        for (const text of strings.filter((s) => typeof s === 'string')) {
+          for (const match of text.matchAll(PLUGIN_ROOT_REFERENCE)) {
+            if (!existsSync(path.join(pluginDir, match[1]))) {
+              add(`"hooks.${event}" references "${match[1]}", which does not exist in the plugin`);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/** Plugins ship Node .mjs scripts. A shell script would add a bash and jq dependency. */
+function checkNoShellScripts(rootDir, pluginDir, problems) {
+  for (const file of walk(pluginDir)) {
+    if (path.extname(file) === '.sh') {
+      problems.push({ file: rel(rootDir, file), message: 'shell scripts are not allowed in plugins; use Node .mjs' });
     }
   }
 }

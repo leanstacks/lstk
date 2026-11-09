@@ -227,6 +227,71 @@ describe('lintRepo', () => {
     expect(lintRepo(root)).toEqual([]);
   });
 
+  describe('hooks', () => {
+    const hooksJson = (command, args) => ({
+      hooks: { PreToolUse: [{ matcher: 'Bash', hooks: [{ type: 'command', command, args }] }] },
+    });
+
+    it('passes a hooks.json whose referenced scripts exist', () => {
+      const root = makeRepo();
+      write(root, 'plugins/one/hooks/run.mjs', '');
+      write(root, 'plugins/one/hooks/hooks.json', hooksJson('node', ['${CLAUDE_PLUGIN_ROOT}/hooks/run.mjs']));
+      expect(lintRepo(root)).toEqual([]);
+    });
+
+    it('passes a shell-form command that references an existing script', () => {
+      const root = makeRepo();
+      write(root, 'plugins/one/hooks/run.mjs', '');
+      write(root, 'plugins/one/hooks/hooks.json', hooksJson('node "${CLAUDE_PLUGIN_ROOT}/hooks/run.mjs"'));
+      expect(lintRepo(root)).toEqual([]);
+    });
+
+    it('reports invalid JSON', () => {
+      const root = makeRepo();
+      write(root, 'plugins/one/hooks/hooks.json', '{nope');
+      expect(messages(root)).toEqual([expect.stringContaining('hooks/hooks.json: invalid JSON')]);
+    });
+
+    it('reports a missing top-level hooks object', () => {
+      const root = makeRepo();
+      write(root, 'plugins/one/hooks/hooks.json', { PreToolUse: [] });
+      expect(messages(root)).toEqual([expect.stringContaining('top-level "hooks" object')]);
+    });
+
+    it('reports an event that is not an array and a group with no handlers', () => {
+      const root = makeRepo();
+      write(root, 'plugins/one/hooks/hooks.json', { hooks: { Stop: {}, PreToolUse: [{ matcher: 'Bash' }] } });
+      expect(messages(root)).toEqual([
+        expect.stringContaining('"hooks.Stop" must be an array'),
+        expect.stringContaining('"hooks.PreToolUse" has a matcher group with no "hooks" array'),
+      ]);
+    });
+
+    it('reports a referenced script that does not exist', () => {
+      const root = makeRepo();
+      write(root, 'plugins/one/hooks/hooks.json', hooksJson('node', ['${CLAUDE_PLUGIN_ROOT}/hooks/missing.mjs']));
+      expect(messages(root)).toEqual([expect.stringContaining('references "hooks/missing.mjs", which does not exist')]);
+    });
+
+    it('ignores a plugin with no hooks directory', () => {
+      expect(lintRepo(makeRepo())).toEqual([]);
+    });
+  });
+
+  it('reports a shell script in a plugin', () => {
+    const root = makeRepo();
+    write(root, 'plugins/one/hooks/old.sh', '#!/bin/bash\n');
+    expect(messages(root)).toEqual([
+      expect.stringContaining('plugins/one/hooks/old.sh: shell scripts are not allowed'),
+    ]);
+  });
+
+  it('does not flag shell scripts outside plugin directories', () => {
+    const root = makeRepo();
+    write(root, 'scripts/dev.sh', '#!/bin/bash\n');
+    expect(lintRepo(root)).toEqual([]);
+  });
+
   it('passes on the real repository', () => {
     expect(lintRepo(REAL_ROOT)).toEqual([]);
   });
