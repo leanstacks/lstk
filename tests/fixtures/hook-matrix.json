@@ -1047,5 +1047,50 @@
     "legacy": "deny",
     "target": "allow",
     "reason": "The subcommand is ls; deploy is a stack name argument, which legacy treats as the subcommand."
+  },
+  {
+    "id": "protect-diverge-suffix-env",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "my.env"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; only files named .env or .env.* are protected."
+  },
+  {
+    "id": "protect-diverge-dot-env-example",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "dot.env.example"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; the pattern matches a whole name, not a substring."
+  },
+  {
+    "id": "protect-diverge-dot-package-lock",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "node_modules/.package-lock.json"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; the pattern matches the whole basename package-lock.json."
   }
 ]
