@@ -7,9 +7,10 @@ lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) a
 
 - `.claude-plugin/marketplace.json`: marketplace manifest listing both plugins.
 - `plugins/lstk/`: lifecycle skills and agents.
-- `plugins/lstk-guardrails/`: hooks, the `init` skill, and settings snippets.
+- `plugins/lstk-guardrails/`: `hooks/` (two `.mjs` hooks, `hooks.json`, shared `hooks/lib/`), `scripts/merge-settings.mjs`,
+  `skills/init/`, and `snippets/` (`baseline.json`, `convenience.json`).
 - `scripts/lint-plugins.mjs`: manifest and frontmatter linter.
-- `tests/`: Vitest tests.
+- `tests/`: Vitest tests. `tests/fixtures/hook-matrix.json` is the allow, ask, and deny matrix for the hooks.
 - `docs/`: plan, architecture, and contributing guides.
 
 ## Commands
@@ -31,6 +32,11 @@ npm run validate       # claude plugin validate --strict (needs the claude CLI)
   directory (no `../`)**. Nothing is shared across plugins.
 - Only `plugin.json` goes in a plugin's `.claude-plugin/`. `skills/`, `agents/`, and `hooks/` sit at the plugin root.
 - A skill's `name` must equal its directory name. Its `description` states what it does and when to use it.
+- Hooks fail open: an unexpected internal error warns on stderr and allows the call. A matched rule denies or asks
+  through the JSON `permissionDecision` output, never exit 2.
+- Protected-file patterns come from built-in defaults plus `.claude/lstk.json` (`protectedPatterns`,
+  `unprotectPatterns`) and the uncommitted `.claude/lstk.local.json`.
+- Plugins ship no shell scripts and no test fixtures. Hook tests must not need `bash` or `jq`.
 - Skills with side effects set `disable-model-invocation: true`.
 - Bump a plugin's `version` in its `plugin.json` for every released change, or installed users will not receive it.
 - Docs are Markdown with Mermaid diagrams. Style is owned by Prettier and oxlint, not by prose.
