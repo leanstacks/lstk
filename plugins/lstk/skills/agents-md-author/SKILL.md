@@ -1,6 +1,6 @@
 ---
 name: agents-md-author
-description: Creates AGENTS.md agentic coding instruction files (a single root file or a hierarchy of nested files) for a repository by investigating its stack, structure, commands, and conventions. Audits any existing agent instruction or memory files first (AGENTS.md, CLAUDE.md, .github/copilot-instructions.md, .cursor/rules, GEMINI.md, etc.) and judges whether they are current. Use this skill whenever the user wants to bootstrap, generate, initialize, refresh, migrate, or consolidate agent instructions, AGENTS.md, CLAUDE.md, copilot-instructions, "project memory", or "onboarding context for AI coding agents", or asks to make a repo "agent-ready", even if they never say "AGENTS.md" explicitly. Also use when a repo has outdated or tool-specific instruction files that should be unified.
+description: Creates, audits, or refreshes AGENTS.md agent instruction files (one root file or a nested hierarchy) by investigating a repo's stack, structure, commands, and conventions. First judges existing CLAUDE.md, copilot-instructions, .cursor/rules, and GEMINI.md files for currency. Use when the user wants to bootstrap, generate, refresh, migrate, or consolidate agent instructions or project memory, or asks to make a repo "agent-ready", even without saying "AGENTS.md".
 allowed-tools: Bash(node "${CLAUDE_SKILL_DIR}/scripts/recon.mjs" *)
 ---
 
@@ -82,7 +82,7 @@ Do **not** read the whole codebase. Targeted diagnostics only.
 1. **File tree discovery.** List the root and one or two levels below it, ignoring dependency and build directories. Identify the stack from manifests (`package.json`, `pyproject.toml`, `requirements.txt`, `go.mod`, `Cargo.toml`, `pom.xml`, `build.gradle*`, `*.csproj`, `Gemfile`, `composer.json`, `mix.exs`, etc.). Note lockfiles to identify the package manager (`pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `uv.lock`, `poetry.lock`). For ecosystem-specific manifests, command sources, generated-code hazards, and monorepo markers, read `references/stack-detection.md` once the stack is identified.
 2. **Entry points.** Locate primary execution vectors: `main`/`bin`/`scripts.start` fields, `src/main.*`, `app.*`, `cmd/*`, server and handler configs, framework config files, IaC entry points (`cdk.json`, `serverless.yml`, `template.yaml`, `*.tf`).
 3. **Configuration detection.** `.env.example` and similar templates, `Dockerfile`, `docker-compose*.yml`, devcontainer, CI workflows (`.github/workflows`, `.gitlab-ci.yml`, etc.).
-4. **Command harvest.** Read only the sections defining scripts/targets in manifests, Makefile/justfile, and CI. CI is the best evidence of the _real_ build, test, and lint sequence.
+4. **Command harvest.** Read only the sections defining scripts or targets in manifests, Makefile/justfile, and CI. CI is the best evidence of the _real_ build, test, and lint sequence.
 5. **Convention evidence.** Read linter/formatter/compiler configs (ESLint, Prettier, Ruff, tsconfig, `.editorconfig`, golangci). Sample two or three representative source and test files to detect naming, test layout, and error-handling idioms. Sample, do not crawl.
 6. **Existing human docs.** Note `README.md`, `CONTRIBUTING.md`, `docs/`, ADRs. These get linked, not duplicated.
 

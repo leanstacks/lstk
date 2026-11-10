@@ -1,13 +1,26 @@
 ---
 name: commit-messages
-description: Write git commit messages using a standardized prefix (feat, fix, chore, doc) followed by a short, descriptive summary. Use this skill whenever creating a git commit, proposing or drafting a commit message, amending or rewording a commit, squashing commits, or when the user says "commit", "commit this", "commit my changes", or asks what a commit message should be. Apply it even if the user does not mention commit message conventions, since all commits in this workflow follow this format.
+description: Writes git commit messages, following the repository's own convention when it has one and a four-prefix format (feat, fix, chore, doc) otherwise. Use when creating, proposing, amending, rewording, or squashing a commit, or when the user says "commit", "commit this", "commit my changes", or asks what a commit message should be, even if they never mention conventions.
 ---
 
 # Commit Messages
 
-Every commit message uses a standardized prefix followed by a short, descriptive summary. A consistent format keeps history scannable, makes changelogs easy to generate, and lets reviewers grasp the intent of a commit before opening the diff.
+A consistent commit format keeps history scannable, makes changelogs easy to generate, and lets reviewers grasp the intent of a commit before opening the diff.
 
-## Format
+## Precedence: the repo's convention wins
+
+Before writing a message, look for a convention the repository already defines, in this order:
+
+1. `AGENTS.md` or `CLAUDE.md`
+2. `CONTRIBUTING.md` or `docs/`
+3. A `commitlint` config (`commitlint.config.*`, a `commitlint` key in `package.json`)
+4. The last 10 or so subjects from `git log --oneline`
+
+If the repo states or clearly uses a convention (Conventional Commits with scopes, ticket keys, a different prefix set, a body), follow it and stop reading this skill. Only when the repo is silent, use the format below. An explicit instruction from the user for a particular commit overrides both.
+
+## Fallback format
+
+Used when the repo defines no convention. Every message uses a standardized prefix followed by a short, descriptive summary.
 
 ```
 <prefix>: <short description>
@@ -57,10 +70,10 @@ Cases that don't map cleanly to a prefix:
 
 ```
 feat: added support for CSV export on the reports page
-feat: added retry with exponential backoff to the payment client
+feat: added retry with exponential backoff to the API client
 fix: corrected off-by-one error in pagination offset
 fix: resolved null pointer when user profile has no avatar
-chore: upgraded NestJS to 11.1.0
+chore: upgraded the web framework to the latest minor version
 chore: removed unused lodash dependency
 chore: reformatted source files with prettier
 doc: added setup instructions for local development

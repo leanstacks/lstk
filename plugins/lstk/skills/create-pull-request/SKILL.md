@@ -1,10 +1,13 @@
 ---
 name: create-pull-request
-description: Create a high-quality GitHub pull request from the current branch. Finds and follows the repository's own PR template (e.g. .github/PULL_REQUEST_TEMPLATE.md), falls back to a best-practice template when none exists, writes a clear PR title, and opens the PR as a DRAFT by default. Use this skill whenever the user asks to open, create, raise, submit, or publish a pull request or PR, says "push this up for review", asks to write or fix a PR title or description, or finishes a feature/fix and wants it reviewed — even if they never say "pull request" explicitly.
+description: Creates a GitHub pull request from the current branch as a draft, using the repository's own PR template (or a best-practice fallback) and a clear title. User-invoked only: run /lstk:create-pull-request when ready to open, raise, or submit a PR for review.
+disable-model-invocation: true
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git show:*), Bash(git rev-parse:*), Bash(gh pr create:*), Bash(gh pr list:*), Bash(gh pr view:*), Bash(gh pr edit:*), Bash(gh repo view:*), Read, Glob, Grep
 ---
 
 # Create Pull Request
+
+This skill is user-invoked only (`/lstk:create-pull-request`), because it pushes a branch and opens a PR. It never runs on its own.
 
 Open a pull request that a reviewer can understand in under two minutes. A good PR explains **why** the change exists, **what** changed at a level the diff doesn't already show, **how to verify it**, and **what could go wrong**.
 
@@ -94,70 +97,15 @@ Notes:
 - Add nothing the template doesn't ask for, with one exception: if the diff carries real risk (migration, breaking change, config change) and the template has no obvious place for it, add it under the closest "Additional Information"-style section.
 - Fill checklists per [Checklist honesty](#checklist-honesty).
 
-**If no template was found:** use the fallback below.
+**If no template was found:** use the fallback template.
 
 #### Fallback template
 
-```markdown
-## Summary
-
-[1–3 sentences: what this PR does and why it is needed.]
-
-Closes #[issue-number] <!-- or: Relates to PROJ-123 -->
-
-## Changes
-
-- [Behavioral or structural change, described at the level of intent, not file names]
-- [...]
-
-## How to Test
-
-1. [Setup or precondition, e.g. branch, env var, seed data]
-2. [Action: command, endpoint plus payload, or UI path]
-3. Verify that [expected result].
-
-**Automated tests:** [Tests added or updated. State which suites you ran and the result.]
-
-## Screenshots / Evidence
-
-[Before/after screenshots, logs, or response samples for UI or behavior changes. Otherwise: N/A.]
-
-## Risk and Rollout
-
-- **Impact:** [What parts of the system or which users are affected]
-- **Breaking changes:** [None / describe, including API or contract changes]
-- **Migrations, config, infra:** [None / DB migrations, new env vars or secrets, IaC or IAM changes, feature flags, deploy ordering]
-- **Rollback:** [How to revert safely, or "Revert this PR"]
-
-## Notes for Reviewers
-
-- **Focus on:** [Where you want the closest review: tricky logic, design decision, security-sensitive code]
-- **Out of scope / follow-ups:** [Known gaps, deferred work, tickets to be filed]
-
-## Checklist
-
-- [ ] Self-review of the diff completed
-- [ ] Tests added or updated for the changes
-- [ ] Lint, type-check, and build pass
-- [ ] Documentation updated as needed (README, /docs, JSDoc, API specs)
-- [ ] No secrets, credentials, or leftover debug code
-```
-
-How to fill the fallback well:
-
-| Section                    | Guidance                                                                                                                                                                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Summary**                | Lead with the _why_. A reviewer who reads only this should know the purpose.                                                                                                                                                    |
-| **Changes**                | Describe behavior and design, not a file-by-file diff narration. Call out incidental or refactoring changes separately so reviewers don't mistake them for functional ones.                                                     |
-| **How to Test**            | Concrete, runnable steps derived from the actual change (commands, endpoints with payloads, UI paths, expected output). Never invent steps for code paths you didn't read.                                                      |
-| **Screenshots / Evidence** | Include only when it helps. You usually can't capture screenshots yourself; leave a clear `TODO: author to add before/after screenshots` and mention it in your final report.                                                   |
-| **Risk and Rollout**       | The section that most often prevents incidents. Be explicit even when the answer is "None". For trivial PRs (typo, docs-only, comment changes), drop this section and Screenshots entirely rather than filling them with `N/A`. |
-| **Notes for Reviewers**    | Direct attention. Say where the risky or debatable parts are, and what you deliberately did not do.                                                                                                                             |
-| **Checklist**              | Subject to the honesty rules below. Add repo-specific items if `CONTRIBUTING.md` or CI config implies them (changelog entry, OpenAPI regeneration, etc.).                                                                       |
+Read `references/fallback-template.md` now. It holds the fallback body (Summary, Changes, How to Test, Screenshots / Evidence, Risk and Rollout, Notes for Reviewers, Checklist) and guidance for filling each section. Drop sections that do not apply to a trivial PR, as that file explains.
 
 ### 5. Write the title
 
-Match the repository's existing convention first. Detect it:
+Match the repository's existing convention first; it always wins over the formats below. Check `AGENTS.md`/`CLAUDE.md` and `CONTRIBUTING.md` for a stated title rule, then detect it from history:
 
 ```bash
 gh pr list --state merged --limit 10 --json title -q '.[].title'
@@ -199,15 +147,17 @@ Examples:
    git push -u origin HEAD
    ```
    Never force-push, and never push to the default branch. If the push would require `--force`, stop and ask.
-2. Write the body to a temporary file and pass it with `--body-file`. This avoids shell quoting and escaping bugs with backticks, quotes, and newlines in Markdown.
+2. Pass the body on stdin with `--body-file -` and a quoted heredoc delimiter. This avoids shell quoting and escaping bugs with backticks, quotes, and newlines in Markdown, and needs no temporary file.
 3. Create the PR as a **draft**:
    ```bash
-   gh pr create --draft --base <base> --title "<title>" --body-file <path-to-body.md>
+   gh pr create --draft --base <base> --title "<title>" --body-file - <<'EOF'
+   <body markdown>
+   EOF
    ```
 4. Don't add labels, reviewers, assignees, or milestones unless the user, the template, or `CONTRIBUTING.md` asks for them. `CODEOWNERS` already requests reviewers automatically.
 5. If `gh` is missing or unauthenticated, don't improvise with raw API calls. Output the final title and body for the user to paste, and give them the compare URL (`https://github.com/<owner>/<repo>/compare/<base>...<branch>`). For GitLab, use `glab mr create --draft` with the same principles.
 
-Delete the temporary body file afterwards.
+Permissions: `git push` and `gh pr ready` are deliberately absent from `allowed-tools`, so Claude Code asks before each one. A push publishes work and is the right place for a confirmation.
 
 ### 7. Report back
 

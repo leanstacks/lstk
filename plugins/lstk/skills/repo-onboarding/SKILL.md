@@ -1,6 +1,6 @@
 ---
 name: repo-onboarding
-description: Onboard a developer to an unfamiliar repository by producing or verifying an overview document (docs/PROJECT_OVERVIEW.md). First checks whether onboarding docs already exist and are current; points the user to them if so, updates them if stale, and creates them if missing. Use this skill whenever the user is new to a codebase or asks things like "onboard me", "walk me through this repo", "give me an overview", "what is this project", "how is this codebase organized", "how do I get this running", "where do I start", or "explain the architecture" — even if they never mention documentation or onboarding. Also use it when the user asks to refresh, update, or audit an existing project overview or onboarding guide.
+description: Onboards a developer to an unfamiliar repository by producing or verifying docs/PROJECT_OVERVIEW.md: reuses it if current, updates it if stale, creates it if missing. Use when the user is new to a codebase or asks "onboard me", "walk me through this repo", "give me an overview", "what is this project", "where do I start", or "explain the architecture", or wants a project overview refreshed or audited.
 ---
 
 # Repo Onboarding

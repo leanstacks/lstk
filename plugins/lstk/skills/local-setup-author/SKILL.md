@@ -1,6 +1,6 @@
 ---
 name: local-setup-author
-description: Create, verify, or update docs/LOCAL_SETUP.md, the guide that takes an engineer from a fresh clone to a running application and a working edit-build-test loop on their own machine. First audits existing documentation (docs/, README, CONTRIBUTING, devcontainer) and judges whether it is current; refers the user to it if so, updates it if stale, and creates it if missing, then reports any duplication with existing docs. Use this skill whenever the user asks how to set up, run, build, or develop a repo locally, wants a local setup guide, dev environment guide, "getting started" or "how do I get this running" doc, is onboarding engineers who need a working machine, or asks to audit or refresh existing setup instructions, even if they never say "LOCAL_SETUP" or "documentation". Stack-agnostic.
+description: Creates, verifies, or updates docs/LOCAL_SETUP.md, the guide from a fresh clone to a running app and a working edit-build-test loop. Audits existing docs (README, CONTRIBUTING, devcontainer) first, then reuses, updates, or creates. Use when the user asks how to set up, run, build, or develop a repo locally, wants a getting-started or dev environment guide, or asks to audit setup instructions. Stack-agnostic.
 ---
 
 # Local Setup Author

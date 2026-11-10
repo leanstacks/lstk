@@ -173,6 +173,77 @@ describe('lintRepo', () => {
     expect(messages(root)).toEqual([expect.stringContaining('"description" must be non-empty')]);
   });
 
+  it('reports a description over the 1024-character cap and accepts one at the cap', () => {
+    const root = makeRepo();
+    write(root, 'plugins/one/skills/long/SKILL.md', skill('long', 'x'.repeat(1025)));
+    write(root, 'plugins/one/skills/edge/SKILL.md', skill('edge', 'x'.repeat(1024)));
+    const found = messages(root);
+    expect(found).toHaveLength(1);
+    expect(found[0]).toMatch(/long\/SKILL\.md.*1025 characters/);
+  });
+
+  it('accepts disable-model-invocation true and false, and rejects other values', () => {
+    const root = makeRepo();
+    const withFlag = (name, value) => skill(name).replace('\n---\n', `\ndisable-model-invocation: ${value}\n---\n`);
+    write(root, 'plugins/one/skills/on/SKILL.md', withFlag('on', 'true'));
+    write(root, 'plugins/one/skills/off/SKILL.md', withFlag('off', 'false'));
+    write(root, 'plugins/one/skills/bad/SKILL.md', withFlag('bad', 'yes'));
+    const found = messages(root);
+    expect(found).toHaveLength(1);
+    expect(found[0]).toMatch(/bad\/SKILL\.md.*disable-model-invocation.*"yes"/);
+  });
+
+  describe('skill file references', () => {
+    const withBody = (name, body) => skill(name) + body;
+
+    it('passes when referenced files exist, including via ${CLAUDE_SKILL_DIR}', () => {
+      const root = makeRepo();
+      write(
+        root,
+        'plugins/one/skills/ok/SKILL.md',
+        withBody(
+          'ok',
+          'See `references/a.md`, [b](references/b.md), and node "${CLAUDE_SKILL_DIR}/scripts/run.mjs".\n',
+        ),
+      );
+      write(root, 'plugins/one/skills/ok/references/a.md', 'a');
+      write(root, 'plugins/one/skills/ok/references/b.md', 'b');
+      write(root, 'plugins/one/skills/ok/scripts/run.mjs', '');
+      expect(messages(root)).toEqual([]);
+    });
+
+    it('reports a missing reference with file and line', () => {
+      const root = makeRepo();
+      write(root, 'plugins/one/skills/gone/SKILL.md', withBody('gone', 'Read `references/missing.md`.\n'));
+      const found = messages(root);
+      expect(found).toHaveLength(1);
+      expect(found[0]).toMatch(/gone\/SKILL\.md:\d+: references "references\/missing\.md"/);
+    });
+
+    it('reports a missing script and template, ignoring trailing punctuation', () => {
+      const root = makeRepo();
+      write(
+        root,
+        'plugins/one/skills/both/SKILL.md',
+        withBody('both', 'Run scripts/x.mjs. Fill templates/t.md, then stop.\n'),
+      );
+      expect(messages(root)).toHaveLength(2);
+    });
+
+    it('ignores globs, placeholders, bare directories, and paths with a different prefix', () => {
+      const root = makeRepo();
+      write(
+        root,
+        'plugins/one/skills/loose/SKILL.md',
+        withBody(
+          'loose',
+          "Look in 'scripts/*', scripts/setup*, references/<name>.md, the scripts/ folder, or docs/references/x.md.\n",
+        ),
+      );
+      expect(messages(root)).toEqual([]);
+    });
+  });
+
   it('reports a skill with no frontmatter block', () => {
     const root = makeRepo();
     write(root, 'plugins/one/skills/demo/SKILL.md', '# Just a heading\n');
