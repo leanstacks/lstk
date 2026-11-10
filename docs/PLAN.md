@@ -55,7 +55,7 @@ lstk/
 │       │   ├── hooks.json
 │       │   ├── protect-files.mjs
 │       │   ├── block-cdk-mutate.mjs
-│       │   └── lib/                  # shared helpers (stdin parse, matching)
+│       │   └── lib/                  # shared helpers: stdin, decision, run, tokenize, paths, config
 │       ├── skills/init/SKILL.md      # /lstk-guardrails:init
 │       ├── scripts/merge-settings.mjs
 │       └── snippets/
@@ -180,7 +180,7 @@ flowchart LR
     M5 --> M6[M6 Backlog / MCP]
 ```
 
-### M0 — Scaffold and tooling
+### M0 — Scaffold and tooling (done)
 
 | Task                                              | Acceptance criteria                                                                                                |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -192,7 +192,9 @@ flowchart LR
 | Local install smoke test                          | `/plugin marketplace add ./` then install both plugins; `/reload-plugins` shows them                               |
 | **Verify against current docs**                   | Manifest schema, version and update behavior, and hook JSON contract confirmed and noted in `docs/ARCHITECTURE.md` |
 
-### M1 — Guardrails plugin
+### M1 — Guardrails plugin (done)
+
+_As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package scripts and `make` targets. `.claude/lstk.json` supports `unprotectPatterns` to remove a default, and `.claude/lstk.local.json` adds personal overrides. Hooks block through the JSON `permissionDecision`. See `docs/plans/PLAN-M1.md`.
 
 | Task                                                                                                                                     | Acceptance criteria                                                                                                                                                                               |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -321,7 +323,7 @@ flowchart LR
 - Semver per plugin via `version` in each `plugin.json`, and git tags like `lstk-v0.1.0` and `lstk-guardrails-v0.1.0`.
 - `CHANGELOG.md` per plugin.
 - **Bump the version on every released change.** Verify in M0 how the update check treats versions, since unbumped changes may not propagate to other machines.
-- Pre-1.0 while the skill set is settling. Cut `0.1.0` at the end of M2, which is the first genuinely useful and safe state.
+- Pre-1.0 while the skill set is settling. Cut `0.1.0` at the end of M2, which is the first genuinely useful and safe state. M1 ships `lstk-guardrails` as `0.1.0-alpha.1` so installed users receive it.
 
 ---
 

@@ -56,7 +56,7 @@ flowchart TB
 - Installed plugins are copied to `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/`. Paths that escape the
   plugin root are rejected, and files outside it are not copied. `${CLAUDE_PLUGIN_ROOT}` points at the cached copy.
 
-### Hook contract (for M1)
+### Hook contract (as built in M1)
 
 - Hooks live in `hooks/hooks.json`, wrapped in a top-level `"hooks"` object: event, then matcher groups, then handlers.
 - Command hooks receive JSON on stdin. Common fields: `session_id`, `cwd`, `permission_mode`, `hook_event_name`. For
@@ -83,6 +83,31 @@ flowchart TB
 - `${CLAUDE_PLUGIN_ROOT}` is substituted in `command` and `args`. Exec form (`command` plus `args`) avoids quoting issues.
   In shell form, wrap the variable in double quotes.
 
+### `lstk-guardrails` design (as built)
+
+- **Decision mechanism.** Hooks print the JSON `permissionDecision` (`deny` or `ask`) with a reason and exit 0. They never
+  use exit 2, so a real exit 2 or other code is never confused with a matched rule.
+- **Fail open.** `runHook` catches any unexpected error, prints `lstk-guardrails: <hook> internal error (<msg>); failing
+open` to stderr, and exits 0. The permission rules from `init` are the backstop.
+- **Module map** (`hooks/lib/`, Node built-ins only): `stdin.mjs` (read and parse JSON), `decision.mjs` (`deny`, `ask`,
+  `allow`, `warn`), `run.mjs` (`runHook`), `tokenize.mjs` (shell-aware tokenizer), `paths.mjs` (normalization, symlink
+  resolution, glob matching), `config.mjs` (loads `.claude/lstk.json`).
+- **`block-cdk-mutate`.** Denies `deploy`, `destroy`, `watch`. Asks on `bootstrap`. Also inspects package-manager scripts
+  and `make` targets, including script bodies in the nearest `package.json`. Deny wins over ask.
+- **`protect-files`.** Resolves `..` and symlinks, then matches gitignore-like patterns against the path relative to
+  `CLAUDE_PROJECT_DIR` (or `cwd`).
+- **`.claude/lstk.json`.** `{ "protectedPatterns": string[], "unprotectPatterns": string[] }`. Patterns are added to the
+  defaults (`.env`, `.env.*`, `package-lock.json`, `.git/`, with `.env.example`, `.env.sample`, and `.env.template`
+  exempt). `unprotectPatterns` removes a default by exact string or exempts a path. `.claude/lstk.local.json` merges
+  after it. Invalid config warns and falls back to defaults. Unknown keys are ignored.
+- **`merge-settings.mjs`.** Adds snippet entries to `permissions.deny`, `ask`, and (opt-in) `allow` in the user or
+  project `settings.json`. It never removes or reorders entries, never touches `hooks` or other keys, is idempotent,
+  refuses invalid input (exit 1), writes atomically with a `.bak` on first change, and supports `--dry-run`. Exit codes:
+  0 success or no change, 1 refused, 2 unexpected error.
+- **`init` skill.** Asks scope and whether to include `convenience`, shows the dry run and any conflicts, applies on
+  confirmation, and reminds the user to remove any old `hooks` block. The `${CLAUDE_PLUGIN_ROOT}` finding is under
+  Skill frontmatter below.
+
 ### Skill frontmatter
 
 - All fields are optional, but `description` is recommended. Unknown fields are silently ignored.
@@ -93,6 +118,15 @@ flowchart TB
   `context`, `agent`, `hooks`, `paths`.
 - The opening `---` must be the first line of the file, or the whole file is treated as content.
 - Keep `SKILL.md` under 500 lines.
+- Path variables in plugin skills (verified in M1 against the skills and plugin reference docs):
+  - `${CLAUDE_PLUGIN_ROOT}` is substituted as text in the Markdown body and in Bash rules in `allowed-tools`. It is
+    substituted only in plugin skills. `${CLAUDE_PROJECT_DIR}` is substituted in the same two places.
+  - `${CLAUDE_SKILL_DIR}` resolves to the skill's own directory, not the plugin root.
+  - `CLAUDE_PLUGIN_ROOT` is **not** exported as an environment variable to Bash commands that Claude runs. It is
+    exported only to hook commands, MCP stdio servers, and LSP servers. A script cannot read it from the shell.
+  - `allowed-tools` uses the space form, `Bash(cmd *)`. The `:*` suffix is accepted as an equivalent.
+  - The docs do not say whether a double-quoted path in an `allowed-tools` rule matches the same command. The `init`
+    skill uses `Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/merge-settings.mjs" *)`. The M1 smoke test confirmed it works.
 
 ### Agent frontmatter
 

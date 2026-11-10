@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.git/config)",
+      "Read(~/.ssh/**)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -fd*)",
+      "Bash(*cdk deploy*)",
+      "Bash(*cdk destroy*)",
+      "Bash(*cdk watch*)",
+      "Bash(*cdk * deploy*)",
+      "Bash(*cdk * destroy*)",
+      "Bash(*cdk * watch*)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(gh release *)",
+      "Bash(gh repo delete*)",
+      "Bash(*cdk bootstrap*)",
+      "Bash(*cdk * bootstrap*)"
+    ]
+  }
+}

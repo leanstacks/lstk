@@ -1,0 +1,1096 @@
+[
+  {
+    "id": "cdk-deny-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-destroy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk destroy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-watch",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk watch"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-npx-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npx cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-npx-aws-cdk-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npx aws-cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-npm-exec-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npm exec cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-npm-run-cdk-dashdash",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npm run cdk -- deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-pinned-version",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk@2.150.0 deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-app-flag",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk -a x deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-all-flag",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk deploy --all"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-and-chain",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "a && cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-semicolon-chain",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "a; cdk destroy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-pipe-chain",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "a | cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-bash-c",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "bash -c \"cdk deploy\""
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-subshell",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo $(cdk deploy)"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-backticks",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo `cdk deploy`"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-multiline",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo hi\ncdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-deny-deny-beats-ask",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk bootstrap && cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-wrapper-npm-run-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny-wrapper",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npm run deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-wrapper-pnpm-cdk-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny-wrapper",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "pnpm cdk:deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-wrapper-yarn-deploy-prod",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny-wrapper",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "yarn deploy:prod"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-wrapper-make-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny-wrapper",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "make deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-wrapper-make-infra-destroy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny-wrapper",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "make infra-destroy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "cdk-wrapper-script-body",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny-wrapper",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npm run ship"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny",
+    "setup": {
+      "files": {
+        "package.json": "{\"scripts\":{\"ship\":\"cdk deploy --all\"}}"
+      }
+    }
+  },
+  {
+    "id": "cdk-wrapper-script-body-destroy-chain",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-deny-wrapper",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "pnpm run teardown"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny",
+    "setup": {
+      "files": {
+        "package.json": "{\"scripts\":{\"teardown\":\"npm run build && cdk destroy\"}}"
+      }
+    }
+  },
+  {
+    "id": "cdk-ask-bootstrap",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-ask",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk bootstrap"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "ask",
+    "target": "ask"
+  },
+  {
+    "id": "cdk-ask-npx-bootstrap",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-ask",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npx cdk bootstrap aws://1/us-east-1"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "ask",
+    "target": "ask"
+  },
+  {
+    "id": "cdk-allow-synth",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk synth"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-diff",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk diff"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-ls",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk ls"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-doctor",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk doctor"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-npx-synth",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npx cdk synth"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-git-status",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "git status"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-echo-deploy",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-ls-cdk-out",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "ls cdk.out"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-cdk-nag",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk-nag deploy-check"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-npm-test",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npm test"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-npm-run-build",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npm run build"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-empty",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": ""
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "cdk-allow-script-body-safe",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-allow",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "npm run build"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow",
+    "setup": {
+      "files": {
+        "package.json": "{\"scripts\":{\"build\":\"tsc\"}}"
+      }
+    }
+  },
+  {
+    "id": "protect-block-env",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".env"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-nested-env",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "apps/api/.env"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-env-local",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".env.local"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-lock",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "package-lock.json"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-nested-lock",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "sub/package-lock.json"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-git-config",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".git/config"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-git-hook",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".git/hooks/pre-commit"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-traversal",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "src/../.env"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-outside-root",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "../x/.env"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-block-absolute-env",
+    "hook": "protect-files",
+    "group": "protect-block",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "${TMP}/apps/api/.env"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "deny"
+  },
+  {
+    "id": "protect-allow-src",
+    "hook": "protect-files",
+    "group": "protect-allow",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "src/index.ts"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "protect-allow-readme",
+    "hook": "protect-files",
+    "group": "protect-allow",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "README.md"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "protect-allow-package-json",
+    "hook": "protect-files",
+    "group": "protect-allow",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "package.json"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "protect-allow-gitignore",
+    "hook": "protect-files",
+    "group": "protect-allow",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".gitignore"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "protect-allow-github",
+    "hook": "protect-files",
+    "group": "protect-allow",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".github/workflows/ci.yml"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "allow"
+  },
+  {
+    "id": "protect-diverge-environment-ts",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "src/.environment.ts"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; only .env and .env.* are protected."
+  },
+  {
+    "id": "protect-diverge-env-example",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".env.example"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Built-in exemption for template env files."
+  },
+  {
+    "id": "protect-diverge-env-sample",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".env.sample"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Built-in exemption for template env files."
+  },
+  {
+    "id": "protect-diverge-env-template",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".env.template"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Built-in exemption for template env files."
+  },
+  {
+    "id": "protect-diverge-envrc",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": ".envrc"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; .envrc is not .env or .env.*."
+  },
+  {
+    "id": "protect-diverge-lock-backup",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "package-lock.json.bak"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; pattern matches the whole basename."
+  },
+  {
+    "id": "protect-diverge-dir-suffix-git",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "foo.git/readme.md"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy \".git/\" substring matches any name ending in .git; target matches a directory named exactly .git."
+  },
+  {
+    "id": "protect-diverge-symlink-env",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "alias"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "deny",
+    "reason": "Legacy only sees the raw path; target resolves the symlink to .env.",
+    "setup": {
+      "files": {
+        ".env": ""
+      },
+      "symlinks": {
+        "alias": ".env"
+      }
+    }
+  },
+  {
+    "id": "protect-diverge-symlink-lock",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "lock-link"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "deny",
+    "reason": "Legacy only sees the raw path; target resolves the symlink to package-lock.json.",
+    "setup": {
+      "files": {
+        "package-lock.json": "{}"
+      },
+      "symlinks": {
+        "lock-link": "package-lock.json"
+      }
+    }
+  },
+  {
+    "id": "protect-diverge-symlink-git-dir",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "gitlink/config"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "allow",
+    "target": "deny",
+    "reason": "Legacy only sees the raw path; target resolves the symlinked directory to .git.",
+    "setup": {
+      "files": {
+        ".git/config": ""
+      },
+      "symlinks": {
+        "gitlink": ".git"
+      }
+    }
+  },
+  {
+    "id": "cdk-diverge-echo",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy regex matches the text anywhere in the line; target only inspects the command word of each simple command."
+  },
+  {
+    "id": "cdk-diverge-echo-quoted",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "echo \"cdk deploy\""
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy regex matches the text anywhere in the line; target only inspects the command word of each simple command."
+  },
+  {
+    "id": "cdk-diverge-commit-message",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "git commit -m \"cdk deploy docs\""
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy regex matches the text anywhere in the line; target only inspects the command word of each simple command."
+  },
+  {
+    "id": "cdk-diverge-comment",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk synth # cdk deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "A shell comment is not executed; legacy matches the text after #."
+  },
+  {
+    "id": "cdk-diverge-synth-arg",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk synth deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "The subcommand is synth; deploy is a stack name argument, which legacy treats as the subcommand."
+  },
+  {
+    "id": "cdk-diverge-ls-arg",
+    "hook": "block-cdk-mutate",
+    "group": "cdk-divergence",
+    "input": {
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cdk ls deploy"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "The subcommand is ls; deploy is a stack name argument, which legacy treats as the subcommand."
+  },
+  {
+    "id": "protect-diverge-suffix-env",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "my.env"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; only files named .env or .env.* are protected."
+  },
+  {
+    "id": "protect-diverge-dot-env-example",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "dot.env.example"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; the pattern matches a whole name, not a substring."
+  },
+  {
+    "id": "protect-diverge-dot-package-lock",
+    "hook": "protect-files",
+    "group": "divergence",
+    "input": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "node_modules/.package-lock.json"
+      },
+      "cwd": "${TMP}"
+    },
+    "legacy": "deny",
+    "target": "allow",
+    "reason": "Legacy substring match over-blocks; the pattern matches the whole basename package-lock.json."
+  }
+]

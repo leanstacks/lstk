@@ -41,11 +41,20 @@ This repo is public. Before every commit, confirm:
 - Hook and script code uses Node built-ins only.
 - Remove `.gitkeep` placeholders when real content arrives.
 
+## Hooks, matrix, and snippets
+
+- **Add a hook case.** Add a row to `tests/fixtures/hook-matrix.json` (`id`, `hook`, `input`, `legacy`, `target`, and a
+  `reason` if the two differ). `tests/hooks/*.test.mjs` assert each row's `target`. Run `npx vitest run tests/hooks`.
+- **Add a snippet rule.** Edit `plugins/lstk-guardrails/snippets/baseline.json` (deny and ask) or `convenience.json`
+  (allow). `tests/snippets.test.mjs` rejects duplicates, conflicts, and personal paths.
+- **Fixtures are public.** Apply the checklist above to every matrix row and fixture.
+- Plugins ship no shell scripts or fixtures, and tests must not depend on `bash` or `jq`.
+
 ## Versioning
 
 Installed copies are cached by `version`, so **an unbumped change does not reach users**. Bump `version` in the plugin's
 `plugin.json` (semver) for every released change. Tag releases `lstk-vX.Y.Z` and `lstk-guardrails-vX.Y.Z`, and record
-changes in `CHANGELOG.md`.
+changes in `CHANGELOG.md`. A release is: bump `version`, update the changelog, run `npm run check`, then tag.
 
 ## Commits and pull requests
 
