@@ -11,6 +11,21 @@ This skill is stack-agnostic. Ecosystem-specific detection tables live in `refer
 
 Scope boundary: this document covers **how to run and change the code on a laptop**. Architecture, domain concepts, and repo tour belong in a project overview (e.g. `docs/PROJECT_OVERVIEW.md`); link to it if it exists, and do not restate it.
 
+## Related skills and output ownership
+
+This skill owns `docs/LOCAL_SETUP.md`. Two sibling skills in this plugin own the other documents below.
+
+| Document                   | Owns                                                          | Does not contain (lives in)                                                              |
+| :------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
+| `AGENTS.md`                | Rules, commands, and boundaries for coding agents             | What the system is (`PROJECT_OVERVIEW.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
+| `docs/PROJECT_OVERVIEW.md` | What the system is and how it is organized                    | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                         |
+| `docs/LOCAL_SETUP.md`      | Fresh clone to running app and a working edit-build-test loop | Architecture and domain (`PROJECT_OVERVIEW.md`); agent rules (`AGENTS.md`)               |
+
+- `/lstk:repo-onboarding` writes `docs/PROJECT_OVERVIEW.md`.
+- `/lstk:agents-md-author` writes `AGENTS.md`.
+
+Treat their outputs as inputs: link to the overview and to `AGENTS.md` instead of copying them, and never modify them. When the overview is missing and the user wants a repo tour, offer `/lstk:repo-onboarding`.
+
 ## Operating principles
 
 Setup guides fail in predictable ways: a step silently depends on something the author already had installed, secrets are mentioned but never located, versions drift, and the guide duplicates a README that then disagrees with it. The principles below target those failures.

@@ -21,6 +21,23 @@ These govern every decision below. Violating them produces files that agents ign
 7. **Closest file wins.** In a hierarchy, nested files hold only what is specific to that subtree and never repeat the root.
 8. **Record uncertainty.** If something could not be verified, mark it `TODO(verify)` in the plan and tell the user. Do not guess.
 
+## Related skills and output ownership
+
+This skill owns `AGENTS.md`. Two sibling skills in this plugin own the other documents below.
+
+| Document                   | Owns                                                          | Does not contain (lives in)                                                              |
+| :------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
+| `AGENTS.md`                | Rules, commands, and boundaries for coding agents             | What the system is (`PROJECT_OVERVIEW.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
+| `docs/PROJECT_OVERVIEW.md` | What the system is and how it is organized                    | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                         |
+| `docs/LOCAL_SETUP.md`      | Fresh clone to running app and a working edit-build-test loop | Architecture and domain (`PROJECT_OVERVIEW.md`); agent rules (`AGENTS.md`)               |
+
+- `/lstk:repo-onboarding` writes `docs/PROJECT_OVERVIEW.md`.
+- `/lstk:local-setup-author` writes `docs/LOCAL_SETUP.md`.
+
+Treat their outputs as inputs: when either document exists, link to it from `AGENTS.md` instead of repeating its content, and never modify it. When one is missing and the user would benefit, offer the matching skill rather than writing that content into `AGENTS.md`.
+
+---
+
 ## Workflow overview
 
 | Phase | Purpose                           | Gate                                       |
@@ -58,20 +75,20 @@ For each file found, test it. Do not rely on modification date alone.
 - **Drift signal:** many manifest or CI commits after its last edit raises suspicion (the script reports this).
 - **Coverage:** does it include build, test, lint, and conventions, or is it a stub?
 
-Classify as **Current**, **Outdated** (state the specific stale items), or **Absent**.
+Classify as `FRESH`, `STALE` (state the specific stale items), or `MISSING`.
 
 ### Branching
 
-- **Current:** Do not regenerate. Show the user the file(s), the evidence of currency, and offer exactly these options:
+- **`FRESH`:** Do not regenerate. Show the user the file(s), the evidence of currency, and offer exactly these options:
   1. Convert or consolidate into `AGENTS.md` (single file or hierarchy), preserving content.
   2. Exit the skill.
 
   Wait for their choice. If they choose conversion, treat the existing content as source material, and still run Phase 1 to confirm the structure supports the layout.
 
-- **Outdated:** Keep the stale files as **source material only**. List the stale items found, then proceed to Phase 1. Reconnaissance is still mandatory; never trust the old content over what the repo shows.
-- **Absent:** Proceed to Phase 1.
+- **`STALE`:** Keep the stale files as **source material only**. List the stale items found, then proceed to Phase 1. Reconnaissance is still mandatory; never trust the old content over what the repo shows.
+- **`MISSING`:** Proceed to Phase 1.
 
-Multiple tool-specific files that disagree with each other count as Outdated: report the conflicts.
+Multiple tool-specific files that disagree with each other count as `STALE`: report the conflicts.
 
 ---
 
@@ -175,7 +192,7 @@ Before finishing, check your own output:
 5. **Secret check:** no credentials, tokens, or real hostnames.
 6. **Link check:** relative links resolve.
 
-Report to the user: files created, the layout rationale in one line, what was verified versus marked `TODO(verify)`, anything dropped from legacy files, and a suggestion to review and commit. Recommend revisiting the file when build tooling or structure changes, since stale instructions are the main failure mode.
+Report to the user: files created, the layout rationale in one line, what was verified versus marked `TODO(verify)`, anything dropped from legacy files, and a suggestion to review and commit. Do not commit; leave that to the user. Recommend revisiting the file when build tooling or structure changes, since stale instructions are the main failure mode.
 
 ## Reference files
 

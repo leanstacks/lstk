@@ -1,5 +1,7 @@
 # Architecture Map Conventions
 
+This is a deliberate separate copy: skills cannot share files, so `agents-md-author` carries its own `architecture-map.md`. The two agree on tree, annotation, depth, and marker rules. They differ on purpose: the project overview adds diagrams and a primary flow, while `AGENTS.md` stays lean.
+
 How to present repository structure and runtime flow. The goal is that a newcomer can answer three questions in under two minutes: _Where does the code live? How do the parts connect? What happens when the main thing happens?_
 
 ## 1. Annotated folder map
@@ -23,6 +25,8 @@ Rules:
 - Describe **role** ("Backend", "Contract", "IaC"), not just content ("TypeScript files").
 - State dependency direction inline when it is a rule (`handlers/ → services/ → utils/`).
 - Mark inferred roles with `(inferred)`.
+- Flag generated, vendored, or protected paths with `(generated)`, `(vendored)`, or `(do not edit)`.
+- Prefer directories to files; list files only for entry points and config a reader must know by name.
 - Group repetitive siblings (`migrations/ # 87 files, timestamped`) instead of listing them.
 
 ## 2. Package / component table (monorepos and multi-service repos)

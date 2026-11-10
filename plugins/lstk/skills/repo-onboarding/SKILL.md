@@ -9,6 +9,23 @@ Get a developer productive in an unfamiliar repo quickly, and leave behind a dur
 
 The skill is stack-agnostic. Stack-specific detection lives in `references/recon-signals.md`; load it only when you need it.
 
+## Related skills and output ownership
+
+This skill owns `docs/PROJECT_OVERVIEW.md`. Two sibling skills in this plugin own the other documents below.
+
+| Document                   | Owns                                                          | Does not contain (lives in)                                                              |
+| :------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
+| `AGENTS.md`                | Rules, commands, and boundaries for coding agents             | What the system is (`PROJECT_OVERVIEW.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
+| `docs/PROJECT_OVERVIEW.md` | What the system is and how it is organized                    | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                         |
+| `docs/LOCAL_SETUP.md`      | Fresh clone to running app and a working edit-build-test loop | Architecture and domain (`PROJECT_OVERVIEW.md`); agent rules (`AGENTS.md`)               |
+
+- `/lstk:local-setup-author` writes `docs/LOCAL_SETUP.md`.
+- `/lstk:agents-md-author` writes `AGENTS.md`.
+
+Treat their outputs as inputs: when `docs/LOCAL_SETUP.md` exists, link to it from the overview's getting-started section and from the Phase 4 brief instead of repeating setup steps, and never modify it. When it is missing and the user wants to get the project running, offer `/lstk:local-setup-author`. Link to `AGENTS.md` for agent rules, and offer `/lstk:agents-md-author` if the user wants agent instructions.
+
+---
+
 ## Operating principles
 
 These exist because the failure modes of onboarding docs are well known: they go stale, they duplicate the README, and they state guesses as facts.
@@ -119,7 +136,7 @@ Assemble the following from Phase 1 evidence. Format conventions are in `referen
 - **The stack**: languages, frameworks, build tooling, runtime/hosting, key external services.
 - **Architecture at a glance**: annotated folder map, component relationships, and the end-to-end flow of the primary use case.
 - **Central contracts**: the main shared types, schemas, API definitions, or database models that the rest of the system depends on. Point to the file; do not copy it wholesale.
-- **Getting started recipe**: ordered steps derived strictly from manifests, scripts, `.env.example`, and container files. Mark the recipe as _derived, not executed_ unless you actually ran it.
+- **Getting started recipe**: a link to `docs/LOCAL_SETUP.md` when it exists. Otherwise a short ordered recipe derived strictly from manifests, scripts, `.env.example`, and container files. Mark the recipe as _derived, not executed_ unless you actually ran it.
 - **Development workflow**: how to build, test, lint, and where CI runs them.
 - **Conventions and gotchas**: naming, layering rules, error-handling patterns, generated files, anything that would trip a newcomer. Only include what you observed.
 - **Open questions**: things you could not determine. Do not hide these; they are valuable to the maintainers.
@@ -172,7 +189,7 @@ Keep the chat output shorter than the document: the document is the deliverable,
 2. **What this is**: 1–2 sentences.
 3. **Stack**: one line.
 4. **Shape**: the 3–6 most important directories/components and how they connect.
-5. **Run it**: the shortest path to a running local environment, with any prerequisites or env setup called out. State that it is derived, not executed.
+5. **Run it**: the shortest path to a running local environment, with any prerequisites or env setup called out, or a pointer to `docs/LOCAL_SETUP.md` when it exists. State that it is derived, not executed.
 6. **Watch out for**: top 1–3 gotchas or open questions.
 
 Then transition using `references/questionnaire.md`: ask what the developer wants to do next, offering the menu from that file, and calibrate depth to their answer. Offer (do not perform without consent) to run install/build/tests to validate the getting-started recipe, since those commands have side effects and can be slow.

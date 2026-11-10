@@ -2,6 +2,8 @@
 
 Used in Phase 2 (to present findings) and Phase 3 (the "Layout" section of `AGENTS.md`).
 
+This is a deliberate separate copy: skills cannot share files, so `repo-onboarding` carries its own `architecture-map.md`. The two agree on tree, annotation, depth, and marker rules. They differ on purpose: `AGENTS.md` stays lean (no diagrams, a placement-rule focus), while the project overview adds diagrams and flows.
+
 ## Goals
 
 Help an agent decide **where to look and where to put things** in under 30 seconds. It is a map, not an inventory.
@@ -10,8 +12,8 @@ Help an agent decide **where to look and where to put things** in under 30 secon
 
 1. **Directories, not files.** List files only for entry points and config that agents must know by name.
 2. **Annotate with purpose, not description of contents.** "HTTP handlers; no business logic" is useful. "Contains source files" is not.
-3. **Depth: 2 levels by default,** 3 only where structure is non-obvious.
-4. **Include a placement rule** for each major directory when it is not obvious (where new code, tests, migrations go).
+3. **Depth: 2 levels by default,** 3 only for the one or two directories that matter most.
+4. **Mark inferred roles** with `(inferred)`. **Include a placement rule** for each major directory when it is not obvious (where new code, tests, migrations go).
 5. **Flag generated, vendored, or protected paths** with a marker so agents do not edit them: `(generated)`, `(vendored)`, `(do not edit)`.
 6. **Omit** dependency directories, build output, and anything git-ignored.
 7. **Stable only.** Skip directories likely to churn. Do not count files.

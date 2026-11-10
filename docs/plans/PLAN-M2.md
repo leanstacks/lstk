@@ -170,7 +170,21 @@ Each phase is one agentic session and ends with `npm run check` green and a comm
 
 **Done when:** each of the three names the other two and states output ownership, both architecture maps agree, and the dogfood run is recorded.
 
-**Handoff to Phase 4:** the final skill list, descriptions, and trigger phrasing for each, plus any near-miss overlaps seen during the dogfood run (these become the negative eval cases).
+**Status: complete, awaiting user review before commit.** Steps 3.1 to 3.6 are done.
+
+**As built**
+
+- **3.1 / 3.2.** Each of the three skills has a "Related skills and output ownership" section with the same three-row table (`AGENTS.md`, `docs/PROJECT_OVERVIEW.md`, `docs/LOCAL_SETUP.md`: what each owns and what it does not contain), plus the two sibling invocations (`/lstk:<name>`) and the rule "treat their outputs as inputs: link, never modify, offer the sibling skill when its output is missing". `repo-onboarding` now links to `docs/LOCAL_SETUP.md` for the getting-started recipe and the Phase 4 "Run it" line when that file exists, and keeps a short derived recipe only when it does not.
+- **3.3 (F6).** The two `architecture-map.md` files stay separate. Each opens with a note saying why (skills cannot share files) and what differs on purpose (the overview adds diagrams and a primary flow, `AGENTS.md` stays lean). Aligned: depth is 2, or 3 for one or two key directories; `(inferred)` marker; `(generated)`, `(vendored)`, `(do not edit)` markers; prefer directories to files.
+- **3.4.** `agents-md-author` now uses the shared status vocabulary `FRESH`, `STALE`, `MISSING` (was Current, Outdated, Absent). `local-setup-author` keeps `SCATTERED` as an intentional extra, since it is the only skill that consolidates setup content spread across other docs. `agents-md-author` gained the "Do not commit" rule the other two already had. Existing `CLAUDE.md` and `AGENTS.md` handling already agreed: read as input, link, never modify (the two doc skills), and `agents-md-author` treats them as source material.
+- **3.5 Dogfood (partial).** Not a full model-driven run of the three skills. Instead, the `agents-md-author` Phase 0 check was done by hand against this repo: `recon.mjs` runs on it, and every command in `AGENTS.md` (`npm ci`, `test`, `lint`, `format:check`, `lint:plugins`, `check`, `validate`) and every layout path exists, so `AGENTS.md` is `FRESH`. One known gap: the layout does not yet mention `scripts/recon.mjs` or the skills, which Phase 5.4 already covers. This repo has no `docs/PROJECT_OVERVIEW.md` or `docs/LOCAL_SETUP.md`, so those would be `MISSING` (`docs/ARCHITECTURE.md` is the plugin contract, not an overview). Nothing was applied. Run the three skills in a live session during the Phase 5 smoke test if a full check is wanted.
+- **3.6.** `npm run check` passes. Changes are uncommitted for review.
+
+**Handoff to Phase 4**
+
+- **Skills and descriptions:** unchanged since Phase 2 (read each `SKILL.md`). Trigger phrasing is unchanged.
+- **Near-misses for negative evals:** `repo-onboarding` vs `local-setup-author` ("how do I get this running" belongs to `local-setup-author`, "onboard me" or "explain the architecture" to `repo-onboarding`); `agents-md-author` vs both ("agent instructions" or "make this repo agent-ready" vs "project overview" or "setup guide"); `commit-messages` vs explaining git history; `create-pull-request` vs "review this PR" or "summarize my diff".
+- **Dogfood caveat:** the live skill runs were not done (see 3.5), so the evals in Phase 4 are the first real check of triggering.
 
 ---
 
