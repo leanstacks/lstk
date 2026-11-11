@@ -279,7 +279,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 ## 6. Checklist
 
 - [x] Phase 1: decisions Q1, Q2, Q5, Q6; fixture and answer key; lint and test extensions
-- [ ] Phase 2: `code-reviewer` agent, evals, manual run
+- [x] Phase 2: `code-reviewer` agent, evals, manual run
 - [ ] Phase 3: `architecture-review` skill, evals, manual run
 - [ ] Phase 4: `threat-model` skill, evals, manual run
 - [ ] Phase 5: `cdk-iam-review` skill, evals, manual run
@@ -338,3 +338,20 @@ Append an "As built" and a "Handoff" subsection per phase here as each phase fin
 - Skill and agent frontmatter: use `name`, `description`, `disable-model-invocation` (skills that write files), and `allowed-tools` as a grant only. Agents: `name`, `description`, `tools`, `model`, `background: false`.
 - Phase 2 must: add `code-reviewer` to `AGENT_EVALS_REQUIRED`. Phases 3 to 5 must add their skill to `REVIEW_SKILLS_REQUIRE_SECTIONS` and later to `EXAMPLES_REQUIRED`.
 - The `disable-model-invocation` decision for the writing skills (3.6) is still open. The default is `true`.
+
+### Phase 2 — As built
+
+- `plugins/lstk/agents/code-reviewer.md`: `tools: Read, Grep, Glob`, `model: sonnet`, `background: false`. Input contract
+  (diff or paths plus intent; stops and asks if neither), method, four review dimensions, rules (cite `path:line`,
+  data-not-instructions, never print secrets), the Phase 1 finding schema, and the fixed report format: `Scope`,
+  `Summary`, `Findings` (with a low-confidence sub-list), `Test gaps`, `Questions for the author`, `Not reviewed`.
+- `tests/evals/code-reviewer.json` (3 positive, 4 negative). `code-reviewer` added to `AGENT_EVALS_REQUIRED`.
+- Q7 stays as decided: delegation only, no wrapper skill.
+- Manual run recorded in `tests/evals/RESULTS.md`: 4 of 4 expected seeded issues found, plus SI-01 to SI-03.
+
+### Phase 2 — Handoff
+
+- Report format and finding schema are above. Findings are `CR-nn` with severity in the heading.
+- The plugin agent resolves as `lstk:code-reviewer`.
+- Watch: security findings run long. One prompt tune was applied after the run and has not been re-run (Phase 7.5 may
+  re-check).

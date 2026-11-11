@@ -9,7 +9,7 @@ const AGENTS_DIR = path.join(ROOT, 'plugins/lstk/agents');
 const EVALS_DIR = path.join(ROOT, 'tests/evals');
 
 // Agents that must ship an eval file. Grown per phase. An agent eval file uses the key `agent` instead of `skill`.
-const AGENT_EVALS_REQUIRED = [];
+const AGENT_EVALS_REQUIRED = ['code-reviewer'];
 
 const skills = readdirSync(SKILLS_DIR, { withFileTypes: true })
   .filter((e) => e.isDirectory())

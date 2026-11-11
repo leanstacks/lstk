@@ -1,5 +1,19 @@
 # Eval results
 
+## 2026-11-11 (M4 Phase 2: `code-reviewer` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`.
+- **Brief:** three paths (`orders-stack.ts`, `cancel-order.ts`, `create-order.ts`), intent "add a cancel-order route and
+  handler". Single run. The agent resolved as `lstk:code-reviewer` (Q1 note from Phase 1 confirmed).
+- **Seeded issues expected from CR** (`SEEDED-ISSUES.md`): SI-04, SI-05, SI-06, SI-07. **Found: 4 of 4.** SI-04 (CR-01),
+  SI-07 (CR-02), SI-05 (CR-06), SI-06 (test gap).
+- **Also found, not expected from CR:** SI-01, SI-02 (CR-03) and SI-03 (CR-04), all handed off. No false findings seen.
+  Extra true findings: handler does not cancel anything, unguarded `JSON.parse` in `create-order.ts`.
+- **Format:** all six sections present in order, every finding cites `path:line`, no secret value printed.
+- **Weaknesses:** the security findings ran longer than the "flag and hand off" rule intends, and the report did not say
+  which config files were absent. One prompt tune made (hand-off findings stay to one line of evidence, `## Scope`
+  names missing convention files). Not re-run after the tune.
+
 ## 2026-11-11 (M3 skills)
 
 - **Claude Code:** 2.1.322

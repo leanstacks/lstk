@@ -1,0 +1,48 @@
+{
+  "agent": "code-reviewer",
+  "note": "Delegation triggers on reviewing a change or diff. Near-misses are writing the change, explaining code, a security audit (threat-model), and reviewing a design doc (architecture-review).",
+  "prompts": [
+    {
+      "id": "code-reviewer-01",
+      "prompt": "Review this diff before I open the PR: src/handlers/cancel-order.ts and infra/lib/orders-stack.ts changed to add the cancel route.",
+      "shouldTrigger": true,
+      "note": "Direct 'review this diff' with paths."
+    },
+    {
+      "id": "code-reviewer-02",
+      "prompt": "Check my changes for test gaps. I added a new handler and one test.",
+      "shouldTrigger": true,
+      "note": "Test-gap review of a change."
+    },
+    {
+      "id": "code-reviewer-03",
+      "prompt": "Can you review the changes on this branch for correctness and anything that drifts from our AGENTS.md conventions?",
+      "shouldTrigger": true,
+      "note": "Change review against stated conventions."
+    },
+    {
+      "id": "code-reviewer-04",
+      "prompt": "Add a cancel-order handler and wire it to DELETE /orders/{id}.",
+      "shouldTrigger": false,
+      "note": "Near-miss: asks to write the change, not review it."
+    },
+    {
+      "id": "code-reviewer-05",
+      "prompt": "Explain what src/handlers/create-order.ts does and how it uses DynamoDB.",
+      "shouldTrigger": false,
+      "note": "Near-miss: explaining code, not reviewing a change."
+    },
+    {
+      "id": "code-reviewer-06",
+      "prompt": "Run a security audit on this service and tell me what an attacker could do.",
+      "shouldTrigger": false,
+      "note": "Near-miss: threat analysis belongs to threat-model."
+    },
+    {
+      "id": "code-reviewer-07",
+      "prompt": "Review the design doc in docs/design.md and tell me where it is weak.",
+      "shouldTrigger": false,
+      "note": "Near-miss: a design doc review belongs to architecture-review."
+    }
+  ]
+}
