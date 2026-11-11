@@ -1,5 +1,20 @@
 # Eval results
 
+## 2026-11-11 (M4 Phase 5: `cdk-iam-review` manual run)
+
+A fresh subagent followed `SKILL.md` against `tests/fixtures/sample-repo` without reading the answer key. The skill is
+not loaded in this session, so this is a simulation of a run, not an invocation of `/lstk:cdk-iam-review`.
+
+- Found: SI-01 (`dynamodb:*`, high, `orders-stack.ts:45`) and SI-02 (wildcard S3 resource, medium, `:53`). Both expected.
+- Also found: SI-03 (public bucket, reported as an IAM finding) and SI-04 (unauthenticated cancel route, as a
+  lower-confidence item). Both true, but outside IAM scope.
+- Missed: none of the two expected. No false findings. No cdk-nag or `cdk.out/` in the fixture, so the cdk-nag path was
+  not exercised.
+- Prompt gaps the run exposed, tuned once: no `cdk.json` in the fixture (now falls back to the `aws-cdk-lib`
+  dependency), unclear home for public-bucket and missing-authorizer items (now: access finding plus a `threat-model`
+  hand-off, authorizer gap in the lower-confidence list), and no severity row for `publicReadAccess` (added). Not re-run.
+- Not verified: the cdk-nag v3 field names against a real report.
+
 ## 2026-11-11 (M4 Phase 4: `threat-model` manual run)
 
 - **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`,

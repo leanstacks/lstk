@@ -282,7 +282,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 2: `code-reviewer` agent, evals, manual run
 - [x] Phase 3: `architecture-review` skill, evals, manual run
 - [x] Phase 4: `threat-model` skill, evals, manual run
-- [ ] Phase 5: `cdk-iam-review` skill, evals, manual run
+- [x] Phase 5: `cdk-iam-review` skill, evals, manual run
 - [ ] Phase 6: `dependency-audit` gate decision (and skill, if it passes)
 - [ ] Phase 7: examples, cross-links, review, release `lstk` 0.3.0, tag
 - [ ] `PLAN.md` M4 status updated
@@ -405,3 +405,44 @@ Append an "As built" and a "Handoff" subsection per phase here as each phase fin
   inline-or-file output choice, and the `disable-model-invocation: true` decision. IDs use a per-skill prefix.
 - `threat-model` hands IAM detail to `cdk-iam-review` by name, so Phase 5 must ship it in this release.
 - Watch: cited line numbers can drift when the model reads several files at once. Check them in the Phase 7 review.
+
+### Phase 5 — As built
+
+- `plugins/lstk/skills/cdk-iam-review/SKILL.md` with `disable-model-invocation: true` (it writes a file the user did not
+  name, same as Phases 3 and 4). Scope is AWS CDK TypeScript only. Terraform, CloudFormation, and other IaC stop with a
+  message. The skill never runs `synth` (Q4 default kept: read source and any existing `cdk.out/`, and tell the user how
+  to produce a template).
+- Output contract: `docs/reviews/cdk-iam-review-<name>.md` (or inline on request). Sections in order:
+  `Scope and sources`, `Principal inventory` (`Principal`, `Permissions summary`, `Source`), `Findings`,
+  `Suggested changes`, `Not reviewed`, `Confidence and limits`. Findings use the Phase 1 schema with ids `IAM-nn` and a
+  `source` tag (`code`, a cdk-nag rule id, or both). Low-confidence items are a separate list. Suggested changes are
+  diff-style snippets that are shown and never applied.
+- Q5 as built: cdk-nag is optional, never required, never run, never a dependency. Both setups are handled (the plan
+  named only the v2 `Aspects` form):
+  - v3 (`aws-cdk-lib` 2.257.0 or later): `Validations.of(app).addPlugins(...)`, `Validations.of(x).acknowledge(...)`,
+    and `policy-validation-report.json` in the cloud assembly (`pluginReports[].violations[]` with `ruleName`,
+    `description`, `severity`, `violatingConstructs[].constructPath`, plus `suppressedViolations[]`).
+  - v2: `Aspects`, `NagSuppressions`, and `*NagReport.csv`. v3 no longer writes the CSV.
+  - Source: researcher report on the cdk-nag README, `MIGRATION.md`, and the CDK schema docs, 2026-11-11. Not checked
+    against a real report. Unverified: the v2 CSV columns, the default output directory (`cdk.out/` assumed), whether the
+    file is written on every synth, the `suppressedViolations[]` schema, and whether `ruleName` is namespaced.
+- `references/iam-patterns.md` (nine patterns with narrower CDK forms, a where-to-look table, a severity guide) and
+  `references/output-template.md`.
+- `tests/evals/cdk-iam-review.json` (3 positive, 5 negative, near-misses against `architecture-review`, `threat-model`,
+  Terraform, `code-reviewer`, and plain IAM Q&A). Added to `REVIEW_SKILLS_REQUIRE_SECTIONS`. Not in `EXAMPLES_REQUIRED`
+  yet (Phase 7).
+- Manual run recorded in `tests/evals/RESULTS.md`: 2 of 2 expected seeded issues (SI-01, SI-02) found, plus SI-03 and
+  SI-04 as out-of-scope extras, no false findings. The run was a subagent following `SKILL.md`, not a real
+  `/lstk:cdk-iam-review` invocation.
+
+### Phase 5 — Handoff
+
+- Patterns covered: wildcard action, wildcard resource, `PassRole` without a condition, open or cross-account trust,
+  broad managed policies, shared roles, public resource policies, missing boundary or condition, duplicate inline grants.
+- One prompt tune applied after the run (fallback when `cdk.json` is absent, home for non-IAM access gaps, severity row
+  for public access). Not re-run. Phase 7.5 may re-check.
+- Not exercised: the cdk-nag path (the fixture has no report) and the `cdk.out/` reconcile step. A future synth-based
+  review is not designed.
+- Phase 6 note: `lodash` is declared but not imported (see `SEEDED-ISSUES.md`), which is the reachability case for the
+  `dependency-audit` value test.
+- Hand-offs name only built skills. `threat-model` can now point to `cdk-iam-review`.
