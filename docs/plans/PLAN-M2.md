@@ -204,7 +204,17 @@ Each phase is one agentic session and ends with `npm run check` green and a comm
 
 **Done when:** all five skills have eval files that pass the shape test, `RESULTS.md` records a manual run, and any description changes are reflected in the skills.
 
-**Handoff to Phase 5:** the eval outcomes and open gaps, and the final descriptions.
+**Status: complete, awaiting user review before commit.** Steps 4.1 to 4.5 are done.
+
+**As built**
+
+- **4.1.** `tests/evals/README.md` documents the format, the manual run, and the pass criteria.
+- **4.2.** One `tests/evals/<skill>.json` per skill, 5 to 7 prompts each, with positive, negative, and near-miss cases (the near-misses are the Phase 3 handoff list). `create-pull-request` has one positive case, the explicit `/lstk:create-pull-request`. Its natural-language requests are `false`.
+- **4.3.** `tests/evals.test.mjs` enforces the eval file per skill, at least 3 prompts, both outcomes, unique ids, and non-empty strings.
+- **4.4.** Run with `claude -p` (Claude Code 2.1.322, Sonnet 5.5) and recorded in `tests/evals/RESULTS.md`. 28 of 28 pass. One miss: `local-setup-author` did not fire on "check whether the setup instructions in our README still work". Its description now says "audit, check, or verify that setup instructions … are correct", and the full re-run passed. The `create-pull-request` slash case is detected by its first tool call, because `-p` expands slash commands inline.
+- **4.5.** `npm run check` passes. Changes are uncommitted for review.
+
+**Handoff to Phase 5:** all 28 evals pass, with one description change (`local-setup-author`). Open gaps: single runs, and the `repo-onboarding` versus `local-setup-author` boundary is worth a recheck in real use. Final descriptions: read each SKILL.md. The smoke test (5.5) still needs the installed-cache check of `recon.mjs`.
 
 ---
 

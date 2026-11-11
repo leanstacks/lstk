@@ -1,0 +1,41 @@
+{
+  "skill": "repo-onboarding",
+  "prompts": [
+    {
+      "id": "repo-onboarding-01",
+      "prompt": "I'm new to this codebase. Can you onboard me?",
+      "shouldTrigger": true,
+      "note": "Core trigger phrase."
+    },
+    {
+      "id": "repo-onboarding-02",
+      "prompt": "Walk me through this repo and explain the architecture.",
+      "shouldTrigger": true,
+      "note": "Overview and architecture triggers."
+    },
+    {
+      "id": "repo-onboarding-03",
+      "prompt": "Where do I start in this project?",
+      "shouldTrigger": true,
+      "note": "Listed trigger phrase."
+    },
+    {
+      "id": "repo-onboarding-04",
+      "prompt": "How do I get this running on my machine?",
+      "shouldTrigger": false,
+      "note": "Near-miss: setup belongs to local-setup-author."
+    },
+    {
+      "id": "repo-onboarding-05",
+      "prompt": "Explain what the parseConfig function does.",
+      "shouldTrigger": false,
+      "note": "Near-miss: a single function, not a repo overview."
+    },
+    {
+      "id": "repo-onboarding-06",
+      "prompt": "Generate an AGENTS.md for this repo.",
+      "shouldTrigger": false,
+      "note": "Belongs to agents-md-author."
+    }
+  ]
+}

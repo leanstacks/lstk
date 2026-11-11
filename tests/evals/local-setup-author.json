@@ -1,0 +1,41 @@
+{
+  "skill": "local-setup-author",
+  "prompts": [
+    {
+      "id": "local-setup-author-01",
+      "prompt": "How do I set up and run this repo locally?",
+      "shouldTrigger": true,
+      "note": "Core trigger."
+    },
+    {
+      "id": "local-setup-author-02",
+      "prompt": "Write a getting-started guide so a new developer can build and test this project.",
+      "shouldTrigger": true,
+      "note": "Dev environment guide trigger."
+    },
+    {
+      "id": "local-setup-author-03",
+      "prompt": "Check whether the setup instructions in our README still work.",
+      "shouldTrigger": true,
+      "note": "Audit of setup docs is a listed trigger."
+    },
+    {
+      "id": "local-setup-author-04",
+      "prompt": "Onboard me and explain the architecture of this repo.",
+      "shouldTrigger": false,
+      "note": "Near-miss: belongs to repo-onboarding."
+    },
+    {
+      "id": "local-setup-author-05",
+      "prompt": "Create an AGENTS.md for this repo.",
+      "shouldTrigger": false,
+      "note": "Belongs to agents-md-author."
+    },
+    {
+      "id": "local-setup-author-06",
+      "prompt": "Deploy this app to production.",
+      "shouldTrigger": false,
+      "note": "Deployment is not local setup."
+    }
+  ]
+}

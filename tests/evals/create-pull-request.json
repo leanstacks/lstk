@@ -1,0 +1,35 @@
+{
+  "skill": "create-pull-request",
+  "prompts": [
+    {
+      "id": "create-pull-request-01",
+      "prompt": "/lstk:create-pull-request",
+      "shouldTrigger": true,
+      "note": "Explicit invocation; the only supported path because auto-invocation is disabled."
+    },
+    {
+      "id": "create-pull-request-02",
+      "prompt": "Open a pull request for this branch.",
+      "shouldTrigger": false,
+      "note": "disable-model-invocation: the model must not auto-pick the skill; it may suggest the slash command."
+    },
+    {
+      "id": "create-pull-request-03",
+      "prompt": "Review this PR and tell me if it is safe to merge.",
+      "shouldTrigger": false,
+      "note": "Near-miss: reviewing an existing PR, not creating one."
+    },
+    {
+      "id": "create-pull-request-04",
+      "prompt": "Summarize my diff against main.",
+      "shouldTrigger": false,
+      "note": "Near-miss: summarizing changes, not opening a PR."
+    },
+    {
+      "id": "create-pull-request-05",
+      "prompt": "Rebase this branch onto main.",
+      "shouldTrigger": false,
+      "note": "Unrelated git operation."
+    }
+  ]
+}

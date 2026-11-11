@@ -1,0 +1,41 @@
+{
+  "skill": "agents-md-author",
+  "prompts": [
+    {
+      "id": "agents-md-author-01",
+      "prompt": "Create an AGENTS.md for this repo.",
+      "shouldTrigger": true,
+      "note": "Direct trigger."
+    },
+    {
+      "id": "agents-md-author-02",
+      "prompt": "Make this repo agent-ready.",
+      "shouldTrigger": true,
+      "note": "Trigger phrase without naming AGENTS.md."
+    },
+    {
+      "id": "agents-md-author-03",
+      "prompt": "Our CLAUDE.md and .cursor/rules are out of date. Consolidate them into one set of agent instructions.",
+      "shouldTrigger": true,
+      "note": "Refresh, migrate, and consolidate triggers."
+    },
+    {
+      "id": "agents-md-author-04",
+      "prompt": "Onboard me to this codebase.",
+      "shouldTrigger": false,
+      "note": "Near-miss: belongs to repo-onboarding."
+    },
+    {
+      "id": "agents-md-author-05",
+      "prompt": "How do I run this project locally?",
+      "shouldTrigger": false,
+      "note": "Near-miss: belongs to local-setup-author."
+    },
+    {
+      "id": "agents-md-author-06",
+      "prompt": "Add a section on linting to the README.",
+      "shouldTrigger": false,
+      "note": "Ordinary docs edit, not agent instructions."
+    }
+  ]
+}
