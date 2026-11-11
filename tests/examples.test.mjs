@@ -9,7 +9,7 @@ const EXAMPLES_DIR = path.join(ROOT, 'docs/examples');
 
 // Skills that must ship a worked example in docs/examples/<skill>.md. Grown phase by phase so the
 // check never blocks an in-progress phase. Reference-only skills (stack-profile) are never listed.
-const EXAMPLES_REQUIRED = [];
+const EXAMPLES_REQUIRED = ['tech-eval', 'adr-author', 'solution-outline'];
 
 const skills = new Set(
   readdirSync(SKILLS_DIR, { withFileTypes: true })

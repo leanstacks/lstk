@@ -154,6 +154,11 @@ Verified in M3 Phase 1 (Claude Code 2.1.322, 2026-11-11) against the sub-agents 
 - The linter requires a non-empty `tools` list and rejects `Bash`, `Write`, `Edit`, and `NotebookEdit`. Plugin agents
   are read-only.
 
+- Triggering of the M3 skills (2026-11-11, 2.1.322): consumers that apply `stack-profile` often load it alongside
+  themselves, so a "negative" for one skill may show another firing. A prompt that refers to requirements it does not
+  contain (for example "here are the requirements") does not trigger `solution-outline`, because Claude asks for
+  them first. Evals must carry the content they refer to.
+
 ### Reference skills and skill-to-skill use
 
 - `user-invocable: false` hides a skill from the `/` menu and from `/name`, but Claude can still load it through the

@@ -16,7 +16,7 @@
     },
     {
       "id": "solution-outline-03",
-      "prompt": "Here are the requirements for our new reporting portal. Write a high-level design and an architecture proposal I can take to the team.",
+      "prompt": "Requirements for our new reporting portal: managers view weekly sales reports, up to 200 users, data refreshed nightly from an existing database, single sign-on required. Write a high-level design and an architecture proposal I can take to the team.",
       "shouldTrigger": true,
       "note": "High-level design from requirements."
     },

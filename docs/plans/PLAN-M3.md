@@ -232,7 +232,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 - [x] Phase 3 — `researcher` agent and `tech-eval`
 - [x] Phase 4 — `adr-author`
 - [x] Phase 5 — `solution-outline`
-- [ ] Phase 6 — Examples, review, release `0.2.0`
+- [x] Phase 6 — Examples, review, release `0.2.0`
 
 _Each phase adds an "As built" note and a Handoff block here when it finishes._
 
@@ -307,3 +307,18 @@ _Each phase adds an "As built" note and a Handoff block here when it finishes._
 - **Smoke test (2.1.322, headless, `--plugin-dir`, no repo):** prompt was a fictional order-tracking API (50 rps peak, three engineers, three months). The output had the banner first, assumptions A1 to A7 with impact, a components table and Mermaid diagram, six key decisions with options, a risk table, ranges per component with a total of 36 to 69 person-days (sums check), open questions, and a confidence section that labels inference. It named `tech-eval` and `adr-author` by name and offered to write `docs/design/<name>.md`. It said the stack was a default and not a requirement.
 - **Not tested:** an interactive session, a run inside a repo with its own `AGENTS.md` (precedence rule), and the answered-questions follow-up.
 - **For the examples phase:** the shared fictional scenario (a small order-tracking API) already produced a usable outline, with decisions on compute model and data store. These can feed the `tech-eval` example (DynamoDB vs managed Postgres, or Lambda vs containers) and then the `adr-author` example. The smoke output omitted the template's title, date, and stack lines, so the example should show the full template.
+
+### Phase 6 — As built
+
+- `docs/examples/`: `README.md` (scenario and reading notes), `solution-outline.md`, `tech-eval.md`, and `adr-author.md`, sharing the fictional Example Orders scenario (outline, then D1 evaluation, then ADR 0001). `stack-profile` has no example (reference-only).
+- `tests/examples.test.mjs`: `EXAMPLES_REQUIRED` is now `tech-eval`, `adr-author`, and `solution-outline`.
+- Each new skill already carried a "Related skills" block (by name only). No `../`, personal paths, emails, or shell scripts found in the new files.
+- Descriptions are 375 to 415 characters and distinct in the combined read. No `SKILL.md` needed trimming.
+- Evals run manually on 2026-11-11, all passing after one prompt fix (`solution-outline-03` had no requirements in it). See `tests/evals/RESULTS.md`.
+- Released: `lstk` `0.2.0`, CHANGELOG, README (skills and agent tables), `ARCHITECTURE.md` note, `PLAN.md` M3 status.
+
+### Phase 6 — Handoff
+
+- **Not done here:** the interactive local install smoke test (`/plugin marketplace add ./`, `/reload-plugins`), the PR, and the `lstk-v0.2.0` tag. These need an interactive session or a decision from the owner.
+- **Still unconfirmed by the owner:** the `researcher` `model: sonnet` choice and the Lambda default in `stack-profile` (Phase 2 and 3 handoffs).
+- **Example sources are illustrative.** Figures in `docs/examples/tech-eval.md` are not verified.
