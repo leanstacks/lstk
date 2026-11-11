@@ -4,7 +4,7 @@ Each row is a deliberate defect in this fixture. `tests/fixtures.test.mjs` check
 its anchor text appears on that line, so this key cannot drift from the code.
 
 Skills: `CR` = code-reviewer, `AR` = architecture-review, `TM` = threat-model, `IAM` = cdk-iam-review,
-`DA` = dependency-audit.
+`DA` = dependency-audit (not built, see `docs/plans/PLAN-M4.md` Phase 6).
 
 | ID    | Issue                                              | Location                         | Anchor                               | Expected from |
 | ----- | -------------------------------------------------- | -------------------------------- | ------------------------------------ | ------------- |
@@ -15,7 +15,7 @@ Skills: `CR` = code-reviewer, `AR` = architecture-review, `TM` = threat-model, `
 | SI-05 | Lambda timeout at the 15-minute maximum            | `infra/lib/orders-stack.ts:38`   | `Duration.minutes(15)`               | AR, CR        |
 | SI-06 | Handler with no test (`tests/cancel-order.test.ts`) | `src/handlers/cancel-order.ts:8` | `export async function handler`      | CR            |
 | SI-07 | Hardcoded secret (plainly fake)                    | `src/handlers/cancel-order.ts:2` | `WEBHOOK_SIGNING_KEY =`              | CR, TM        |
-| SI-08 | Pinned vulnerable dependency (`lodash` 4.17.20)    | `package.json:11`                | `"lodash": "4.17.20"`                | DA            |
+| SI-08 | Pinned vulnerable dependency (`lodash` 4.17.20)    | `package.json:11`                | `"lodash": "4.17.20"`                | none (DA not built) |
 
 ## Notes
 

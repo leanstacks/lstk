@@ -50,6 +50,13 @@ It is never installed, built, or run.
   together.
 - Use only placeholder values (`111111111111`, obviously invalid keys).
 
+## Dependency triage
+
+`lstk` has no `dependency-audit` skill (the M4 value gate failed). To triage `npm audit` output, run `npm audit --json`
+yourself and ask Claude to check, for each advisory, whether the vulnerable package or function is used, whether it is a
+dev or runtime dependency, and whether removing or upgrading is the lowest-risk fix. Never run `npm audit fix --force`
+without reading what it changes.
+
 ## Plugin rules
 
 - Each plugin is self-contained. Never use `../` to reach outside a plugin directory.

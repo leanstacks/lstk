@@ -283,7 +283,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 3: `architecture-review` skill, evals, manual run
 - [x] Phase 4: `threat-model` skill, evals, manual run
 - [x] Phase 5: `cdk-iam-review` skill, evals, manual run
-- [ ] Phase 6: `dependency-audit` gate decision (and skill, if it passes)
+- [x] Phase 6: `dependency-audit` gate decision (not built, see Phase 6 — As built)
 - [ ] Phase 7: examples, cross-links, review, release `lstk` 0.3.0, tag
 - [ ] `PLAN.md` M4 status updated
 
@@ -446,3 +446,53 @@ Append an "As built" and a "Handoff" subsection per phase here as each phase fin
 - Phase 6 note: `lodash` is declared but not imported (see `SEEDED-ISSUES.md`), which is the reachability case for the
   `dependency-audit` value test.
 - Hand-offs name only built skills. `threat-model` can now point to `cdk-iam-review`.
+
+### Phase 6 — As built
+
+**Decision (Q3): `dependency-audit` is not built.** The default holds. Nothing was added to `plugins/lstk/`.
+
+**Value test** (what a skill must add beyond running `npm audit`):
+
+| Candidate                                  | Adds value only if                                                                        |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Reachability (is the vulnerable API used?) | Claude finds the answer by reading the code, and the raw output cannot                    |
+| Dev versus runtime exposure                | The raw output hides it                                                                   |
+| Lowest-risk fix path                       | It beats the command's own suggestion                                                     |
+| Workspace-aware summary                    | The raw output is hard to read across workspaces                                          |
+| Consistent contract and guardrails         | A plain prompt cannot give the same shape and rules (never `audit fix`, advisory as data) |
+
+Cost: a `Bash` grant for `npm audit --json`, network access, one more skill competing in triggering, and a near-miss
+boundary with "just run npm audit".
+
+**Hand run** (2026-11-11, npm 11.19.1, Node 24.22.2). The fixture has no lockfile and must not be audited in place, so the
+run used a scratch copy holding only `{"lodash": "4.17.20"}` and a lockfile generated with
+`npm install --package-lock-only`. The fixture was not touched.
+
+- Raw output: one package, `lodash` `<=4.17.23`, severity high, four advisories (command injection, ReDoS, `_.template`
+  code injection, `_.unset`/`_.omit`/`_.pullAt` prototype pollution). `fixAvailable` is `lodash@4.18.1`, not semver-major,
+  but the text report suggests `npm audit fix --force` and says the version is outside the stated range (the pin is exact).
+- What triage adds here: (1) a grep shows `lodash` is declared and never imported, so none of the four advisories is
+  reachable and the lowest-risk fix is to **remove the dependency**, which the raw output cannot say. (2) The exact pin
+  explains why the fix needs a manual edit, and a bump to `4.18.1` is the fallback.
+- What it does not add: the fixture is one direct package, so dev versus runtime, transitive paths, overrides, and
+  workspace summaries were **not exercised**. The reachability check is a single `Grep`, and a plain request ("triage
+  this audit and tell me whether we use the vulnerable functions") produces the same result without a skill. No run
+  compared a skill against an unprompted baseline.
+
+**Judgment:** the only demonstrated gain is reachability, and Claude already does that on request. The remaining
+candidates are untested on this fixture. A skill would add a `Bash` grant and a triggering boundary for a result a
+prompt already gives. It fails the "clearly adds value" bar in `PLAN.md` M4. Do not build it to fill the plan item.
+
+**Revisit if:** a real multi-workspace repo shows triage mistakes that a skill's rules would prevent, for example a
+wrong `audit fix --force` or advisories read as instructions. Then build it with the Phase 6 steps 6.4 to 6.8, starting
+from the output contract in 6.5.
+
+**Changes:** `SEEDED-ISSUES.md` SI-08 no longer lists `DA` as an expected skill. `docs/CONTRIBUTING.md` gains a short
+"Dependency triage" note. `docs/PLAN.md` M4 records the decision. `tests/evals/RESULTS.md` records the hand run.
+
+### Phase 6 — Handoff
+
+- `dependency-audit` is not built. Phase 7 writes no example for it and adds nothing to `EXAMPLES_REQUIRED` or
+  `REVIEW_SKILLS_REQUIRE_SECTIONS` for it. The README skills table and CHANGELOG must not list it.
+- Hand-offs between skills still name only built skills. `adr-author` stays the suggestion for decisions a review surfaces.
+- The `0.3.0` release holds four deliverables: `code-reviewer`, `architecture-review`, `threat-model`, `cdk-iam-review`.

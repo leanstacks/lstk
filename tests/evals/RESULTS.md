@@ -127,3 +127,11 @@ not loaded in this session, so this is a simulation of a run, not an invocation 
 - Single run per prompt. Triggering is not deterministic, so near-misses (such as the `repo-onboarding` and
   `local-setup-author` boundary) may flip on another run.
 - `commit-messages` stays model-invocable (Q1). No over-triggering showed in the negative prompts.
+
+## dependency-audit value gate (M4 Phase 6, 2026-11-11)
+
+Not a trigger eval: the skill was not built. A hand run of `npm audit --json` on a scratch copy of the fixture's
+`lodash` 4.17.20 pin (SI-08) returned one high finding with four advisories and a `lodash@4.18.1` fix. Triage added one
+thing the raw output lacks: `lodash` is never imported, so the advisories are unreachable and removal is the lowest-risk
+fix. Dev versus runtime, transitive paths, and workspaces were not exercised. A plain prompt gives the same
+reachability result, so the skill was not built. Details in `docs/plans/PLAN-M4.md`, Phase 6.
