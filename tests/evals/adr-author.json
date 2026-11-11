@@ -1,0 +1,42 @@
+{
+  "skill": "adr-author",
+  "note": "Triggers on recording or superseding a decision that has been made. Near-misses are choosing between options (tech-eval) and understanding why a repo is built a certain way (repo-onboarding).",
+  "prompts": [
+    {
+      "id": "adr-author-01",
+      "prompt": "Write an ADR for our decision to use SQS for background jobs.",
+      "shouldTrigger": true,
+      "note": "Direct request for an ADR."
+    },
+    {
+      "id": "adr-author-02",
+      "prompt": "We settled on DynamoDB for order lookups. Document why we chose it.",
+      "shouldTrigger": true,
+      "note": "Document a decision already made."
+    },
+    {
+      "id": "adr-author-03",
+      "prompt": "ADR 7 is outdated now that we moved to Lambda. Supersede it with a new record.",
+      "shouldTrigger": true,
+      "note": "Supersede an existing ADR."
+    },
+    {
+      "id": "adr-author-04",
+      "prompt": "Which should we pick for the message bus, SQS or SNS plus SQS? Weigh the trade-offs.",
+      "shouldTrigger": false,
+      "note": "Near-miss: the decision is not made yet, so this is tech-eval."
+    },
+    {
+      "id": "adr-author-05",
+      "prompt": "Why is this repo structured as npm workspaces? Walk me through how it is organized.",
+      "shouldTrigger": false,
+      "note": "Near-miss: understanding an existing repo is repo-onboarding."
+    },
+    {
+      "id": "adr-author-06",
+      "prompt": "Write a commit message for my staged changes.",
+      "shouldTrigger": false,
+      "note": "Unrelated: commit-messages."
+    }
+  ]
+}

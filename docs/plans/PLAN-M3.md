@@ -230,7 +230,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 - [x] Phase 1 — Verify the contract and prepare the guardrails
 - [x] Phase 2 — `stack-profile`
 - [x] Phase 3 — `researcher` agent and `tech-eval`
-- [ ] Phase 4 — `adr-author`
+- [x] Phase 4 — `adr-author`
 - [ ] Phase 5 — `solution-outline`
 - [ ] Phase 6 — Examples, review, release `0.2.0`
 
@@ -278,3 +278,18 @@ _Each phase adds an "As built" note and a Handoff block here when it finishes._
 - **Observed weakness:** AWS pages carried no dates, so most sources are "undated", and one price came from a third-party source. The agent flagged both. This is acceptable, but Phase 6 evals should check that the flags persist.
 - **Sourcing conventions the next skills may reuse:** numbered source keys `[n]` in cells, a "Sources" list with URL or `path:line` and a date where known, `not found` for gaps, and inference labeled as such.
 - **Model:** `sonnet` is my choice for cost on a read-only research task. It is not stated in PLAN, so the owner may want to confirm it.
+
+### Phase 4 — As built
+
+- `plugins/lstk/skills/adr-author/SKILL.md`: precedence rule, Phase 0 convention detection (`docs/adr/`, `docs/decisions/`, `adr/`, `doc/adr/`, `adr-tools`, `log4brains`), gather, confirm, write, lifecycle rules, diagrams, related skills (by name only).
+- `references/adr-template.md` (MADR-style template and index) and `references/mermaid-examples.md`.
+- `tests/evals/adr-author.json`: 3 positives, 3 near-misses and negatives (`tech-eval`, `repo-onboarding`, `commit-messages`).
+- `adr-author` stays off `EXAMPLES_REQUIRED` until Phase 6.
+
+### Phase 4 — Handoff
+
+- **Template as built:** MADR-style with Status, Date, Deciders, Related, Context, Decision, Consequences (good, bad, follow-ups), Alternatives considered. Index is a table in `docs/adr/README.md`. **Q3 is final** as written.
+- **Smoke test (2.1.322, headless, `--plugin-dir`):** in an empty repo it created `docs/adr/0001-...md` and `docs/adr/README.md`. In a repo with a Nygard record in `doc/adr/` it followed that format and numbering (`0002`) and made no index, since none existed. Both runs flagged `TODO(verify)` items and said the consequences were their inference.
+- **Finding:** in the empty-repo run the read of `references/adr-template.md` was denied (headless, `acceptEdits`), so the headings came from memory. Not a skill defect, but an interactive run was not tested.
+- **Finding:** both runs added unstated details (for example, Lambda consumers). Added a rule to `SKILL.md` to mark such facts `TODO(verify)`. The re-run after that edit was not done.
+- The superseding flow (lifecycle rules) was not smoke tested.
