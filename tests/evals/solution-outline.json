@@ -1,0 +1,48 @@
+{
+  "skill": "solution-outline",
+  "note": "Triggers on shaping a whole solution from requirements. Near-misses are a single technology choice (tech-eval), recording one decision (adr-author), and gaps from prototype to production (a future promote-prototype skill).",
+  "prompts": [
+    {
+      "id": "solution-outline-01",
+      "prompt": "Outline a solution for a small order-tracking API: customers check order status, warehouse staff post updates, about 50 requests per second at peak.",
+      "shouldTrigger": true,
+      "note": "Direct request for an outline from requirements."
+    },
+    {
+      "id": "solution-outline-02",
+      "prompt": "What would it take to build a notification service that sends email and SMS when an order ships? Give me a rough scope and effort.",
+      "shouldTrigger": true,
+      "note": "Scope and effort question."
+    },
+    {
+      "id": "solution-outline-03",
+      "prompt": "Requirements for our new reporting portal: managers view weekly sales reports, up to 200 users, data refreshed nightly from an existing database, single sign-on required. Write a high-level design and an architecture proposal I can take to the team.",
+      "shouldTrigger": true,
+      "note": "High-level design from requirements."
+    },
+    {
+      "id": "solution-outline-04",
+      "prompt": "Compare DynamoDB and Aurora Serverless for our order lookups.",
+      "shouldTrigger": false,
+      "note": "Near-miss: one technology choice is tech-eval."
+    },
+    {
+      "id": "solution-outline-05",
+      "prompt": "We decided to use SQS for background jobs. Record that decision.",
+      "shouldTrigger": false,
+      "note": "Near-miss: recording a decision is adr-author."
+    },
+    {
+      "id": "solution-outline-06",
+      "prompt": "Our prototype works. What gaps do we need to close before it can go to production?",
+      "shouldTrigger": false,
+      "note": "Near-miss: production gaps belong to a future promote-prototype skill, not a new outline."
+    },
+    {
+      "id": "solution-outline-07",
+      "prompt": "Fix the failing unit test in the order service.",
+      "shouldTrigger": false,
+      "note": "Unrelated coding task."
+    }
+  ]
+}

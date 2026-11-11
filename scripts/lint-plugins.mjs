@@ -18,6 +18,8 @@ const SKILL_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const SKILL_NAME_MAX = 64;
 // The Agent Skills spec caps a description at 1024 characters. Descriptions sit in context, so aim for 500 or fewer.
 const DESCRIPTION_MAX = 1024;
+// Plugin agents are read-only. They must not be granted shell or file-mutation tools.
+const WRITE_CAPABLE_TOOLS = new Set(['Bash', 'Write', 'Edit', 'NotebookEdit']);
 // A file path in a SKILL.md that points into the skill's own references/, scripts/, or templates/ directory.
 const SKILL_FILE_REFERENCE =
   /(?<![\w./-])(?:\$\{CLAUDE_SKILL_DIR\}\/)?((?:references|scripts|templates)\/[^\s"'`()[\]<>]+)/g;
@@ -279,7 +281,28 @@ function checkAgents(rootDir, pluginDir, problems) {
       if (!isNonEmptyString(fm.data[field]))
         problems.push({ file: fm.display, message: `"${field}" must be non-empty` });
     }
+    const tools = parseToolNames(fm.data.tools);
+    if (tools.length === 0) {
+      problems.push({ file: fm.display, message: '"tools" must declare a non-empty allowlist' });
+    }
+    for (const tool of tools) {
+      if (WRITE_CAPABLE_TOOLS.has(tool)) {
+        problems.push({
+          file: fm.display,
+          message: `"tools" must not include write-capable tool "${tool}"; agents are read-only`,
+        });
+      }
+    }
   }
+}
+
+/** Tool names from a `tools` value, as a comma list or a YAML list. Rule arguments such as `Bash(git *)` are dropped. */
+function parseToolNames(value) {
+  if (typeof value !== 'string') return [];
+  return value
+    .split(/[,\s]+/)
+    .map((token) => /^-?\s*([A-Za-z0-9_]+)/.exec(token)?.[1])
+    .filter(Boolean);
 }
 
 function* walk(dir) {

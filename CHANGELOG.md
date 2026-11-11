@@ -5,6 +5,23 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [lstk 0.2.0]
+
+### Added
+
+- `lstk` skills: `stack-profile` (reference-only, `user-invocable: false`), `tech-eval`, `adr-author`, and
+  `solution-outline`.
+- `researcher` agent (read-only, `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`) that `tech-eval` runs in parallel, one
+  per option.
+- Trigger evals for the four new skills, and worked examples in `docs/examples/` built on one fictional scenario.
+- `lint-plugins` rules: agents must declare a non-empty `tools` list that excludes `Bash`, `Write`, `Edit`, and
+  `NotebookEdit`. A test requires `docs/examples/<skill>.md` for `tech-eval`, `adr-author`, and `solution-outline`.
+- `ARCHITECTURE.md` notes on agent frontmatter and reference-skill behavior, verified on Claude Code 2.1.322.
+
+### Changed
+
+- `lstk` is `0.2.0`. `lstk-guardrails` is unchanged.
+
 ## [lstk 0.1.0, lstk-guardrails 0.1.0]
 
 ### Added

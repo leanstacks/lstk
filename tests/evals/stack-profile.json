@@ -1,0 +1,42 @@
+{
+  "skill": "stack-profile",
+  "note": "Reference-only skill (user-invocable: false). Claude loads it on its own when a task needs stack defaults. Positives are tasks that need defaults; negatives are repos that state another stack or tasks unrelated to stack choice.",
+  "prompts": [
+    {
+      "id": "stack-profile-01",
+      "prompt": "Design a small REST API for tracking orders in a new empty repo.",
+      "shouldTrigger": true,
+      "note": "Design task with no stack stated, so defaults are needed."
+    },
+    {
+      "id": "stack-profile-02",
+      "prompt": "Which framework and test runner should we use for a new TypeScript service? We have no preferences yet.",
+      "shouldTrigger": true,
+      "note": "Stack choice with the repo silent."
+    },
+    {
+      "id": "stack-profile-03",
+      "prompt": "Scaffold a serverless backend and its infrastructure for a webhook receiver on AWS.",
+      "shouldTrigger": true,
+      "note": "Scaffolding needs Lambda and CDK defaults."
+    },
+    {
+      "id": "stack-profile-04",
+      "prompt": "This repo's AGENTS.md says we use Go, Gin, and Terraform. Outline a service for tracking orders.",
+      "shouldTrigger": false,
+      "note": "Near-miss: the repo states another stack, so the profile must not apply."
+    },
+    {
+      "id": "stack-profile-05",
+      "prompt": "Add a Pytest fixture for the database connection in this Python project.",
+      "shouldTrigger": false,
+      "note": "Near-miss: a Python repo, where the TypeScript profile does not apply."
+    },
+    {
+      "id": "stack-profile-06",
+      "prompt": "Fix the off-by-one error in the pagination helper.",
+      "shouldTrigger": false,
+      "note": "Unrelated to stack choice."
+    }
+  ]
+}
