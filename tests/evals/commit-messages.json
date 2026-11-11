@@ -1,0 +1,47 @@
+{
+  "skill": "commit-messages",
+  "prompts": [
+    {
+      "id": "commit-messages-01",
+      "prompt": "commit my changes",
+      "shouldTrigger": true,
+      "note": "Core trigger phrase."
+    },
+    {
+      "id": "commit-messages-02",
+      "prompt": "I've finished the retry logic. Can you commit this?",
+      "shouldTrigger": true,
+      "note": "Natural phrasing of a commit request."
+    },
+    {
+      "id": "commit-messages-03",
+      "prompt": "What should the commit message be for this diff?",
+      "shouldTrigger": true,
+      "note": "Asks for a message without saying 'commit' as a verb."
+    },
+    {
+      "id": "commit-messages-04",
+      "prompt": "Squash my last three commits and reword them into one.",
+      "shouldTrigger": true,
+      "note": "Squashing and rewording are listed triggers."
+    },
+    {
+      "id": "commit-messages-05",
+      "prompt": "Explain what changed in the last five commits of this repo.",
+      "shouldTrigger": false,
+      "note": "Near-miss: reads git history, does not write a commit."
+    },
+    {
+      "id": "commit-messages-06",
+      "prompt": "Show me the git blame for src/index.js.",
+      "shouldTrigger": false,
+      "note": "Git-related but unrelated to authoring a message."
+    },
+    {
+      "id": "commit-messages-07",
+      "prompt": "Add a unit test for the parser.",
+      "shouldTrigger": false,
+      "note": "Unrelated coding task."
+    }
+  ]
+}

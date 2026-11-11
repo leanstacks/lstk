@@ -1,9 +1,10 @@
 {
   "name": "lstk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "LeanStacks Agentic Toolkit: research, design, develop, review, harden, prototype.",
   "author": { "name": "LeanStacks", "url": "https://leanstacks.com" },
   "license": "MIT",
   "repository": "https://github.com/leanstacks/lstk",
-  "homepage": "https://github.com/leanstacks/lstk"
+  "homepage": "https://github.com/leanstacks/lstk",
+  "icon": "./icon.png"
 }

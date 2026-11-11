@@ -16,6 +16,11 @@ const SEMVER =
 // Claude Code documents lowercase letters, digits and hyphens. The 64-character cap follows the Agent Skills spec.
 const SKILL_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const SKILL_NAME_MAX = 64;
+// The Agent Skills spec caps a description at 1024 characters. Descriptions sit in context, so aim for 500 or fewer.
+const DESCRIPTION_MAX = 1024;
+// A file path in a SKILL.md that points into the skill's own references/, scripts/, or templates/ directory.
+const SKILL_FILE_REFERENCE =
+  /(?<![\w./-])(?:\$\{CLAUDE_SKILL_DIR\}\/)?((?:references|scripts|templates)\/[^\s"'`()[\]<>]+)/g;
 
 /**
  * Parse YAML-ish frontmatter. Supports `key: value`, quoted values, and indented continuation or block scalars.
@@ -221,9 +226,46 @@ function checkSkills(rootDir, pluginDir, problems) {
         problems.push({ file: display, message: `"name" must be at most ${SKILL_NAME_MAX} characters` });
       }
     }
-    if (!isNonEmptyString(data.description))
+    if (!isNonEmptyString(data.description)) {
       problems.push({ file: display, message: '"description" must be non-empty' });
+    } else if (data.description.length > DESCRIPTION_MAX) {
+      problems.push({
+        file: display,
+        message: `"description" is ${data.description.length} characters; the maximum is ${DESCRIPTION_MAX}`,
+      });
+    }
+    if (
+      data['disable-model-invocation'] !== undefined &&
+      !['true', 'false'].includes(data['disable-model-invocation'])
+    ) {
+      problems.push({
+        file: display,
+        message: `"disable-model-invocation" must be true or false, not ${JSON.stringify(data['disable-model-invocation'])}`,
+      });
+    }
+    checkSkillLinks(rootDir, path.join(skillsDir, dirent.name), skillFile, problems);
   }
+}
+
+/** Every references/, scripts/, or templates/ path named in a SKILL.md must exist inside that skill. */
+function checkSkillLinks(rootDir, skillDir, skillFile, problems) {
+  const seen = new Set();
+  readFileSync(skillFile, 'utf8')
+    .split(/\r?\n/)
+    .forEach((line, index) => {
+      for (const match of line.matchAll(SKILL_FILE_REFERENCE)) {
+        const target = match[1].replace(/[.,:;]+$/, '');
+        // Globs, placeholders, and variables are examples, not links.
+        if (/[*<>{}$]/.test(target) || target.endsWith('/') || seen.has(target)) continue;
+        seen.add(target);
+        if (!existsSync(path.join(skillDir, target))) {
+          problems.push({
+            file: `${rel(rootDir, skillFile)}:${index + 1}`,
+            message: `references "${target}", which does not exist in the skill`,
+          });
+        }
+      }
+    });
 }
 
 function checkAgents(rootDir, pluginDir, problems) {

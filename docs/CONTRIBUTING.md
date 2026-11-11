@@ -33,6 +33,9 @@ This repo is public. Before every commit, confirm:
   opens PRs, or writes outside the working tree.
 - **Docs and diagrams** are Markdown with Mermaid.
 - **Agents** restrict `tools` to the minimum. Plugin agents cannot carry `hooks`, `mcpServers`, or `permissionMode`.
+- **Every skill needs trigger evals.** Add `tests/evals/<skill>.json` (at least 3 prompts, both `shouldTrigger` values,
+  one near-miss). `tests/evals.test.mjs` fails without it. Run the set manually and record it in
+  `tests/evals/RESULTS.md`. See `tests/evals/README.md`.
 - A skill's `name` equals its directory name. `npm run lint:plugins` enforces this.
 
 ## Plugin rules
@@ -54,7 +57,8 @@ This repo is public. Before every commit, confirm:
 
 Installed copies are cached by `version`, so **an unbumped change does not reach users**. Bump `version` in the plugin's
 `plugin.json` (semver) for every released change. Tag releases `lstk-vX.Y.Z` and `lstk-guardrails-vX.Y.Z`, and record
-changes in `CHANGELOG.md`. A release is: bump `version`, update the changelog, run `npm run check`, then tag.
+changes in `CHANGELOG.md`. A release is: bump `version`, update the changelog, run `npm run check` and `npm run validate`, smoke-test the install
+in a scratch repo, then tag after merge.
 
 ## Commits and pull requests
 
