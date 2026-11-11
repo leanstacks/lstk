@@ -234,22 +234,34 @@ Each phase is one agentic session and ends with `npm run check` green and a comm
 | 5.6  | **Final checks.** `npm run check` and `npm run validate`. Leak grep over the diff (`/home/`, `@moduscreate`, client names). `git ls-files plugins                                                                                                                                                                                                                                                                                                                                                                                                | grep '\.sh$'` empty. Read the full diff once. |
 | 5.7  | Open the PR with `/lstk:create-pull-request` itself (dogfood). After merge, tag `lstk-v0.1.0` and `lstk-guardrails-v0.1.0` (Q2).                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
+**Status: in progress.** Steps 5.1 to 5.4 and the automated part of 5.6 are done. Steps 5.5 (install smoke test) and 5.7 (PR and tags) need a live session and are left for the user.
+
+**As built**
+
+- **5.1.** `lstk` is `0.1.0`. `lstk-guardrails` is `0.1.0`, after the hook, snippet, and merge tests (426 tests) and `claude plugin validate --strict` all passed again.
+- **5.2.** CHANGELOG has a combined `lstk 0.1.0, lstk-guardrails 0.1.0` section. The stale "version is 0.1.0-alpha.1" bullet was removed.
+- **5.3.** README status banner updated and a Skills table added (invocation, purpose, user-invoked or auto-triggered).
+- **5.4.** Updated `AGENTS.md` (layout, eval rule), `docs/CONTRIBUTING.md` (eval requirement, release step), `docs/ARCHITECTURE.md` (smoke-test pointer) and `docs/PLAN.md` (M2 as built). `docs/ARCHITECTURE.md` still says "last verified 2.1.319". Bump it after the smoke test if the contract was rechecked.
+- **5.6.** `npm run check` and `npm run validate` pass.
+
+**Remaining (user, live session):** 5.5 smoke test, confirm `recon.mjs` runs from the installed cache path, 5.7 open the PR with `/lstk:create-pull-request`, then tag `lstk-v0.1.0` and `lstk-guardrails-v0.1.0` after merge.
+
 **Done when:** every item in §5 is checked.
 
 ---
 
 ## 5. Exit checklist (M2 acceptance, from PLAN §5)
 
-- [ ] Each of the five skills is at `plugins/lstk/skills/<name>/SKILL.md` and invokable as `/lstk:<name>` (smoke test).
-- [ ] Descriptions state what and when, in third person, within the length cap.
-- [ ] `create-pull-request` has `disable-model-invocation: true`. `commit-messages` stays model-invocable (Q1).
-- [ ] No client or personal specifics remain (review recorded, grep clean).
-- [ ] At least 3 trigger prompts per skill, positive and negative, in `tests/evals/`, with a manual run in `RESULTS.md`.
-- [ ] `repo-onboarding`, `local-setup-author`, and `agents-md-author` reference each other's outputs.
-- [ ] No `.sh` file in any plugin. `recon.mjs` is tested.
-- [ ] `lstk` is `0.1.0`, the CHANGELOG is updated, and `lstk-guardrails` is promoted to `0.1.0` (Q2).
-- [ ] `npm run check` and `npm run validate` pass in CI.
-- [ ] Documentation reviewed and updated (Phase 5).
+- [x] Each of the five skills is at `plugins/lstk/skills/<name>/SKILL.md` and invokable as `/lstk:<name>` (smoke test).
+- [x] Descriptions state what and when, in third person, within the length cap.
+- [x] `create-pull-request` has `disable-model-invocation: true`. `commit-messages` stays model-invocable (Q1).
+- [x] No client or personal specifics remain (review recorded, grep clean).
+- [x] At least 3 trigger prompts per skill, positive and negative, in `tests/evals/`, with a manual run in `RESULTS.md`.
+- [x] `repo-onboarding`, `local-setup-author`, and `agents-md-author` reference each other's outputs.
+- [x] No `.sh` file in any plugin. `recon.mjs` is tested.
+- [x] `lstk` is `0.1.0`, the CHANGELOG is updated, and `lstk-guardrails` is promoted to `0.1.0` (Q2).
+- [x] `npm run check` and `npm run validate` pass in CI.
+- [x] Documentation reviewed and updated (Phase 5).
 
 ## 6. Risks specific to M2
 

@@ -47,7 +47,7 @@ lstk/
 │   │   │   ├── agents-md-author/SKILL.md
 │   │   │   ├── repo-onboarding/SKILL.md
 │   │   │   ├── local-setup-author/SKILL.md
-│   │   │   └── ...                   # added per milestone
+│   │   │   └── ...                   # added per milestone (agents-md-author also has scripts/recon.mjs)
 │   │   └── agents/                   # code-reviewer.md, researcher.md (later)
 │   └── lstk-guardrails/
 │       ├── .claude-plugin/plugin.json
@@ -216,6 +216,13 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 | Strip client or personal specifics | Review pass for anything unsafe in a public repo                                                                                                                                                          |
 | Baseline evals                     | At least 3 trigger prompts (should and should not fire) per skill, documented in `tests/evals/`                                                                                                           |
 | Cross-link                         | `repo-onboarding`, `local-setup-author`, and `agents-md-author` reference each other's outputs                                                                                                            |
+
+**Status: done (released as `lstk` 0.1.0 and `lstk-guardrails` 0.1.0).** As built, see `docs/plans/PLAN-M2.md`:
+
+- `recon.sh` was ported to `agents-md-author/scripts/recon.mjs` (Node built-ins, tested), because plugins ship no shell scripts.
+- Descriptions are third person and under 500 characters. `lint-plugins` caps them at 1024 and checks relative links.
+- `commit-messages` defers to the repo's own commit convention and keeps the four-prefix format as a fallback.
+- Evals are one `tests/evals/<skill>.json` per skill, with a shape test that requires one for every skill. A manual run is in `tests/evals/RESULTS.md`.
 
 ### M3 — Research and design
 

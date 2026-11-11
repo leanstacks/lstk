@@ -3,8 +3,8 @@
 A [Claude Code](https://code.claude.com) plugin marketplace that helps engineers and architects research, design,
 develop, review, and harden applications, and prototype quickly. It is AWS-first and TypeScript-first.
 
-> **Status:** pre-release. `lstk-guardrails` is available as `0.1.0-alpha.1`. The `lstk` plugin is still empty, and its
-> skills arrive in later milestones. See [docs/PLAN.md](docs/PLAN.md).
+> **Status:** pre-1.0. `lstk` and `lstk-guardrails` are `0.1.0`. `lstk` ships five skills so far, and more arrive in
+> later milestones. See [docs/PLAN.md](docs/PLAN.md).
 
 ## Plugins
 
@@ -26,6 +26,20 @@ for example `/lstk:<skill>`.
 
 Then run `/lstk-guardrails:init` to merge the guardrail permission rules into your settings (see
 [Install and init](#install-and-init)).
+
+## Skills
+
+The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
+
+| Skill                 | Invocation                                    | Purpose                                                                                      |
+| --------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `commit-messages`     | Auto-triggered, or `/lstk:commit-messages`    | Writes commit messages in the repo's own convention, or `feat`, `fix`, `chore`, `doc`.       |
+| `create-pull-request` | User-invoked only                             | Opens a draft GitHub PR from the current branch, using the repo's PR template.               |
+| `agents-md-author`    | Auto-triggered, or `/lstk:agents-md-author`   | Creates, audits, or refreshes `AGENTS.md` after surveying the repo.                          |
+| `repo-onboarding`     | Auto-triggered, or `/lstk:repo-onboarding`    | Produces or verifies `docs/PROJECT_OVERVIEW.md`: what the system is and how it is organized. |
+| `local-setup-author`  | Auto-triggered, or `/lstk:local-setup-author` | Produces or verifies `docs/LOCAL_SETUP.md`: from a fresh clone to a running app.             |
+
+Skills defer to the target repo: its `AGENTS.md`, `CONTRIBUTING.md`, and templates win over the skill's defaults.
 
 ## Guardrail model
 

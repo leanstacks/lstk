@@ -1,9 +1,10 @@
 {
   "name": "lstk-guardrails",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0",
   "description": "Deterministic guardrail hooks and a settings bootstrap for safer agentic coding.",
   "author": { "name": "LeanStacks", "url": "https://leanstacks.com" },
   "license": "MIT",
   "repository": "https://github.com/leanstacks/lstk",
-  "homepage": "https://github.com/leanstacks/lstk"
+  "homepage": "https://github.com/leanstacks/lstk",
+  "icon": "./icon.png"
 }

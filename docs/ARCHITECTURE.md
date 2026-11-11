@@ -125,7 +125,7 @@ open` to stderr, and exits 0. The permission rules from `init` are the backstop.
     2.1.322) with a scratch plugin loaded through `--plugin-dir`: it is substituted in the Markdown body and in
     `allowed-tools`, and `Bash(node "${CLAUDE_SKILL_DIR}/scripts/x.mjs" *)` matched a double-quoted command under
     `dontAsk`. Use this form to run a skill's own script. Confirming it from the installed cache path is part of the
-    M2 smoke test.
+    M2 smoke test (see the PR description).
   - `CLAUDE_PLUGIN_ROOT` is **not** exported as an environment variable to Bash commands that Claude runs. It is
     exported only to hook commands, MCP stdio servers, and LSP servers. A script cannot read it from the shell.
   - `allowed-tools` uses the space form, `Bash(cmd *)`. The `:*` suffix is accepted as an equivalent.

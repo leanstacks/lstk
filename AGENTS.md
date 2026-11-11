@@ -6,11 +6,13 @@ lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) a
 ## Layout
 
 - `.claude-plugin/marketplace.json`: marketplace manifest listing both plugins.
-- `plugins/lstk/`: lifecycle skills and agents.
+- `plugins/lstk/`: lifecycle skills (`skills/<name>/SKILL.md`, with `references/`) and agents. `agents-md-author` ships
+  `scripts/recon.mjs`, a read-only repo survey.
 - `plugins/lstk-guardrails/`: `hooks/` (two `.mjs` hooks, `hooks.json`, shared `hooks/lib/`), `scripts/merge-settings.mjs`,
   `skills/init/`, and `snippets/` (`baseline.json`, `convenience.json`).
 - `scripts/lint-plugins.mjs`: manifest and frontmatter linter.
 - `tests/`: Vitest tests. `tests/fixtures/hook-matrix.json` is the allow, ask, and deny matrix for the hooks.
+  `tests/evals/<skill>.json` holds each skill's trigger evals.
 - `docs/`: plan, architecture, and contributing guides.
 
 ## Commands
@@ -38,6 +40,7 @@ npm run validate       # claude plugin validate --strict (needs the claude CLI)
   `unprotectPatterns`) and the uncommitted `.claude/lstk.local.json`.
 - Plugins ship no shell scripts and no test fixtures. Hook tests must not need `bash` or `jq`.
 - Skills with side effects set `disable-model-invocation: true`.
+- Every skill needs a trigger eval file in `tests/evals/`. `tests/evals.test.mjs` fails without one.
 - Bump a plugin's `version` in its `plugin.json` for every released change, or installed users will not receive it.
 - Docs are Markdown with Mermaid diagrams. Style is owned by Prettier and oxlint, not by prose.
 - Commit messages use the prefixes `feat`, `fix`, `chore`, and `doc`.
