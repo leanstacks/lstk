@@ -231,7 +231,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 - [x] Phase 2 — `stack-profile`
 - [x] Phase 3 — `researcher` agent and `tech-eval`
 - [x] Phase 4 — `adr-author`
-- [ ] Phase 5 — `solution-outline`
+- [x] Phase 5 — `solution-outline`
 - [ ] Phase 6 — Examples, review, release `0.2.0`
 
 _Each phase adds an "As built" note and a Handoff block here when it finishes._
@@ -293,3 +293,17 @@ _Each phase adds an "As built" note and a Handoff block here when it finishes._
 - **Finding:** in the empty-repo run the read of `references/adr-template.md` was denied (headless, `acceptEdits`), so the headings came from memory. Not a skill defect, but an interactive run was not tested.
 - **Finding:** both runs added unstated details (for example, Lambda consumers). Added a rule to `SKILL.md` to mark such facts `TODO(verify)`. The re-run after that edit was not done.
 - The superseding flow (lifecycle rules) was not smoke tested.
+
+### Phase 5 — As built
+
+- `plugins/lstk/skills/solution-outline/SKILL.md`: precedence rule, six-step workflow, output contract (banner, summary, requirements and assumptions, architecture, key decisions, risks, staffing and effort sketch, open questions, confidence and unknowns), estimation rules, related skills (by name only, no file links).
+- `references/outline-template.md`: the template, with the banner and the "Confidence and unknowns" section marked mandatory.
+- `tests/evals/solution-outline.json`: 3 positives, 4 near-misses and negatives (`tech-eval`, `adr-author`, a future `promote-prototype` request, an unrelated fix).
+- `solution-outline` stays off `EXAMPLES_REQUIRED` until Phase 6.
+
+### Phase 5 — Handoff
+
+- **Output contract as built:** as listed above. Effort is a range per component, with size (S, M, L) used when there is no repo history. The total always carries its assumptions and exclusions. Key decisions are listed with options and are not settled, each with a next step (`tech-eval`, then `adr-author`).
+- **Smoke test (2.1.322, headless, `--plugin-dir`, no repo):** prompt was a fictional order-tracking API (50 rps peak, three engineers, three months). The output had the banner first, assumptions A1 to A7 with impact, a components table and Mermaid diagram, six key decisions with options, a risk table, ranges per component with a total of 36 to 69 person-days (sums check), open questions, and a confidence section that labels inference. It named `tech-eval` and `adr-author` by name and offered to write `docs/design/<name>.md`. It said the stack was a default and not a requirement.
+- **Not tested:** an interactive session, a run inside a repo with its own `AGENTS.md` (precedence rule), and the answered-questions follow-up.
+- **For the examples phase:** the shared fictional scenario (a small order-tracking API) already produced a usable outline, with decisions on compute model and data store. These can feed the `tech-eval` example (DynamoDB vs managed Postgres, or Lambda vs containers) and then the `adr-author` example. The smoke output omitted the template's title, date, and stack lines, so the example should show the full template.
