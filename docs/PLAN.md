@@ -235,6 +235,13 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 
 **Acceptance:** each skill has a trigger eval set and a worked example in `docs/examples/`.
 
+**Status: done (released as `lstk` 0.2.0).** As built, see `docs/plans/PLAN-M3.md`:
+
+- `stack-profile` is reference-only (`user-invocable: false`). Consumer skills name it and repeat its precedence rule, and never link its files.
+- `researcher` is read-only (`Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`), runs in the foreground (`background: false`), and defines the report format that `tech-eval` consumes.
+- `lint-plugins` requires agents to declare `tools` without `Bash`, `Write`, `Edit`, or `NotebookEdit`. A test requires a worked example for `tech-eval`, `adr-author`, and `solution-outline`.
+- Worked examples share one fictional scenario (an order-tracking API) in `docs/examples/`. `stack-profile` has none, being reference-only.
+
 ### M4 — Review and harden
 
 | Skill / agent                 | Notes                                                                                                          |

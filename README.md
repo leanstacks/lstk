@@ -3,8 +3,8 @@
 A [Claude Code](https://code.claude.com) plugin marketplace that helps engineers and architects research, design,
 develop, review, and harden applications, and prototype quickly. It is AWS-first and TypeScript-first.
 
-> **Status:** pre-1.0. `lstk` and `lstk-guardrails` are `0.1.0`. `lstk` ships five skills so far, and more arrive in
-> later milestones. See [docs/PLAN.md](docs/PLAN.md).
+> **Status:** pre-1.0. `lstk` is `0.2.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships nine skills and one agent so far, and
+> more arrive in later milestones. See [docs/PLAN.md](docs/PLAN.md).
 
 ## Plugins
 
@@ -38,6 +38,19 @@ The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 | `agents-md-author`    | Auto-triggered, or `/lstk:agents-md-author`   | Creates, audits, or refreshes `AGENTS.md` after surveying the repo.                          |
 | `repo-onboarding`     | Auto-triggered, or `/lstk:repo-onboarding`    | Produces or verifies `docs/PROJECT_OVERVIEW.md`: what the system is and how it is organized. |
 | `local-setup-author`  | Auto-triggered, or `/lstk:local-setup-author` | Produces or verifies `docs/LOCAL_SETUP.md`: from a fresh clone to a running app.             |
+
+| `stack-profile` | Loaded by Claude when needed (not in the menu) | Default stack (TypeScript, NestJS, Lambda, React, CDK) for use where the repo is silent. |
+| `tech-eval` | Auto-triggered, or `/lstk:tech-eval` | Trade-off matrix and sourced recommendation, using parallel `researcher` agents. |
+| `adr-author` | Auto-triggered, or `/lstk:adr-author` | Writes and maintains Markdown ADRs, following the repo's convention. |
+| `solution-outline` | Auto-triggered, or `/lstk:solution-outline` | Draft outline from requirements: components, risks, and an effort sketch. |
+
+### Agents
+
+| Agent        | Tools                                           | Purpose                                                                |
+| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------- |
+| `researcher` | `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch` | Read-only research that returns a sourced report. Used by `tech-eval`. |
+
+See [docs/examples](docs/examples/README.md) for worked examples of the design skills.
 
 Skills defer to the target repo: its `AGENTS.md`, `CONTRIBUTING.md`, and templates win over the skill's defaults.
 
