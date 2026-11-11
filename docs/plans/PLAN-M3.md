@@ -228,7 +228,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 ## 6. Checklist
 
 - [x] Phase 1 — Verify the contract and prepare the guardrails
-- [ ] Phase 2 — `stack-profile`
+- [x] Phase 2 — `stack-profile`
 - [ ] Phase 3 — `researcher` agent and `tech-eval`
 - [ ] Phase 4 — `adr-author`
 - [ ] Phase 5 — `solution-outline`
@@ -249,3 +249,17 @@ _Each phase adds an "As built" note and a Handoff block here when it finishes._
 - **Agent fields:** `name`, `description`, `tools`, `disallowedTools`, `model` (`sonnet`, `opus`, `haiku`, `fable`, full ID, or `inherit`; omitted means the main model), `skills`, `effort`, `maxTurns`, and others. `hooks`, `mcpServers`, `permissionMode`, and `initialPrompt` are ignored in plugin agents.
 - **Preloading:** an agent's `skills` field injects full skill content, but cannot preload a `disable-model-invocation: true` skill. `researcher` does not need it.
 - **Unverified:** the docs do not say whether foreground subagents get `WebFetch` and `WebSearch`. Check this in the Phase 3 smoke test.
+
+### Phase 2 — As built
+
+- `plugins/lstk/skills/stack-profile/SKILL.md`: `user-invocable: false`. Sections in order: precedence rule, detection, defaults, rationale, where the profile is used (consumers by name only, no file links).
+- `references/defaults.md`: containers-vs-Lambda guidance and per-area detail, loaded on demand.
+- `tests/evals/stack-profile.json`: 3 positives, 3 near-misses and negatives (repo states Go and Terraform, Python repo, unrelated fix). The file note records the `user-invocable: false` expectation.
+- `stack-profile` stays off `EXAMPLES_REQUIRED` (reference-only, per 2.6).
+
+### Phase 2 — Handoff
+
+- **Frontmatter:** `name`, `description` (under 500 characters), `user-invocable: false`.
+- **Areas covered:** language and modules, package management, backend (containers and Lambda), frontend, infrastructure, testing, linting, formatting.
+- **Needs owner confirmation:** the Lambda default of "Node.js behind API Gateway" (versus Function URLs or ALB), and the containers-vs-Lambda decision table in `references/defaults.md`. Both are my judgment, not stated in PLAN.
+- Consumer skills must repeat the precedence rule (PLAN-M3 §5).
