@@ -3,7 +3,7 @@
 A [Claude Code](https://code.claude.com) plugin marketplace that helps engineers and architects research, design,
 develop, review, and harden applications, and prototype quickly. It is AWS-first and TypeScript-first.
 
-> **Status:** pre-1.0. `lstk` is `0.2.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships nine skills and one agent so far, and
+> **Status:** pre-1.0. `lstk` is `0.3.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships twelve skills and two agents so far, and
 > more arrive in later milestones. See [docs/PLAN.md](docs/PLAN.md).
 
 ## Plugins
@@ -42,14 +42,18 @@ The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 | `tech-eval`           | Auto-triggered, or `/lstk:tech-eval`           | Trade-off matrix and sourced recommendation, using parallel `researcher` agents.             |
 | `adr-author`          | Auto-triggered, or `/lstk:adr-author`          | Writes and maintains Markdown ADRs, following the repo's convention.                         |
 | `solution-outline`    | Auto-triggered, or `/lstk:solution-outline`    | Draft outline from requirements: components, risks, and an effort sketch.                    |
+| `architecture-review` | User-invoked only                              | Design or CDK review by pillar, with trade-offs to decide. Writes `docs/reviews/`.           |
+| `threat-model`        | User-invoked only                              | STRIDE threat table from code and infra, with mitigations. Writes `docs/threat-models/`.     |
+| `cdk-iam-review`      | User-invoked only                              | Static IAM review of CDK TypeScript, with shown-only diffs. Writes `docs/reviews/`.          |
 
 ### Agents
 
-| Agent        | Tools                                           | Purpose                                                                |
-| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------- |
-| `researcher` | `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch` | Read-only research that returns a sourced report. Used by `tech-eval`. |
+| Agent           | Tools                                           | Purpose                                                                |
+| --------------- | ----------------------------------------------- | ---------------------------------------------------------------------- |
+| `researcher`    | `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch` | Read-only research that returns a sourced report. Used by `tech-eval`. |
+| `code-reviewer` | `Read`, `Grep`, `Glob`                          | Read-only change review. The caller supplies the diff or paths.        |
 
-See [docs/examples](docs/examples/README.md) for worked examples of the design skills.
+See [docs/examples](docs/examples/README.md) for worked examples of the design and review skills.
 
 Skills defer to the target repo: its `AGENTS.md`, `CONTRIBUTING.md`, and templates win over the skill's defaults.
 

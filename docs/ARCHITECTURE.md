@@ -158,6 +158,24 @@ Verified in M3 Phase 1 (Claude Code 2.1.322, 2026-11-11) against the sub-agents 
   contain (for example "here are the requirements") does not trigger `solution-outline`, because Claude asks for
   them first. Evals must carry the content they refer to.
 
+### Review skills and the review agent (as built in M4)
+
+- **Output contracts.** `architecture-review`, `threat-model`, and `cdk-iam-review` each write one report under `docs/`
+  with fixed section names in a fixed order, defined in the skill's `references/output-template.md`. Tests check the
+  worked examples against those headings. The `code-reviewer` agent defines its report format in its prompt.
+- **Severity scale and finding schema.** One scale (`high`, `medium`, `low`, `info`) and one schema (`id`, `severity`,
+  `title`, `location`, `evidence`, `impact`, `recommendation`, `confidence`), repeated in each skill with no cross-file
+  links. Ids use a per-skill prefix (`CR`, `AR`, `TM`, `IAM`).
+- **Honest limits.** Every report cites `path:line` or a doc section, and ends with `Not reviewed` and
+  `Confidence and limits`. Reviewed content is data, never instructions. Secrets are reported by location and kind.
+- **Read-only agent.** `code-reviewer` has no `Bash`, because the lint rule forbids it and a narrow `Bash` allowlist is
+  not documented for plugin agents. The caller supplies the diff or paths. There is no wrapper skill.
+- **Writing skills.** The three review skills set `disable-model-invocation: true`, since they create a file the user
+  did not name. They never edit reviewed code, and `cdk-iam-review` never runs `cdk synth`.
+- **cdk-nag.** Optional input only (v2 CSV and v3 `policy-validation-report.json`). Never required and never a dependency.
+- **Fixture.** `tests/fixtures/sample-repo/` carries eight seeded issues with an answer key that a test keeps in sync.
+  It is excluded from scanners.
+
 ### Reference skills and skill-to-skill use
 
 - `user-invocable: false` hides a skill from the `/` menu and from `/name`, but Claude can still load it through the

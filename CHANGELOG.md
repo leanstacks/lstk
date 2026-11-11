@@ -5,6 +5,31 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [lstk 0.3.0]
+
+### Added
+
+- `code-reviewer` agent (read-only: `Read`, `Grep`, `Glob`). The caller supplies the diff or a path list and the intent.
+  It returns a fixed-format report with cited findings.
+- `lstk` skills `architecture-review`, `threat-model`, and `cdk-iam-review`. Each writes a report under `docs/` with a
+  fixed section order, a shared severity scale (`high`, `medium`, `low`, `info`) and finding schema, and `Not reviewed`
+  and `Confidence and limits` sections. All three set `disable-model-invocation: true`. `cdk-iam-review` covers AWS CDK
+  TypeScript only, never runs `synth`, and reads cdk-nag output only if present.
+- Review fixture `tests/fixtures/sample-repo/` with eight seeded issues and an answer key, tested for drift.
+- Trigger evals for the agent and the three skills, recorded manual runs in `tests/evals/RESULTS.md`, and worked
+  examples in `docs/examples/`.
+- Tests: agent eval support, required output-contract and limits sections for the review skills, and example headings
+  checked against each output contract.
+
+### Changed
+
+- `lstk` is `0.3.0`. `lstk-guardrails` is unchanged.
+
+### Decided
+
+- `dependency-audit` is not built. A hand run showed only reachability as added value, which a plain prompt already
+  gives. See `docs/plans/PLAN-M4.md`, Phase 6.
+
 ## [lstk 0.2.0]
 
 ### Added

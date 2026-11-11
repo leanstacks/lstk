@@ -284,8 +284,8 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 4: `threat-model` skill, evals, manual run
 - [x] Phase 5: `cdk-iam-review` skill, evals, manual run
 - [x] Phase 6: `dependency-audit` gate decision (not built, see Phase 6 — As built)
-- [ ] Phase 7: examples, cross-links, review, release `lstk` 0.3.0, tag
-- [ ] `PLAN.md` M4 status updated
+- [x] Phase 7: examples, cross-links, review, release `lstk` 0.3.0 (tag after merge)
+- [x] `PLAN.md` M4 status updated
 
 ---
 
@@ -496,3 +496,30 @@ from the output contract in 6.5.
   `REVIEW_SKILLS_REQUIRE_SECTIONS` for it. The README skills table and CHANGELOG must not list it.
 - Hand-offs between skills still name only built skills. `adr-author` stays the suggestion for decisions a review surfaces.
 - The `0.3.0` release holds four deliverables: `code-reviewer`, `architecture-review`, `threat-model`, `cdk-iam-review`.
+
+### Phase 7 — As built
+
+- Worked examples in `docs/examples/`: `code-reviewer.md` (agent), `architecture-review.md`, `threat-model.md`,
+  `cdk-iam-review.md`. `docs/examples/README.md` has the new rows and a lifecycle diagram that runs from design through
+  build to review and harden, with the hand-offs between skills.
+- `tests/examples.test.mjs`: the three review skills are in `EXAMPLES_REQUIRED`. A structure test checks each example's
+  `##` headings against its `references/output-template.md`, in order. The agent's report headings are a literal map in
+  the test. Extra headings (such as `## Prompt`) are allowed.
+- Cross-links are by name only (verified by grep, and `lint:plugins` finds no `../`). Hand-offs name only built skills.
+- `tests/evals/RESULTS.md` has an M4 summary: no expected seeded issue was missed in any manual run.
+- Public-safety grep over the branch diff found no personal paths, emails, real account IDs, or keys.
+- Release: `lstk` `0.3.0` in `plugin.json`, CHANGELOG entry, README (twelve skills, two agents), `ARCHITECTURE.md`
+  section on review contracts, and `PLAN.md` M4 marked done. `npm run check` and `npm run validate` pass.
+
+**Not done in this session (do before or after merge):**
+
+- 7.6: `/code-review` and `/security-review` on the branch were not run.
+- 7.8: the local install smoke test (`/plugin marketplace add ./`, install, `/reload-plugins`, confirm `/lstk:<name>`
+  and the agent) needs an interactive session and was not run.
+- 7.9: tag `lstk-v0.3.0` after merge.
+
+### Phase 7 — Handoff (carry-over for M5)
+
+- Prompt tunes after the Phase 2 and Phase 5 runs were never re-run. The cdk-nag and `cdk.out/` paths were never
+  exercised. Runs for Phases 3 to 5 were subagent simulations, not real `/lstk:<name>` invocations.
+- `dependency-audit` stays unbuilt. Revisit only on evidence from a real multi-workspace repo (Phase 6).

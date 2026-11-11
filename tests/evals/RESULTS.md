@@ -1,5 +1,21 @@
 # Eval results
 
+## 2026-11-11 (M4 summary, Phase 7)
+
+Manual runs against `tests/fixtures/sample-repo`, one per deliverable (details in the sections below):
+
+| Deliverable           | Expected seeded issues found | Notes                                                           |
+| --------------------- | ---------------------------- | --------------------------------------------------------------- |
+| `code-reviewer`       | 4 of 4                       | Also found SI-01 to SI-03. Security findings run long.          |
+| `architecture-review` | 4 of 4                       | No false findings.                                              |
+| `threat-model`        | 5 of 5                       | Secret not echoed.                                              |
+| `cdk-iam-review`      | 2 of 2                       | SI-03 and SI-04 reported as out-of-scope extras. No false hits. |
+
+No expected seeded issue was missed. `dependency-audit` was not built (Phase 6). The prompt tunes made after the
+Phase 2 and Phase 5 runs were **not re-run**, the cdk-nag and `cdk.out/` paths were never exercised, and the Phase 3 to
+5 runs were subagents following `SKILL.md`, not real `/lstk:<name>` invocations. Cited line numbers matched the fixture
+in every run checked by hand, but drift is possible when many files are read at once. These are carry-over items.
+
 ## 2026-11-11 (M4 Phase 5: `cdk-iam-review` manual run)
 
 A fresh subagent followed `SKILL.md` against `tests/fixtures/sample-repo` without reading the answer key. The skill is
