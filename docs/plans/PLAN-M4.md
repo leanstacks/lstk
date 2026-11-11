@@ -280,7 +280,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 - [x] Phase 1: decisions Q1, Q2, Q5, Q6; fixture and answer key; lint and test extensions
 - [x] Phase 2: `code-reviewer` agent, evals, manual run
-- [ ] Phase 3: `architecture-review` skill, evals, manual run
+- [x] Phase 3: `architecture-review` skill, evals, manual run
 - [ ] Phase 4: `threat-model` skill, evals, manual run
 - [ ] Phase 5: `cdk-iam-review` skill, evals, manual run
 - [ ] Phase 6: `dependency-audit` gate decision (and skill, if it passes)
@@ -355,3 +355,27 @@ Append an "As built" and a "Handoff" subsection per phase here as each phase fin
 - The plugin agent resolves as `lstk:code-reviewer`.
 - Watch: security findings run long. One prompt tune was applied after the run and has not been re-run (Phase 7.5 may
   re-check).
+
+### Phase 3 — As built
+
+- `plugins/lstk/skills/architecture-review/SKILL.md` with `disable-model-invocation: true` (the 3.6 default, accepted:
+  the skill creates a file the user did not name). Description 500 characters or fewer, with the three non-triggers.
+- Output contract: `docs/reviews/architecture-review-<name>.md` (or inline on request). Sections in order:
+  `Scope and sources`, `System summary`, `Assumptions`, `Findings by pillar`, `Trade-offs to decide`, `Not reviewed`,
+  `Confidence and limits`. Findings use the Phase 1 schema with ids `AR-nn`. Each trade-off names the choice, the
+  cost, and the condition under which it is fine.
+- `references/questions.md`: six pillars, 4 to 6 original questions each (28 in all), tagged `[doc]`, `[code]`, or
+  `[both]`. `references/output-template.md`: the report skeleton.
+- `tests/evals/architecture-review.json` (3 positive, 5 negative, with near-misses against `tech-eval`, `threat-model`,
+  `cdk-iam-review`, `code-reviewer`, and plain Q&A). Added to `REVIEW_SKILLS_REQUIRE_SECTIONS`.
+- Not added to `EXAMPLES_REQUIRED` yet: the example file lands in Phase 7 (7.1 and 7.3), and adding it now would fail
+  `npm run check`.
+- Manual run recorded in `tests/evals/RESULTS.md`: 4 of 4 expected seeded issues found, no false findings.
+
+### Phase 3 — Handoff
+
+- Section names for `threat-model` to stay consistent with: `Scope and sources`, `Assumptions`, `Not reviewed`,
+  `Confidence and limits`. `architecture-review` uses `System summary`. `threat-model` uses `System model`.
+- `disable-model-invocation: true` applies to Phase 4 too (4.7). Evals for such skills use explicit-ask positives.
+- Watch: the model names skills that are not built (for example `dependency-audit`). Hand-offs in a prompt should list
+  only built skills.

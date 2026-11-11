@@ -1,5 +1,18 @@
 # Eval results
 
+## 2026-11-11 (M4 Phase 3: `architecture-review` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`,
+  invoked as `/lstk:architecture-review` (the skill sets `disable-model-invocation`). Brief: review `infra/` and `src/`,
+  inline output. Single run.
+- **Seeded issues expected from AR** (`SEEDED-ISSUES.md`): SI-01, SI-03, SI-04, SI-05. **Found: 4 of 4.** SI-04 (AR-01),
+  SI-03 (AR-02), SI-01 and SI-02 (AR-03), SI-05 (AR-05, also listed under trade-offs). SI-07 also found (AR-04), with the
+  location and kind only, no value printed.
+- **Format:** all seven sections in order, pillar headings present, every finding cites `path:line`, trade-offs name
+  the choice, the cost, and the condition. No "wrong", "secure", or "compliant" wording. No false findings seen.
+- **Weaknesses:** the model mentioned `dependency-audit` as a hand-off, which is not built (Phase 6 gate). It cited
+  CDK default behavior from memory, and said so under `Confidence and limits`. Not tuned.
+
 ## 2026-11-11 (M4 Phase 2: `code-reviewer` manual run)
 
 - **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`.
