@@ -147,6 +147,10 @@ Verified in M3 Phase 1 (Claude Code 2.1.322, 2026-11-11) against the sub-agents 
   the main conversation's model.
 - `skills` preloads the full content of each listed skill at startup. It does not inherit from the parent, and it
   cannot preload a skill with `disable-model-invocation: true`.
+- Verified in M3 Phase 3 (2.1.322, headless `claude -p` with `--plugin-dir`): a subagent with
+  `tools: Read, Grep, Glob, WebFetch, WebSearch` can call `WebFetch` and `WebSearch`. Without an explicit
+  instruction, Claude launched parallel `Agent` calls as background tasks and the session ended before the reports
+  returned. The `researcher` sets `background: false`, and `tech-eval` tells Claude to wait for every report.
 - The linter requires a non-empty `tools` list and rejects `Bash`, `Write`, `Edit`, and `NotebookEdit`. Plugin agents
   are read-only.
 

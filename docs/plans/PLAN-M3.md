@@ -229,7 +229,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 
 - [x] Phase 1 — Verify the contract and prepare the guardrails
 - [x] Phase 2 — `stack-profile`
-- [ ] Phase 3 — `researcher` agent and `tech-eval`
+- [x] Phase 3 — `researcher` agent and `tech-eval`
 - [ ] Phase 4 — `adr-author`
 - [ ] Phase 5 — `solution-outline`
 - [ ] Phase 6 — Examples, review, release `0.2.0`
@@ -263,3 +263,18 @@ _Each phase adds an "As built" note and a Handoff block here when it finishes._
 - **Areas covered:** language and modules, package management, backend (containers and Lambda), frontend, infrastructure, testing, linting, formatting.
 - **Needs owner confirmation:** the Lambda default of "Node.js behind API Gateway" (versus Function URLs or ALB), and the containers-vs-Lambda decision table in `references/defaults.md`. Both are my judgment, not stated in PLAN.
 - Consumer skills must repeat the precedence rule (PLAN-M3 §5).
+
+### Phase 3 — As built
+
+- `plugins/lstk/agents/researcher.md`: `tools: Read, Grep, Glob, WebFetch, WebSearch`, `model: sonnet`, `background: false`. Rules for sourcing, fact vs inference, dates, "not found", and untrusted fetched content. Report format (Q2): Question, Findings, Gaps and uncertainty, Suggested follow-ups, capped at about 600 words.
+- `plugins/lstk/skills/tech-eval/SKILL.md`: precedence rule repeated, five-step workflow, output contract, related skills (by name only). The report template is in `references/report-template.md`.
+- `tests/evals/tech-eval.json`: 3 positives, 4 near-misses and negatives (`adr-author`, plain Q&A, `solution-outline`, unrelated).
+- `tech-eval` stays off `EXAMPLES_REQUIRED` until Phase 6 (the list is still empty).
+
+### Phase 3 — Handoff
+
+- **Smoke test (2.1.322, headless, `--plugin-dir`):** `tech-eval` loaded, spawned two `researcher` agents in parallel, and produced a criteria list, matrix with source keys, per-option summary, recommendation with change conditions, and numbered sources. Tool calls in the subagents were `WebFetch` and `WebSearch` only. It offered `adr-author` by name. Resolves the Phase 1 "unverified" item: subagents do get `WebFetch` and `WebSearch`.
+- **Finding:** the first run launched the agents as background tasks and ended before the reports came back. Fixed with `background: false` on the agent and an explicit wait instruction in `tech-eval` step 3. The second run completed. I cannot tell which of the two changes fixed it, because I did not test them separately. The run was headless (`claude -p`), so an interactive session was not tested.
+- **Observed weakness:** AWS pages carried no dates, so most sources are "undated", and one price came from a third-party source. The agent flagged both. This is acceptable, but Phase 6 evals should check that the flags persist.
+- **Sourcing conventions the next skills may reuse:** numbered source keys `[n]` in cells, a "Sources" list with URL or `path:line` and a date where known, `not found` for gaps, and inference labeled as such.
+- **Model:** `sonnet` is my choice for cost on a read-only research task. It is not stated in PLAN, so the owner may want to confirm it.

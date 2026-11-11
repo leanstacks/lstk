@@ -1,0 +1,48 @@
+{
+  "skill": "tech-eval",
+  "note": "Triggers on comparing or choosing between options. Near-misses are recording a decision already made (adr-author), explaining one technology (plain Q&A), and shaping a whole solution (solution-outline).",
+  "prompts": [
+    {
+      "id": "tech-eval-01",
+      "prompt": "Compare DynamoDB and Aurora Serverless for a read-heavy order lookup workload.",
+      "shouldTrigger": true,
+      "note": "Direct comparison of two options."
+    },
+    {
+      "id": "tech-eval-02",
+      "prompt": "Which should we use for background jobs: SQS with Lambda, or a NestJS worker on containers?",
+      "shouldTrigger": true,
+      "note": "'Which should we use' with named options."
+    },
+    {
+      "id": "tech-eval-03",
+      "prompt": "Build vs buy for authentication. What are the trade-offs of rolling our own versus using a managed identity service?",
+      "shouldTrigger": true,
+      "note": "Build vs buy and trade-offs."
+    },
+    {
+      "id": "tech-eval-04",
+      "prompt": "We decided on Aurora Serverless. Write that down as an ADR.",
+      "shouldTrigger": false,
+      "note": "Near-miss: the decision is made, so this is adr-author."
+    },
+    {
+      "id": "tech-eval-05",
+      "prompt": "Explain how DynamoDB partitions data.",
+      "shouldTrigger": false,
+      "note": "Near-miss: explaining one technology is plain Q&A, not a comparison."
+    },
+    {
+      "id": "tech-eval-06",
+      "prompt": "Outline a solution for a customer order-tracking portal, with components and effort.",
+      "shouldTrigger": false,
+      "note": "Near-miss: shaping a whole solution is solution-outline."
+    },
+    {
+      "id": "tech-eval-07",
+      "prompt": "Write a commit message for my staged changes.",
+      "shouldTrigger": false,
+      "note": "Unrelated."
+    }
+  ]
+}
