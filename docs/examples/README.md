@@ -1,22 +1,34 @@
 # Worked examples
 
 One fictional scenario runs through these examples: **Example Orders**, a small order-tracking API for a made-up
-retailer. The three skills read as one lifecycle.
+retailer. The skills and the agent read as one lifecycle: design, then review and harden the built result.
 
 ```mermaid
 flowchart LR
     A["solution-outline<br/>shape the solution"] -- "key decision D1: data store" --> B["tech-eval<br/>compare options"]
     B -- "recommendation" --> C["adr-author<br/>record the decision"]
+    C --> D["build"]
+    D --> E["code-reviewer<br/>review the change"]
+    D --> F["architecture-review<br/>review the design"]
+    F -- "data-flow concerns" --> G["threat-model<br/>STRIDE table"]
+    E -- "security findings" --> G
+    F -- "IAM concerns" --> H["cdk-iam-review<br/>least-privilege review"]
+    G -- "IAM detail" --> H
+    F -. "decision surfaced" .-> C
 ```
 
-| Example                                    | Skill              | Shows                                                      |
-| ------------------------------------------ | ------------------ | ---------------------------------------------------------- |
-| [solution-outline.md](solution-outline.md) | `solution-outline` | A draft outline with components, risks, and effort ranges. |
-| [tech-eval.md](tech-eval.md)               | `tech-eval`        | A trade-off matrix and a sourced recommendation for D1.    |
-| [adr-author.md](adr-author.md)             | `adr-author`       | The resulting ADR and its index entry.                     |
+| Example                                          | Skill                   | Shows                                                      |
+| ------------------------------------------------ | ----------------------- | ---------------------------------------------------------- |
+| [solution-outline.md](solution-outline.md)       | `solution-outline`      | A draft outline with components, risks, and effort ranges. |
+| [tech-eval.md](tech-eval.md)                     | `tech-eval`             | A trade-off matrix and a sourced recommendation for D1.    |
+| [adr-author.md](adr-author.md)                   | `adr-author`            | The resulting ADR and its index entry.                     |
+| [code-reviewer.md](code-reviewer.md)             | `code-reviewer` (agent) | A fixed-format code review with cited findings.            |
+| [architecture-review.md](architecture-review.md) | `architecture-review`   | Findings by pillar and trade-offs to decide.               |
+| [threat-model.md](threat-model.md)               | `threat-model`          | A data-flow diagram and a STRIDE threat table.             |
+| [cdk-iam-review.md](cdk-iam-review.md)           | `cdk-iam-review`        | A principal inventory, findings, and shown-only diffs.     |
 
 `stack-profile` has no example of its own. It is reference-only, and its effect is visible in the **Stack** lines of the
-other three.
+design examples.
 
 ## Read these as illustrations
 
