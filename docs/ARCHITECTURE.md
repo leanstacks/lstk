@@ -134,8 +134,31 @@ open` to stderr, and exits 0. The permission rules from `init` are the backstop.
 
 ### Agent frontmatter
 
-- Required: `name` and `description`. Common: `tools`, `model`.
-- Plugin agents ignore `hooks`, `mcpServers`, and `permissionMode`. Ship hooks at plugin level instead.
+Verified in M3 Phase 1 (Claude Code 2.1.322, 2026-11-11) against the sub-agents and plugin components docs.
+
+- Required: `name` and `description`.
+- Supported: `tools`, `disallowedTools`, `model`, `effort`, `maxTurns`, `skills`, `memory`, `background`, `isolation`
+  (`worktree` only), `color`, and a few others. Unknown fields are silently ignored.
+- Plugin agents ignore `hooks`, `mcpServers`, `permissionMode`, and `initialPrompt`. Ship hooks at plugin level instead.
+- `tools` is an allowlist, written as a comma string or a YAML list. Omitting it inherits every tool, so the linter
+  requires it. `WebFetch` and `WebSearch` are valid names. Some tools are always removed from subagents (for example
+  `AskUserQuestion` and `ExitPlanMode`).
+- `model` accepts `sonnet`, `opus`, `haiku`, `fable`, a full model ID, or `inherit`. When omitted it falls through to
+  the main conversation's model.
+- `skills` preloads the full content of each listed skill at startup. It does not inherit from the parent, and it
+  cannot preload a skill with `disable-model-invocation: true`.
+- The linter requires a non-empty `tools` list and rejects `Bash`, `Write`, `Edit`, and `NotebookEdit`. Plugin agents
+  are read-only.
+
+### Reference skills and skill-to-skill use
+
+- `user-invocable: false` hides a skill from the `/` menu and from `/name`, but Claude can still load it through the
+  Skill tool, and its description stays in context. `disable-model-invocation: true` is the opposite: Claude cannot load
+  it and its description is not in context.
+- The docs describe no skill-to-skill reference mechanism. Verified in M3 (2.1.322) with a scratch plugin loaded through
+  `--plugin-dir`: a skill whose body said "apply the `ref-skill` skill" caused Claude to call the Skill tool with
+  `scr:ref-skill`, and a `user-invocable: false` skill loaded and returned its content. Skills therefore refer to
+  each other by name, never by file path.
 
 ### Validation
 

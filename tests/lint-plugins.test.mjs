@@ -65,7 +65,11 @@ describe('lintRepo', () => {
   it('passes a scaffold with a valid skill and agent', () => {
     const root = makeRepo();
     write(root, 'plugins/one/skills/demo-skill/SKILL.md', skill('demo-skill'));
-    write(root, 'plugins/one/agents/reviewer.md', '---\nname: reviewer\ndescription: Reviews code.\n---\nBody');
+    write(
+      root,
+      'plugins/one/agents/reviewer.md',
+      '---\nname: reviewer\ndescription: Reviews code.\ntools: Read, Grep\n---\nBody',
+    );
     write(root, 'plugins/one/skills/.gitkeep', '');
     expect(lintRepo(root)).toEqual([]);
   });
@@ -275,6 +279,34 @@ describe('lintRepo', () => {
     expect(messages(root)).toEqual([
       expect.stringContaining('"name" must be non-empty'),
       expect.stringContaining('"description" must be non-empty'),
+    ]);
+  });
+
+  it('accepts an agent whose tools are a comma list or a YAML list', () => {
+    const root = makeRepo();
+    write(root, 'plugins/one/agents/a.md', '---\nname: a\ndescription: d\ntools: Read, Grep, WebFetch\n---\n');
+    write(root, 'plugins/one/agents/b.md', '---\nname: b\ndescription: d\ntools:\n  - Read\n  - WebSearch\n---\n');
+    expect(lintRepo(root)).toEqual([]);
+  });
+
+  it('reports an agent with no tools allowlist', () => {
+    const root = makeRepo();
+    write(root, 'plugins/one/agents/open.md', '---\nname: open\ndescription: d\n---\n');
+    expect(messages(root)).toEqual([expect.stringContaining('"tools" must declare a non-empty allowlist')]);
+  });
+
+  it('reports write-capable tools in an agent allowlist', () => {
+    const root = makeRepo();
+    write(
+      root,
+      'plugins/one/agents/rw.md',
+      '---\nname: rw\ndescription: d\ntools: Read, Bash(git *), Write, Edit, NotebookEdit\n---\n',
+    );
+    expect(messages(root)).toEqual([
+      expect.stringContaining('write-capable tool "Bash"'),
+      expect.stringContaining('write-capable tool "Write"'),
+      expect.stringContaining('write-capable tool "Edit"'),
+      expect.stringContaining('write-capable tool "NotebookEdit"'),
     ]);
   });
 
