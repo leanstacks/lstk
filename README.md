@@ -31,18 +31,17 @@ Then run `/lstk-guardrails:init` to merge the guardrail permission rules into yo
 
 The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 
-| Skill                 | Invocation                                    | Purpose                                                                                      |
-| --------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `commit-messages`     | Auto-triggered, or `/lstk:commit-messages`    | Writes commit messages in the repo's own convention, or `feat`, `fix`, `chore`, `doc`.       |
-| `create-pull-request` | User-invoked only                             | Opens a draft GitHub PR from the current branch, using the repo's PR template.               |
-| `agents-md-author`    | Auto-triggered, or `/lstk:agents-md-author`   | Creates, audits, or refreshes `AGENTS.md` after surveying the repo.                          |
-| `repo-onboarding`     | Auto-triggered, or `/lstk:repo-onboarding`    | Produces or verifies `docs/PROJECT_OVERVIEW.md`: what the system is and how it is organized. |
-| `local-setup-author`  | Auto-triggered, or `/lstk:local-setup-author` | Produces or verifies `docs/LOCAL_SETUP.md`: from a fresh clone to a running app.             |
-
-| `stack-profile` | Loaded by Claude when needed (not in the menu) | Default stack (TypeScript, NestJS, Lambda, React, CDK) for use where the repo is silent. |
-| `tech-eval` | Auto-triggered, or `/lstk:tech-eval` | Trade-off matrix and sourced recommendation, using parallel `researcher` agents. |
-| `adr-author` | Auto-triggered, or `/lstk:adr-author` | Writes and maintains Markdown ADRs, following the repo's convention. |
-| `solution-outline` | Auto-triggered, or `/lstk:solution-outline` | Draft outline from requirements: components, risks, and an effort sketch. |
+| Skill                 | Invocation                                     | Purpose                                                                                      |
+| --------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `commit-messages`     | Auto-triggered, or `/lstk:commit-messages`     | Writes commit messages in the repo's own convention, or `feat`, `fix`, `chore`, `doc`.       |
+| `create-pull-request` | User-invoked only                              | Opens a draft GitHub PR from the current branch, using the repo's PR template.               |
+| `agents-md-author`    | Auto-triggered, or `/lstk:agents-md-author`    | Creates, audits, or refreshes `AGENTS.md` after surveying the repo.                          |
+| `repo-onboarding`     | Auto-triggered, or `/lstk:repo-onboarding`     | Produces or verifies `docs/PROJECT_OVERVIEW.md`: what the system is and how it is organized. |
+| `local-setup-author`  | Auto-triggered, or `/lstk:local-setup-author`  | Produces or verifies `docs/LOCAL_SETUP.md`: from a fresh clone to a running app.             |
+| `stack-profile`       | Loaded by Claude when needed (not in the menu) | Default stack (TypeScript, NestJS, Lambda, React, CDK) for use where the repo is silent.     |
+| `tech-eval`           | Auto-triggered, or `/lstk:tech-eval`           | Trade-off matrix and sourced recommendation, using parallel `researcher` agents.             |
+| `adr-author`          | Auto-triggered, or `/lstk:adr-author`          | Writes and maintains Markdown ADRs, following the repo's convention.                         |
+| `solution-outline`    | Auto-triggered, or `/lstk:solution-outline`    | Draft outline from requirements: components, risks, and an effort sketch.                    |
 
 ### Agents
 
