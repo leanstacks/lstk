@@ -1,5 +1,21 @@
 # Eval results
 
+## 2026-11-11 (M4 Phase 4: `threat-model` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`,
+  invoked as `/lstk:threat-model` (the skill sets `disable-model-invocation`). Brief: model the order API from `infra/`
+  and `src/`, inline output. Single run.
+- **Seeded issues expected from TM** (`SEEDED-ISSUES.md`): SI-01, SI-02, SI-03, SI-04, SI-07. **Found: 5 of 5.** SI-04
+  (TM-01), SI-07 (TM-03), SI-03 (TM-04), SI-01 and SI-02 (TM-05, handed to `cdk-iam-review`).
+- **Also found, not seeded:** SI-05 (TM-06), unguarded `JSON.parse` (TM-07), no ownership check on cancel (TM-02, labeled
+  inference), no access logging (TM-08). No false findings seen.
+- **Secrets:** SI-07 reported by location and kind only. The value was not printed, in the table or the diagram.
+- **Format:** all eight sections in order, the Mermaid diagram and element table present, every threat row has evidence
+  and the nine columns, residual risk is not marked accepted. The model said it did not open `SEEDED-ISSUES.md`.
+- **Weaknesses:** some cited line numbers were off for `cancel-order.ts` (the model read files in one pass). It named
+  `cdk-iam-review`, which is built in Phase 5. The diagram used an unquoted subgraph title with a space (`AWS account`),
+  which some Mermaid versions reject. Template fixed to quote subgraph titles; the rest is not tuned.
+
 ## 2026-11-11 (M4 Phase 3: `architecture-review` manual run)
 
 - **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`,

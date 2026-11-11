@@ -281,7 +281,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 1: decisions Q1, Q2, Q5, Q6; fixture and answer key; lint and test extensions
 - [x] Phase 2: `code-reviewer` agent, evals, manual run
 - [x] Phase 3: `architecture-review` skill, evals, manual run
-- [ ] Phase 4: `threat-model` skill, evals, manual run
+- [x] Phase 4: `threat-model` skill, evals, manual run
 - [ ] Phase 5: `cdk-iam-review` skill, evals, manual run
 - [ ] Phase 6: `dependency-audit` gate decision (and skill, if it passes)
 - [ ] Phase 7: examples, cross-links, review, release `lstk` 0.3.0, tag
@@ -379,3 +379,29 @@ Append an "As built" and a "Handoff" subsection per phase here as each phase fin
 - `disable-model-invocation: true` applies to Phase 4 too (4.7). Evals for such skills use explicit-ask positives.
 - Watch: the model names skills that are not built (for example `dependency-audit`). Hand-offs in a prompt should list
   only built skills.
+
+### Phase 4 — As built
+
+- `plugins/lstk/skills/threat-model/SKILL.md` with `disable-model-invocation: true` (4.7, same as Phase 3: the skill
+  writes a file the user did not name). The description states it is not an audit or pen test, with the non-triggers.
+- Output contract: `docs/threat-models/<name>.md` (or inline on request). Sections in order: `Scope and sources`,
+  `System model` (Mermaid diagram, then element table), `Assumptions` (with an `Assumptions to verify` list), `Threats`,
+  `Top risks`, `Mitigation plan`, `Not reviewed`, `Confidence and limits`.
+- Threat table columns: `ID` (`TM-nn`), `Element`, `STRIDE`, `Threat`, `Evidence`, `Existing control`, `Mitigation`,
+  `Residual risk` (severity plus rationale, never "accepted"), `Confidence`. A threat with no evidence moves to
+  `Assumptions to verify`.
+- System-model element kinds: `actor`, `entry point`, `process`, `data store`, `external service`, `identity`,
+  `secret`. Element table columns: `Element`, `Kind`, `Boundary`, `Source`.
+- Secrets: the report gives the location and the kind only, never the value (rule in the skill and the STRIDE prompts).
+- `references/stride-prompts.md` (web API, queue, data store, Lambda, identity) and `references/output-template.md`.
+- `tests/evals/threat-model.json` (3 positive, 5 negative, with near-misses against `code-reviewer`,
+  `architecture-review`, `cdk-iam-review`, a pen test, and plain Q&A). Added to `REVIEW_SKILLS_REQUIRE_SECTIONS`.
+  Not added to `EXAMPLES_REQUIRED` (lands in Phase 7).
+- Manual run recorded in `tests/evals/RESULTS.md`: 5 of 5 expected seeded issues found, secret not echoed.
+
+### Phase 4 — Handoff
+
+- Reuse for `cdk-iam-review`: shared section names `Scope and sources`, `Not reviewed`, `Confidence and limits`, the
+  inline-or-file output choice, and the `disable-model-invocation: true` decision. IDs use a per-skill prefix.
+- `threat-model` hands IAM detail to `cdk-iam-review` by name, so Phase 5 must ship it in this release.
+- Watch: cited line numbers can drift when the model reads several files at once. Check them in the Phase 7 review.
