@@ -1,0 +1,54 @@
+{
+  "skill": "cdk-iam-review",
+  "note": "Triggers on reviewing IAM in an AWS CDK TypeScript app. Near-misses are a design review (architecture-review), a threat analysis (threat-model), IAM in non-CDK IaC (Terraform, CloudFormation), a change review (code-reviewer), and plain IAM Q&A. The skill is a scoped review that writes a file, so it sets disable-model-invocation and positives are explicit asks.",
+  "prompts": [
+    {
+      "id": "cdk-iam-review-01",
+      "prompt": "Review the IAM in this CDK app. Is anything over-broad?",
+      "shouldTrigger": true,
+      "note": "Direct IAM review of a CDK app."
+    },
+    {
+      "id": "cdk-iam-review-02",
+      "prompt": "Check my roles and policies in infra/lib for least privilege.",
+      "shouldTrigger": true,
+      "note": "'Least privilege' and 'roles and policies' in a CDK path."
+    },
+    {
+      "id": "cdk-iam-review-03",
+      "prompt": "Why does the CancelOrder Lambda role have access to every S3 object? Trace where that grant comes from in the CDK stack.",
+      "shouldTrigger": true,
+      "note": "'Why does this role have access to X' in CDK."
+    },
+    {
+      "id": "cdk-iam-review-04",
+      "prompt": "Review this architecture for weak points and trade-offs.",
+      "shouldTrigger": false,
+      "note": "Near-miss: whole-design review, so architecture-review."
+    },
+    {
+      "id": "cdk-iam-review-05",
+      "prompt": "Threat model the order API and map the trust boundaries.",
+      "shouldTrigger": false,
+      "note": "Near-miss: threat analysis, so threat-model."
+    },
+    {
+      "id": "cdk-iam-review-06",
+      "prompt": "Check the IAM policies in our Terraform modules for least privilege.",
+      "shouldTrigger": false,
+      "note": "Near-miss: Terraform, out of scope. The skill would stop and say so."
+    },
+    {
+      "id": "cdk-iam-review-07",
+      "prompt": "Review my diff for bugs and missing tests.",
+      "shouldTrigger": false,
+      "note": "Near-miss: change review, so the code-reviewer agent."
+    },
+    {
+      "id": "cdk-iam-review-08",
+      "prompt": "What is the difference between an IAM role and an IAM user?",
+      "shouldTrigger": false,
+      "note": "Near-miss: plain IAM Q&A, no CDK code to review."
+    }
+  ]
+}

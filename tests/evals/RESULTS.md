@@ -1,5 +1,79 @@
 # Eval results
 
+## 2026-11-11 (M4 summary, Phase 7)
+
+Manual runs against `tests/fixtures/sample-repo`, one per deliverable (details in the sections below):
+
+| Deliverable           | Expected seeded issues found | Notes                                                           |
+| --------------------- | ---------------------------- | --------------------------------------------------------------- |
+| `code-reviewer`       | 4 of 4                       | Also found SI-01 to SI-03. Security findings run long.          |
+| `architecture-review` | 4 of 4                       | No false findings.                                              |
+| `threat-model`        | 5 of 5                       | Secret not echoed.                                              |
+| `cdk-iam-review`      | 2 of 2                       | SI-03 and SI-04 reported as out-of-scope extras. No false hits. |
+
+No expected seeded issue was missed. `dependency-audit` was not built (Phase 6). The prompt tunes made after the
+Phase 2 and Phase 5 runs were **not re-run**, the cdk-nag and `cdk.out/` paths were never exercised, and the Phase 3 to
+5 runs were subagents following `SKILL.md`, not real `/lstk:<name>` invocations. Cited line numbers matched the fixture
+in every run checked by hand, but drift is possible when many files are read at once. These are carry-over items.
+
+## 2026-11-11 (M4 Phase 5: `cdk-iam-review` manual run)
+
+A fresh subagent followed `SKILL.md` against `tests/fixtures/sample-repo` without reading the answer key. The skill is
+not loaded in this session, so this is a simulation of a run, not an invocation of `/lstk:cdk-iam-review`.
+
+- Found: SI-01 (`dynamodb:*`, high, `orders-stack.ts:45`) and SI-02 (wildcard S3 resource, medium, `:53`). Both expected.
+- Also found: SI-03 (public bucket, reported as an IAM finding) and SI-04 (unauthenticated cancel route, as a
+  lower-confidence item). Both true, but outside IAM scope.
+- Missed: none of the two expected. No false findings. No cdk-nag or `cdk.out/` in the fixture, so the cdk-nag path was
+  not exercised.
+- Prompt gaps the run exposed, tuned once: no `cdk.json` in the fixture (now falls back to the `aws-cdk-lib`
+  dependency), unclear home for public-bucket and missing-authorizer items (now: access finding plus a `threat-model`
+  hand-off, authorizer gap in the lower-confidence list), and no severity row for `publicReadAccess` (added). Not re-run.
+- Not verified: the cdk-nag v3 field names against a real report.
+
+## 2026-11-11 (M4 Phase 4: `threat-model` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`,
+  invoked as `/lstk:threat-model` (the skill sets `disable-model-invocation`). Brief: model the order API from `infra/`
+  and `src/`, inline output. Single run.
+- **Seeded issues expected from TM** (`SEEDED-ISSUES.md`): SI-01, SI-02, SI-03, SI-04, SI-07. **Found: 5 of 5.** SI-04
+  (TM-01), SI-07 (TM-03), SI-03 (TM-04), SI-01 and SI-02 (TM-05, handed to `cdk-iam-review`).
+- **Also found, not seeded:** SI-05 (TM-06), unguarded `JSON.parse` (TM-07), no ownership check on cancel (TM-02, labeled
+  inference), no access logging (TM-08). No false findings seen.
+- **Secrets:** SI-07 reported by location and kind only. The value was not printed, in the table or the diagram.
+- **Format:** all eight sections in order, the Mermaid diagram and element table present, every threat row has evidence
+  and the nine columns, residual risk is not marked accepted. The model said it did not open `SEEDED-ISSUES.md`.
+- **Weaknesses:** some cited line numbers were off for `cancel-order.ts` (the model read files in one pass). It named
+  `cdk-iam-review`, which is built in Phase 5. The diagram used an unquoted subgraph title with a space (`AWS account`),
+  which some Mermaid versions reject. Template fixed to quote subgraph titles; the rest is not tuned.
+
+## 2026-11-11 (M4 Phase 3: `architecture-review` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`,
+  invoked as `/lstk:architecture-review` (the skill sets `disable-model-invocation`). Brief: review `infra/` and `src/`,
+  inline output. Single run.
+- **Seeded issues expected from AR** (`SEEDED-ISSUES.md`): SI-01, SI-03, SI-04, SI-05. **Found: 4 of 4.** SI-04 (AR-01),
+  SI-03 (AR-02), SI-01 and SI-02 (AR-03), SI-05 (AR-05, also listed under trade-offs). SI-07 also found (AR-04), with the
+  location and kind only, no value printed.
+- **Format:** all seven sections in order, pillar headings present, every finding cites `path:line`, trade-offs name
+  the choice, the cost, and the condition. No "wrong", "secure", or "compliant" wording. No false findings seen.
+- **Weaknesses:** the model mentioned `dependency-audit` as a hand-off, which is not built (Phase 6 gate). It cited
+  CDK default behavior from memory, and said so under `Confidence and limits`. Not tuned.
+
+## 2026-11-11 (M4 Phase 2: `code-reviewer` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk`, `--permission-mode plan`, run from `tests/fixtures/sample-repo`.
+- **Brief:** three paths (`orders-stack.ts`, `cancel-order.ts`, `create-order.ts`), intent "add a cancel-order route and
+  handler". Single run. The agent resolved as `lstk:code-reviewer` (Q1 note from Phase 1 confirmed).
+- **Seeded issues expected from CR** (`SEEDED-ISSUES.md`): SI-04, SI-05, SI-06, SI-07. **Found: 4 of 4.** SI-04 (CR-01),
+  SI-07 (CR-02), SI-05 (CR-06), SI-06 (test gap).
+- **Also found, not expected from CR:** SI-01, SI-02 (CR-03) and SI-03 (CR-04), all handed off. No false findings seen.
+  Extra true findings: handler does not cancel anything, unguarded `JSON.parse` in `create-order.ts`.
+- **Format:** all six sections present in order, every finding cites `path:line`, no secret value printed.
+- **Weaknesses:** the security findings ran longer than the "flag and hand off" rule intends, and the report did not say
+  which config files were absent. One prompt tune made (hand-off findings stay to one line of evidence, `## Scope`
+  names missing convention files). Not re-run after the tune.
+
 ## 2026-11-11 (M3 skills)
 
 - **Claude Code:** 2.1.322
@@ -69,3 +143,11 @@
 - Single run per prompt. Triggering is not deterministic, so near-misses (such as the `repo-onboarding` and
   `local-setup-author` boundary) may flip on another run.
 - `commit-messages` stays model-invocable (Q1). No over-triggering showed in the negative prompts.
+
+## dependency-audit value gate (M4 Phase 6, 2026-11-11)
+
+Not a trigger eval: the skill was not built. A hand run of `npm audit --json` on a scratch copy of the fixture's
+`lodash` 4.17.20 pin (SI-08) returned one high finding with four advisories and a `lodash@4.18.1` fix. Triage added one
+thing the raw output lacks: `lodash` is never imported, so the advisories are unreachable and removal is the lowest-risk
+fix. Dev versus runtime, transitive paths, and workspaces were not exercised. A plain prompt gives the same
+reachability result, so the skill was not built. Details in `docs/plans/PLAN-M4.md`, Phase 6.

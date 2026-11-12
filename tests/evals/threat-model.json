@@ -1,0 +1,54 @@
+{
+  "skill": "threat-model",
+  "note": "Triggers on building a threat model from code, infra, or a design. Near-misses are a change review (code-reviewer), a design-weakness review (architecture-review), IAM only (cdk-iam-review), a full security audit or pen test, and plain Q&A about security. The skill sets disable-model-invocation, so positives are explicit invocations or direct asks.",
+  "prompts": [
+    {
+      "id": "threat-model-01",
+      "prompt": "Threat model the order API in this repo. Where are the trust boundaries and what could an attacker do?",
+      "shouldTrigger": true,
+      "note": "Direct threat model with trust boundaries."
+    },
+    {
+      "id": "threat-model-02",
+      "prompt": "Run STRIDE on our order service and give me a table of threats with mitigations.",
+      "shouldTrigger": true,
+      "note": "STRIDE with a threat table."
+    },
+    {
+      "id": "threat-model-03",
+      "prompt": "What could go wrong security-wise with the CDK app in infra/? Map the attack surface.",
+      "shouldTrigger": true,
+      "note": "'Attack surface' and 'what could go wrong security-wise'."
+    },
+    {
+      "id": "threat-model-04",
+      "prompt": "Review my diff for bugs and missing tests.",
+      "shouldTrigger": false,
+      "note": "Near-miss: change review, so the code-reviewer agent."
+    },
+    {
+      "id": "threat-model-05",
+      "prompt": "Review this architecture for weak points and trade-offs. Is it well-architected?",
+      "shouldTrigger": false,
+      "note": "Near-miss: design review, so architecture-review."
+    },
+    {
+      "id": "threat-model-06",
+      "prompt": "Check the IAM roles in my CDK stack for least privilege.",
+      "shouldTrigger": false,
+      "note": "Near-miss: IAM only, so cdk-iam-review."
+    },
+    {
+      "id": "threat-model-07",
+      "prompt": "Do a full penetration test and security audit of our production environment and certify it is compliant.",
+      "shouldTrigger": false,
+      "note": "Near-miss: audit and pen test are out of scope."
+    },
+    {
+      "id": "threat-model-08",
+      "prompt": "What does STRIDE stand for?",
+      "shouldTrigger": false,
+      "note": "Near-miss: plain Q&A, no model of a system asked."
+    }
+  ]
+}

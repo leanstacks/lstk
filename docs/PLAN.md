@@ -252,6 +252,8 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 | `cdk-iam-review`              | Least-privilege review of CDK constructs. Evaluate whether cdk-nag output should feed it                       |
 | `dependency-audit` (optional) | Wraps `npm audit` plus triage guidance. Only if it clearly adds value beyond running the command               |
 
+**Status: done (`lstk` 0.3.0).** `code-reviewer`, `architecture-review`, `threat-model`, and `cdk-iam-review` are built. `dependency-audit` is **not built**: a hand run on the fixture showed only reachability as added value, which a plain prompt already gives (see `docs/plans/PLAN-M4.md`, Phase 6).
+
 **Acceptance:** each runs on a sample repo (`examples/` or a linked fixture) and produces output that is reproducibly structured.
 
 ### M5 — Prototype

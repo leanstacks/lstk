@@ -38,6 +38,25 @@ This repo is public. Before every commit, confirm:
   `tests/evals/RESULTS.md`. See `tests/evals/README.md`.
 - A skill's `name` equals its directory name. `npm run lint:plugins` enforces this.
 
+## Review fixture
+
+`tests/fixtures/sample-repo/` is test data for the M4 review skills. It carries **deliberately seeded defects**
+(listed in its `SEEDED-ISSUES.md`), including a vulnerable `lodash` pin in its `package.json` and a plainly fake secret.
+It is never installed, built, or run.
+
+- Do not run `npm audit` or any dependency scan against it, and keep it out of CI scans.
+- If Dependabot or another scanner is added, exclude `tests/fixtures/` (the repo has no `dependabot.yml` today).
+- `tests/fixtures.test.mjs` checks that every `path:line` in the answer key still matches the fixture. Update both
+  together.
+- Use only placeholder values (`111111111111`, obviously invalid keys).
+
+## Dependency triage
+
+`lstk` has no `dependency-audit` skill (the M4 value gate failed). To triage `npm audit` output, run `npm audit --json`
+yourself and ask Claude to check, for each advisory, whether the vulnerable package or function is used, whether it is a
+dev or runtime dependency, and whether removing or upgrading is the lowest-risk fix. Never run `npm audit fix --force`
+without reading what it changes.
+
 ## Plugin rules
 
 - Each plugin is self-contained. Never use `../` to reach outside a plugin directory.

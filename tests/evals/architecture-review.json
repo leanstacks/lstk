@@ -1,0 +1,54 @@
+{
+  "skill": "architecture-review",
+  "note": "Triggers on reviewing a whole design or CDK app for weak points. Near-misses are one technology choice (tech-eval), a threat analysis (threat-model), IAM only (cdk-iam-review), a code diff review (code-reviewer), and plain Q&A about a design. The skill sets disable-model-invocation, so positives are explicit invocations or direct asks.",
+  "prompts": [
+    {
+      "id": "architecture-review-01",
+      "prompt": "Review this architecture: docs/design/orders.md describes our order service on API Gateway, Lambda, and DynamoDB. What are the weak points?",
+      "shouldTrigger": true,
+      "note": "Direct design doc review with 'weak points'."
+    },
+    {
+      "id": "architecture-review-02",
+      "prompt": "Do a well-architected review of the CDK app in infra/.",
+      "shouldTrigger": true,
+      "note": "Well-architected review of code and infra."
+    },
+    {
+      "id": "architecture-review-03",
+      "prompt": "Is this design sound? Look at the design doc and the stack together and tell me where the trade-offs are.",
+      "shouldTrigger": true,
+      "note": "'Is this design sound' with doc and code."
+    },
+    {
+      "id": "architecture-review-04",
+      "prompt": "Should we use DynamoDB or Aurora for order lookups?",
+      "shouldTrigger": false,
+      "note": "Near-miss: one technology choice, so tech-eval."
+    },
+    {
+      "id": "architecture-review-05",
+      "prompt": "Threat model the order API. What could an attacker do and where are the trust boundaries?",
+      "shouldTrigger": false,
+      "note": "Near-miss: threat analysis, so threat-model."
+    },
+    {
+      "id": "architecture-review-06",
+      "prompt": "Check the IAM roles in my CDK stack for least privilege.",
+      "shouldTrigger": false,
+      "note": "Near-miss: IAM only, so cdk-iam-review."
+    },
+    {
+      "id": "architecture-review-07",
+      "prompt": "Review my diff for bugs and missing tests.",
+      "shouldTrigger": false,
+      "note": "Near-miss: change review, so the code-reviewer agent."
+    },
+    {
+      "id": "architecture-review-08",
+      "prompt": "Explain how our order service handles a cancelled order, based on the design doc.",
+      "shouldTrigger": false,
+      "note": "Near-miss: plain Q&A about a design, no review asked."
+    }
+  ]
+}
