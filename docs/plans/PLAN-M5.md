@@ -248,7 +248,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 ## 6. Checklist
 
 - [ ] Phase 1: decisions Q1, Q2, Q6; `PROTOTYPE.md` and gap-list contracts; test scaffolding
-- [ ] Phase 2: web and Lambda templates, scaffold script, tests, real run
+- [x] Phase 2: web and Lambda templates, scaffold script, tests, real run
 - [ ] Phase 3: `prototype` skill, evals, manual run
 - [ ] Phase 4: `promote-prototype` skill, output template, evals, manual run
 - [ ] Phase 5: guardrail interaction runs and docs
@@ -336,3 +336,57 @@ Wording avoids "ready", "secure", "compliant", and "complete".
   `disable-model-invocation: true`) and the real eval file (plan step 3.6) with the first template. Phase 3 replaces
   the stub body. Do not add the skill to the README or CHANGELOG until Phase 6.
 - Templates must contain no `.env`, no lockfile, and no `../`. Pin every dependency.
+
+### Phase 2 — As built
+
+- **Templates** (`plugins/lstk/skills/prototype/templates/`), all pinned to exact versions on 2026-11-12:
+  - `web/`: `_gitignore`, `index.html`, `package.json`, `PROTOTYPE.md`, `tsconfig.json`, `vite.config.ts` (Vitest config
+    inside, jsdom), `src/{main,App,OrderList}.tsx`, `src/OrderList.test.tsx`, `src/api/{client,fixtures,types}.ts`.
+    The client answers from in-process fixtures and has `setBaseUrl()` to switch to `fetch` (Q5).
+  - `lambda/`: `_gitignore`, `package.json`, `PROTOTYPE.md`, `tsconfig.json`, `events/sample.json`, `scripts/invoke.ts`,
+    `src/handler.ts` (API Gateway HTTP API v2, `GET /orders/{id}`), `src/handler.test.ts`. No bundler and no CDK (Q4, F2).
+    TypeScript runs through Node's native type stripping (`node scripts/invoke.ts`), so the tsconfig sets
+    `erasableSyntaxOnly` and imports use `.ts` extensions.
+  - Pins: react and react-dom 19.3.1, vite 8.3.8, @vitejs/plugin-react 6.3.0, typescript 7.0.2, vitest 5.1.0,
+    @testing-library/react 16.3.3, @testing-library/dom 10.4.2, jsdom 31.0.0, @types/react and @types/react-dom 19.3.0,
+    @types/node 24.19.2, @types/aws-lambda 8.10.164.
+  - `{{name}}` is not used in `.tsx` files, because Prettier reformats `{{name}}` in JSX as an object expression. The web
+    app heading is the literal "Prototype".
+- **Stubs from the Phase 1 constraint:** `skills/prototype/SKILL.md` is a stub (valid frontmatter,
+  `disable-model-invocation: true`, `allowed-tools` already scoped to `${CLAUDE_SKILL_DIR}/scripts/scaffold.mjs`).
+  `tests/evals/prototype.json` is the real eval set (9 prompts). `disable-model-invocation` means the only positives are
+  explicit `/lstk:prototype` invocations, per `tests/evals/README.md`. Natural-language "prototype this" prompts are
+  `false`. This differs from plan step 3.6, which lists natural-language positives.
+- **`scripts/scaffold.mjs`:** `node scaffold.mjs --shape web|lambda --name <kebab-name> --target <dir>`.
+  - Name must match `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`, at most 40 characters.
+  - Refuses a missing target, a `prototypes` entry that is a symlink or a file, and a non-empty `prototypes/<name>/`.
+    An existing empty directory is accepted.
+  - Substitutes `{{name}}` and `{{date}}` (local date, `YYYY-MM-DD`). Renames `_gitignore` to `.gitignore`.
+  - stdout is JSON: `{ shape, name, directory: "prototypes/<name>", files: [paths relative to directory] }`. Errors go to
+    stderr as `scaffold: <message>` with exit code 1 and empty stdout.
+  - Exports `scaffold()`, `nameProblem()`, `ScaffoldError`, `SHAPES`. The templates path is built with
+    `path.join(import.meta.dirname, '..', 'templates')`, because `lint-plugins.mjs` rejects a literal `../` string.
+- **Tests:** `tests/scaffold.test.mjs` (name table, both shapes, substitution, traversal, overwrite refusal, symlink,
+  CLI exit codes, and the real `protect-files` hook run over every scaffolded path). `tests/prototype-skills.test.mjs`
+  gained a template structure block: exactly two shapes, the seven `PROTOTYPE.md` sections in order, the throwaway
+  header on every `.ts`, `.tsx`, and `.html` file, `_gitignore`, no lockfile or env file, and one pinned `package.json`
+  per shape.
+- **Real run** (scratch directory, not committed; Node 24.22.2, npm 11.19.1, 2026-11-12): both shapes scaffolded by the
+  script, then `npm install`, `npm test`, and `npm audit` (0 vulnerabilities in both). Web: 1 test passed and
+  `npm run build` passed. Lambda: 3 tests passed, `npm run typecheck` passed, and `npm run invoke` returned a 200.
+- **`protect-files` (step 2.6):** no scaffolded file is blocked, checked by the hook's own `evaluate()` in the tests.
+  The `.gitignore` rename is not a protected pattern. `npm install` writes `package-lock.json` through Bash, which the
+  hook does not see, and the scaffold never writes one.
+
+### Phase 2 — Handoff
+
+- Script CLI and JSON output are above. Phase 3's skill calls it as
+  `node "${CLAUDE_SKILL_DIR}/scripts/scaffold.mjs" --shape <shape> --name <name> --target <repo root>`, and then tailors
+  the files listed in the JSON.
+- Template `PROTOTYPE.md` files have a `TODO` under `Purpose`. The skill must replace it, and add to `What is faked` and
+  `Known shortcuts`.
+- Tailoring must keep the header comment on every new source file (the structure test only checks the templates).
+- The web app uses `npm run dev` and the Lambda uses `npm run invoke`. `How to run` in `PROTOTYPE.md` must stay
+  accurate after tailoring.
+- No `protect-files` conflicts, so no Phase 5 template fix is pending. Phase 5 still needs the live run with hooks on.
+- Carry-over for Phase 3: `SKILL.md` is a stub and the skill is not yet in `PROTOTYPE_SKILLS_REQUIRE_SECTIONS`.

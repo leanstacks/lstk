@@ -70,12 +70,80 @@ describe('unpinnedDependencies', () => {
   });
 });
 
+const TEMPLATE_SHAPES = ['web', 'lambda'];
+const PROTOTYPE_SECTIONS = [
+  'Status',
+  'Purpose',
+  'How to run',
+  'What is faked',
+  'Known shortcuts',
+  'Not covered',
+  'Promotion',
+];
+const THROWAWAY_HEADER = 'Throwaway prototype. Not production code.';
+const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.html'];
+
+describe('prototype template structure', () => {
+  it('has exactly the web and lambda shapes', () => {
+    const shapes = readdirSync(TEMPLATES_DIR, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+    expect(shapes.sort()).toEqual([...TEMPLATE_SHAPES].sort());
+  });
+
+  describe.each(TEMPLATE_SHAPES)('%s', (shape) => {
+    const dir = path.join(TEMPLATES_DIR, shape);
+    const files = [...walk(dir)].map((f) => path.relative(dir, f).split(path.sep).join('/'));
+
+    it('has PROTOTYPE.md with the contract sections, in order', () => {
+      const text = readFileSync(path.join(dir, 'PROTOTYPE.md'), 'utf8');
+      expect(text.split('\n')[0]).toBe('# {{name}}');
+      const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
+      expect(headings).toEqual(PROTOTYPE_SECTIONS);
+      expect(text).toMatch(/^## Status\n\nThrowaway prototype\. Not production code\./m);
+      expect(text).toContain('/lstk:promote-prototype');
+    });
+
+    it('starts every source file with the throwaway header', () => {
+      const sources = files.filter((f) => SOURCE_EXTENSIONS.includes(path.extname(f)));
+      expect(sources.length).toBeGreaterThan(0);
+      for (const rel of sources) {
+        const head = readFileSync(path.join(dir, rel), 'utf8').split('\n').slice(0, 2).join('\n');
+        expect(head, rel).toContain(THROWAWAY_HEADER);
+      }
+    });
+
+    it('ships _gitignore, no .gitignore, no lockfile, and no env file', () => {
+      expect(files).toContain('_gitignore');
+      expect(files).not.toContain('.gitignore');
+      expect(files.filter((f) => /(^|\/)(package-lock\.json|\.env(\..*)?)$/.test(f))).toEqual([]);
+    });
+
+    it('references nothing outside its own directory', () => {
+      for (const rel of files) {
+        expect(readFileSync(path.join(dir, rel), 'utf8'), rel).not.toMatch(/\.\.\/\.\.\//);
+      }
+    });
+
+    it('has a package.json named by the placeholder', () => {
+      expect(JSON.parse(readFileSync(path.join(dir, 'package.json'), 'utf8')).name).toBe('{{name}}');
+    });
+  });
+
+  it('the Lambda PROTOTYPE.md says it is not deployed', () => {
+    expect(readFileSync(path.join(TEMPLATES_DIR, 'lambda/PROTOTYPE.md'), 'utf8')).toMatch(/Not deployed/);
+  });
+});
+
 describe('prototype templates', () => {
   const packages = existsSync(TEMPLATES_DIR)
     ? [...walk(TEMPLATES_DIR)].filter((f) => path.basename(f) === 'package.json')
     : [];
 
-  // Vacuous until Phase 2 adds the templates. The count assertion is added there.
+  it('finds one package.json per shape', () => {
+    expect(packages).toHaveLength(TEMPLATE_SHAPES.length);
+  });
+
   it.each(packages.map((f) => path.relative(TEMPLATES_DIR, f)))('%s pins every dependency', (rel) => {
     const pkg = JSON.parse(readFileSync(path.join(TEMPLATES_DIR, rel), 'utf8'));
     expect(unpinnedDependencies(pkg)).toEqual([]);

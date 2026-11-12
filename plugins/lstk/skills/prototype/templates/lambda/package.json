@@ -1,0 +1,18 @@
+{
+  "name": "{{name}}",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Throwaway prototype. Not production code.",
+  "scripts": {
+    "invoke": "node scripts/invoke.ts events/sample.json",
+    "typecheck": "tsc",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.164",
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  }
+}

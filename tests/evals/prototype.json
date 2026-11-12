@@ -1,0 +1,60 @@
+{
+  "skill": "prototype",
+  "note": "prototype sets disable-model-invocation, so the only positive cases are explicit slash invocations. Natural-language requests are false because the model must not auto-pick the skill. Near-misses are production scaffolding, estimating (solution-outline), gap analysis (promote-prototype), and deploying.",
+  "prompts": [
+    {
+      "id": "prototype-01",
+      "prompt": "/lstk:prototype an order status dashboard for warehouse staff",
+      "shouldTrigger": true,
+      "note": "Explicit invocation with an idea; the web shape."
+    },
+    {
+      "id": "prototype-02",
+      "prompt": "/lstk:prototype a Lambda that parses shipping webhooks",
+      "shouldTrigger": true,
+      "note": "Explicit invocation; the Lambda shape."
+    },
+    {
+      "id": "prototype-03",
+      "prompt": "/lstk:prototype",
+      "shouldTrigger": true,
+      "note": "Explicit invocation with no idea; the skill asks once for the purpose, shape, and name."
+    },
+    {
+      "id": "prototype-04",
+      "prompt": "Prototype an order dashboard.",
+      "shouldTrigger": false,
+      "note": "disable-model-invocation: the model must not auto-pick the skill; it may suggest the slash command."
+    },
+    {
+      "id": "prototype-05",
+      "prompt": "Spike a Lambda that parses webhooks and show me whether it works.",
+      "shouldTrigger": false,
+      "note": "Natural-language spike request; auto-invocation is disabled."
+    },
+    {
+      "id": "prototype-06",
+      "prompt": "Write the production order service with authentication, tests, and logging.",
+      "shouldTrigger": false,
+      "note": "Near-miss: production code, not a throwaway prototype."
+    },
+    {
+      "id": "prototype-07",
+      "prompt": "What would it take to build an order dashboard? Give me a rough scope and effort.",
+      "shouldTrigger": false,
+      "note": "Near-miss: scope and effort belong to solution-outline."
+    },
+    {
+      "id": "prototype-08",
+      "prompt": "Our prototype works. What gaps do we need to close before production?",
+      "shouldTrigger": false,
+      "note": "Near-miss: gap analysis belongs to promote-prototype."
+    },
+    {
+      "id": "prototype-09",
+      "prompt": "Deploy the Lambda stack to the dev account.",
+      "shouldTrigger": false,
+      "note": "A prototype never deploys, and the guardrails block cdk deploy."
+    }
+  ]
+}
