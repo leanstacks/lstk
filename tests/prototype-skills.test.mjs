@@ -9,7 +9,7 @@ const TEMPLATES_DIR = path.join(SKILLS_DIR, 'prototype/templates');
 
 // M5 skills. Each body must have an output contract and a limits section (PLAN-M5 F7). Grown per phase:
 // `prototype` in Phase 3, `promote-prototype` in Phase 4. Starts empty so an in-progress phase never fails.
-export const PROTOTYPE_SKILLS_REQUIRE_SECTIONS = [];
+export const PROTOTYPE_SKILLS_REQUIRE_SECTIONS = ['prototype'];
 
 const DEPENDENCY_FIELDS = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
 // An exact version, with an optional prerelease suffix. Ranges, tags, URLs, and `latest` are not pins.

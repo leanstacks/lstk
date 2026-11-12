@@ -249,7 +249,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 - [ ] Phase 1: decisions Q1, Q2, Q6; `PROTOTYPE.md` and gap-list contracts; test scaffolding
 - [x] Phase 2: web and Lambda templates, scaffold script, tests, real run
-- [ ] Phase 3: `prototype` skill, evals, manual run
+- [x] Phase 3: `prototype` skill, evals, manual run
 - [ ] Phase 4: `promote-prototype` skill, output template, evals, manual run
 - [ ] Phase 5: guardrail interaction runs and docs
 - [ ] Phase 6: examples, review, release `lstk` 0.4.0 (tag after merge)
@@ -390,3 +390,24 @@ Wording avoids "ready", "secure", "compliant", and "complete".
   accurate after tailoring.
 - No `protect-files` conflicts, so no Phase 5 template fix is pending. Phase 5 still needs the live run with hooks on.
 - Carry-over for Phase 3: `SKILL.md` is a stub and the skill is not yet in `PROTOTYPE_SKILLS_REQUIRE_SECTIONS`.
+
+### Phase 3 — As built
+
+- `skills/prototype/SKILL.md` replaces the stub. Workflow: ground, clarify once, check placement (report only, Q3),
+  scaffold, tailor, write `PROTOTYPE.md`, verify. It has an `Output contract`, `Rules`, `Limits`, and `Hand-offs`
+  sections. The skill is now in `PROTOTYPE_SKILLS_REQUIRE_SECTIONS`.
+- Q3 resolved as the default: report what will pick up `prototypes/<name>/`, never edit root config.
+- The skill does not run `npm install` or start servers. "Verify" means tell the user the commands, and run tests only
+  if dependencies are already installed. `allowed-tools` allows no other Bash.
+- `tests/evals/prototype.json` is unchanged from Phase 2 (9 prompts, explicit-invocation positives).
+- **Manual run** (headless, both plugins loaded, `dontAsk`): web passed first time. Lambda failed first because the
+  model used `--target "$PWD"`, which the permission check denied. Tuned once to require a literal absolute path.
+  Re-run passed. Details are in `tests/evals/RESULTS.md`.
+
+### Phase 3 — Handoff
+
+- Final `description` and `allowed-tools` are in `skills/prototype/SKILL.md`.
+  `allowed-tools: Bash(node "${CLAUDE_SKILL_DIR}/scripts/scaffold.mjs" *), Read, Write, Edit, Glob, Grep`.
+- Misses: the no-argument "ask once" path and the tailored code's behavior were not exercised. Tests and install were
+  not run on the generated prototypes. Phase 5 must still run the unsafe-path attempts with the hooks live.
+- Phase 4 can use a prototype scaffolded by the script (or the scratch ones, which are not committed) as its input.

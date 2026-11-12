@@ -1,5 +1,29 @@
 # Eval results
 
+## 2026-11-12 (M5 Phase 3: `prototype` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk` and `--plugin-dir plugins/lstk-guardrails` (hooks live),
+  `--permission-mode dontAsk`, headless `claude -p`, one scratch repo per shape (only `AGENTS.md`), invoked as
+  `/lstk:prototype <idea>` with the name, shape, and purpose given. Single run per shape, plus one re-run of Lambda
+  after the tune. Not a trigger eval: `disable-model-invocation` means only explicit invocations were tried.
+- **Web** (`order-status`): scaffolded and tailored in the first run. Tree matched the script's list. `PROTOTYPE.md` had
+  all seven sections in order, no `TODO` or `{{` left, the invented lateness rule and frozen clock under
+  `What is faked`, and shortcuts added. Header comment on every source file. No hook block seen. Placement check
+  reported no workspaces, CI, or lint config, and no root config was edited.
+- **Lambda** (`shipping-webhook`): the first run **failed**. The model passed `--target "$PWD"` and the Bash call was
+  denied, so it stopped as instructed (it did not hand-write the files). Tuned once: the skill now requires a literal
+  absolute path and bans shell expansions. The re-run scaffolded and tailored correctly: `PROTOTYPE.md` kept
+  "Not deployed" and the deploy needs, listed the invented carrier payload, hard-coded shared secret, and missing
+  idempotency, and had no placeholders left. Header comments present on all source files.
+- **Not run:** `npm install`, tests, and the dev server (the skill does not run them, and `dontAsk` denied other Bash).
+  The tailored code was not executed, so "it works" is unverified. The `PROTOTYPE.md` claims of "10 cases" and the
+  like came from the model and were not checked.
+- **Hook friction:** none from `protect-files` or `block-cdk-mutate` on the scaffold or tailoring writes. The Phase 5
+  runs still need to try the unsafe paths. A model Bash call to read files was denied by `dontAsk`, not by a hook, and
+  the model fell back to `Read`.
+- **Misses:** the `$PWD` denial (fixed, re-run passed). The skill's "ask once" path (`/lstk:prototype` with no idea)
+  was not exercised.
+
 ## 2026-11-11 (M4 summary, Phase 7)
 
 Manual runs against `tests/fixtures/sample-repo`, one per deliverable (details in the sections below):
