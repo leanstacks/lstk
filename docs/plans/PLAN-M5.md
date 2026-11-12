@@ -260,3 +260,79 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 ## 7. Phase records
 
 Append a "As built" and a "Handoff" subsection per phase here as each phase finishes, in the style of `PLAN-M4.md`.
+
+### Phase 1 — As built
+
+- Verified (Claude Code 2.1.322, 2026-11-12, scratch plugin via `--plugin-dir`, headless `claude -p`, `dontAsk`):
+  - `${CLAUDE_SKILL_DIR}` is substituted in the body and in `allowed-tools`. A skill ran
+    `node "${CLAUDE_SKILL_DIR}/scripts/s.mjs" --shape web --name demo` under
+    `allowed-tools: Bash(node "${CLAUDE_SKILL_DIR}/scripts/s.mjs" *) Read` with the arguments intact, and `Read` of
+    `"${CLAUDE_SKILL_DIR}/templates/web/x.txt"` worked from a different working directory.
+  - `agents-md-author` already uses this form for `scripts/recon.mjs`. The installed-cache path is exercised in the
+    Phase 6 smoke test (F3).
+  - The existing `lint-plugins.mjs` link check already covers `templates/` paths named in a `SKILL.md`.
+- `protect-files` defaults (read from `hooks/protect-files.mjs`): `.env`, `.env.*` (except `.env.example`, `.env.sample`,
+  `.env.template`), `package-lock.json`, anything under `.git/`. Templates must ship none of those. `npm install` writes
+  the lockfile through Bash, which this hook does not see.
+- Added `tests/prototype-skills.test.mjs`: `PROTOTYPE_SKILLS_REQUIRE_SECTIONS` (empty), an exported
+  `unpinnedDependencies()` with table-driven tests, and a per-template `package.json` pin check (vacuous until Phase 2).
+- `.oxlintrc.json` ignores `plugins/lstk/skills/prototype/templates`. Vitest already only includes `tests/**/*.test.mjs`.
+  Prettier keeps checking templates. No `dependabot.yml` exists. `docs/CONTRIBUTING.md` has a "Prototype templates"
+  section. `tests/evals.test.mjs` and `tests/examples.test.mjs` need no change (the evals test iterates skill
+  directories, and the examples list is explicit).
+
+### Phase 1 — Decisions
+
+- **Q1:** script plus prose. `scripts/scaffold.mjs` does the deterministic copy and substitution. Claude tailors the
+  result.
+- **Q2:** pin exact versions in template `package.json`. No lockfile. Record the pin date in the CHANGELOG.
+- **Q6:** two shapes only (`web`, `lambda`). A NestJS shape is a backlog item.
+- Template `.gitignore` ships as `_gitignore` and the script renames it, so tooling that treats `.gitignore` specially
+  does not act on the template tree. (Phase 2 detail.)
+
+### Phase 1 — `PROTOTYPE.md` contract
+
+Required `##` sections, in this order, under a `# <name>` title:
+
+1. `Status`: one line, starting "Throwaway prototype. Not production code."
+2. `Purpose`: the question or demo the prototype serves.
+3. `How to run`: exact commands, working from `prototypes/<name>/`.
+4. `What is faked`: every mocked boundary (data, API, auth, clock, third party).
+5. `Known shortcuts`: shortcuts taken, one per line.
+6. `Not covered`: auth, tests, IaC, observability, and so on, as applicable. The Lambda shape adds "Not deployed" and
+   what a deploy would need.
+7. `Promotion`: one line pointing to `/lstk:promote-prototype`.
+
+Template placeholders: `{{name}}`, `{{date}}`. Template source files start with a one-line throwaway header comment.
+
+### Phase 1 — Gap-list contract (`PROMOTION-GAPS.md`)
+
+Sections, in order: `Scope and sources`, `Summary` (counts by category and size), `What is faked`, `Gaps`,
+`Promotion order`, `Hand-offs`, `Not reviewed`, `Confidence and limits`.
+
+`Gaps` is a table with one row per finding and these columns:
+
+| Column       | Content                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `id`         | `G1`, `G2`, and so on                                                                                              |
+| `category`   | `tests`, `auth`, `error-handling`, `iac`, `observability`, or conditional `security`, `data`, `ops`, `performance` |
+| `gap`        | What production needs that the prototype lacks, in one sentence                                                    |
+| `location`   | `path:line`, or a `PROTOTYPE.md` section name                                                                      |
+| `evidence`   | What was seen (or "absent: searched X"). Never a secret value                                                      |
+| `effort`     | `S`, `M`, `L`, or `XL`                                                                                             |
+| `confidence` | `high`, `medium`, or `low`                                                                                         |
+
+Effort scale (Q9), relative to this prototype and the repo's stack, never hours or cost: `S` is a contained change in
+one file or module with no new dependency. `M` spans a few files or adds one dependency. `L` touches several modules or
+needs a design decision. `XL` is cross-cutting (for example auth through every layer, or the first IaC). The report
+states this basis and that sizes feed `solution-outline`. Conditional categories appear only with a stated reason.
+Wording avoids "ready", "secure", "compliant", and "complete".
+
+### Phase 1 — Handoff
+
+- Mechanics, decisions, and both contracts are above.
+- **Phase 2 constraint:** `lint:plugins` fails on a skill directory with no `SKILL.md`, and `evals.test.mjs` then needs
+  `tests/evals/prototype.json`. Commit a stub `plugins/lstk/skills/prototype/SKILL.md` (valid frontmatter, a short body,
+  `disable-model-invocation: true`) and the real eval file (plan step 3.6) with the first template. Phase 3 replaces
+  the stub body. Do not add the skill to the README or CHANGELOG until Phase 6.
+- Templates must contain no `.env`, no lockfile, and no `../`. Pin every dependency.

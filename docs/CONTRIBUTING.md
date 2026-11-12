@@ -50,6 +50,21 @@ It is never installed, built, or run.
   together.
 - Use only placeholder values (`111111111111`, obviously invalid keys).
 
+## Prototype templates
+
+`plugins/lstk/skills/prototype/templates/` holds the Vite + React and Lambda starters that the `prototype` skill copies
+into a user's repo. They are plugin files, not part of this repo's own build.
+
+- oxlint ignores the directory (see `.oxlintrc.json`). Vitest only runs `tests/**/*.test.mjs`, so template tests never
+  run here. Prettier still checks the files, so keep them formatted.
+- Never run `npm install` or `npm audit` inside `templates/`, and never commit a lockfile or `node_modules` there. Keep
+  the directory out of Dependabot and any dependency scan if one is added (the repo has no `dependabot.yml` today).
+- Every dependency in a template `package.json` is pinned to an exact version. `tests/prototype-skills.test.mjs`
+  enforces it. Record the pin date in the CHANGELOG entry of each release that touches the templates.
+- Templates carry no `.env`, no lockfile, and no `../` path, so `protect-files` and `lint:plugins` stay quiet.
+- A skill directory without a `SKILL.md` fails `lint:plugins`, and a skill with a `SKILL.md` needs
+  `tests/evals/<skill>.json`. Add a stub `SKILL.md` and its eval file in the same commit as the first template.
+
 ## Dependency triage
 
 `lstk` has no `dependency-audit` skill (the M4 value gate failed). To triage `npm audit` output, run `npm audit --json`
