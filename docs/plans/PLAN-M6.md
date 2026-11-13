@@ -410,3 +410,26 @@ Rules: reference skills by name only, never copy a description (the README table
 `tests/guides.test.mjs` checks: relative links in `README.md` and `docs/guides/*.md` (fenced and inline code ignored), every `/lstk:<name>` or `lstk:<name>` and `/lstk-guardrails:<name>` exists as a skill (or, for `lstk:`, an agent), the README mentions every user-invocable skill and agent, `lifecycle.md` (once it exists) mentions every user-invocable skill and agent, `getting-started.md` (once it exists) names `/lstk-guardrails:init`, and guides never mention guardrail-weakening steps outside a "never" rule. Link anchors (`#section`) are not checked. Agent mentions are checked only in `lstk:<agent>` form; the lifecycle test covers bare agent names.
 
 **Handoff to Phase 2:** the matrix, the verified facts, the template, and the Q1 to Q4 decisions above. Legend wording to use: **type it** (slash-only), **say it** (auto-triggers; also callable by slash), **delegate it** (agent), **plain Claude Code** (no lstk skill).
+
+### Phase 2 record — lifecycle map and getting started
+
+**Done:** `docs/guides/lifecycle.md`, `getting-started.md`, and `README.md` (the guides index) are written. `existing-projects.md`, `new-projects.md`, `review-and-hardening.md`, and `faq.md` exist as stubs so index links resolve. `npm run check` passes, and the lifecycle and getting-started tests run (not skipped).
+
+**Legend (final wording, in `lifecycle.md#how-to-invoke-each-piece`):** **type it** (slash-only), **say it** (Claude may load it; also callable by slash), **delegate it** (agent; ask Claude, or `@agent-lstk:<name>`), **plain Claude Code** (no lstk skill). Steps are tagged in brackets: `[type it]`, `[say it]`, `[delegate it]`, `[plain Claude Code]`.
+
+**Stage names:** Discover, Plan, Implement, Review, Commit, Pull request, Harden.
+
+**Stubs to fill (each has an H2 per recipe and a `_Planned._` line; replace it with the recipe-template sections):**
+
+- `existing-projects.md`: Shared implementation loop, Add a feature, Enhance an existing feature, Fix a bug, Improve test coverage (Phase 3).
+- `new-projects.md`: Create a solution design, Start a repo with the default stack, Prototype first, then promote, Implement features in a new project (Phase 4; add the architect-versus-engineer table).
+- `review-and-hardening.md`: Review a change, Review a design, Harden a service, Before a release or client handoff (Phase 5).
+- `faq.md`: whole file (Phase 5).
+
+**Notes for later phases:**
+
+- `guides/README.md` links use anchors (`#add-a-feature`, `#review-a-change`, and so on). The link test does not check anchors, so keep the H2 titles above unchanged or update the index.
+- The wording test flags any line naming `settings.json`, `unprotectPatterns`, or "disable a hook" unless it says never, not, or do not. Write "your Claude Code settings" instead.
+- Guides carry the header `> Last verified against lstk 0.4.0 and Claude Code 2.1.323 on 2026-11-13.` Phase 6 sets the real per-recipe date.
+- `getting-started.md` says to check the install with `/` and `/skills`, not an agent-listing command (not confirmed to exist).
+- `lifecycle.md` links the loop variants to the four recipe files, and the `Guardrails apply throughout` section links the README guardrail model.
