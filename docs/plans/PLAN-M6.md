@@ -475,3 +475,20 @@ Rules: reference skills by name only, never copy a description (the README table
 - `solution-outline` accepts `PROMOTION-GAPS.md` as an input when named in the prompt.
 
 **Follow-up (user request):** recipe 2 was renamed "Start a repo with a chosen stack" and now has a default-stack and a bespoke-stack variant. The bespoke variant uses a user-written stack brief (prompt or `docs/design/stack.md`), `solution-outline`, and `adr-author`. The anchor is now `#start-a-repo-with-a-chosen-stack`, updated in the guides index and in `new-projects.md`. Documented limit: `agents-md-author` records only what it can verify in the repo, so the skeleton comes before `AGENTS.md`. Phase 6 must also test: `agents-md-author` on a near-empty skeleton repo, and `solution-outline` honoring a stack brief over `stack-profile` defaults. Evidence for the scaffold-skill issues: note each bespoke stack a user asks for.
+
+### Phase 5 record — review, hardening, and FAQ
+
+**Done:** `docs/guides/review-and-hardening.md` has four recipes (review a change, review a design, harden a service, before a release or client handoff), each with the template headings, and a shared intro that states the static-review limits. `docs/guides/faq.md` is complete: slash-only skills, a skill that did not trigger, running agents, read-only agents, a hook that blocked a call, repo conventions over `stack-profile`, where files are written and whether to commit them, why there is no implement, fix, or coverage skill, what lstk does not do, and why the guides are not in the plugin cache. H2 titles in `review-and-hardening.md` are unchanged, so the guides index anchors resolve. `npm run check` passes. No skill text was changed. Step 5.6 cross-check: every skill and agent named exists, and output paths and commit notes match the capability matrix.
+
+**Backlog slot for Phase 7 (step 7.4):** `faq.md`, "What does lstk not do?", the closing line "Ideas that are not built yet are tracked in the backlog. The links are added when the backlog is filed." Replace it with links to the scaffold-skill, AWS MCP, `PostToolUse` hook, and "Backlog review" issues.
+
+**Statements that depend on model behavior (Phase 6 must test, in addition to the Phase 3 and 4 lists):**
+
+- Delegating "check my changes for test gaps" makes `code-reviewer` fill the Test gaps section.
+- `architecture-review`, `threat-model`, and `cdk-iam-review` ask once for the input after the bare slash command, and offer inline output.
+- `cdk-iam-review` stops on non-CDK-TypeScript input.
+- `architecture-review` and `threat-model` name each other and `cdk-iam-review` as hand-offs.
+- Claude assesses `npm audit --json` output per advisory from the prompt shown, without changing files.
+- The release checklist prompt makes the three documentation skills report stale content before editing.
+- `@agent-lstk:code-reviewer` forces delegation, and a hook block message is visible to the user (unconfirmed, so the FAQ says to ask Claude).
+- The FAQ claim that `/skills` and the `/plugin` Installed and Errors tabs show what is loaded.
