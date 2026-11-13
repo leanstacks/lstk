@@ -252,8 +252,8 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 3: `prototype` skill, evals, manual run
 - [x] Phase 4: `promote-prototype` skill, output template, evals, manual run
 - [x] Phase 5: guardrail interaction runs and docs
-- [ ] Phase 6: examples, review, release `lstk` 0.4.0 (tag after merge)
-- [ ] `PLAN.md` M5 status updated
+- [ ] Phase 6: examples, release `lstk` 0.4.0 done. `/code-review`, `/security-review`, the installed-cache smoke test, and the tag are still open (see Phase 6 records)
+- [x] `PLAN.md` M5 status updated
 
 ---
 
@@ -468,3 +468,27 @@ Wording avoids "ready", "secure", "compliant", and "complete".
 - Not exercised, for Phase 6 to note as limits: interactive `ask` handling, a `.claude/lstk.json` override run, and an
   evasion attempt through an indirect script. The Phase 6 smoke test should run the skills from the installed cache.
 - Carry-over for M6: consider a path-scoped `Write` if Claude Code documents one for skills.
+
+### Phase 6 — As built
+
+- `docs/examples/prototype.md` (web shape, `order-status`, file tree and `PROTOTYPE.md`) and
+  `docs/examples/promote-prototype.md` (seven gaps in the exact contract shape). `docs/examples/README.md` has both rows
+  and the lifecycle diagram now shows `prototype`, `promote-prototype`, and the throwaway end.
+- `tests/examples.test.mjs`: both skills are in `EXAMPLES_REQUIRED`. `promote-prototype` is a contract skill (headings
+  read from its output template). `prototype` uses a literal map of the seven `PROTOTYPE.md` sections.
+- `tests/evals/RESULTS.md` has an M5 summary table at the top.
+- Release: `lstk` is `0.4.0`, with CHANGELOG (template pin date 2026-11-12), README (fourteen skills), `ARCHITECTURE.md`
+  notes (two contracts, effort scale, no-deploy rule), and `PLAN.md` M5 marked done. `npm run check` (560 tests) and
+  `npm run validate` pass.
+- Public-safety grep over changed files (personal paths, email, AWS key pattern): no matches.
+
+### Phase 6 — Open before merge
+
+- **6.5:** `/code-review` and `/security-review` on the branch have not been run. Fix confirmed findings, then amend the
+  release.
+- **6.7:** the installed-cache smoke test (`/plugin marketplace add ./`, install both plugins, `/reload-plugins`, run
+  each skill once) needs an interactive session and has not been run. This is the check for F3 (template path
+  resolution from the plugin cache).
+- **6.8:** tag `lstk-v0.4.0` after merge.
+- **M6 carry-over:** a path-scoped `Write` for `promote-prototype` if Claude Code documents one. Interactive `ask`
+  handling, a `.claude/lstk.json` override run, and indirect-script evasion remain unexercised.
