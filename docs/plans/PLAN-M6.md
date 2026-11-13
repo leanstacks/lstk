@@ -333,3 +333,80 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 ## Phase records
 
 _Each phase appends its handoff note here._
+
+### Phase 1 record — inventory, decisions, and docs tests
+
+**Done:** `tests/guides.test.mjs` added (passes on an empty `docs/guides/`). Prettier already covers `docs/guides/` (`prettier --check .`, no ignore rule). oxlint covers JS only, so no change. Mermaid and other fenced blocks are stripped before the link check (step 1.6).
+
+#### Capability matrix (source for every guide)
+
+Invocation modes: **type it** = slash-only (`disable-model-invocation: true`), **say it** = Claude may auto-trigger from the description, also callable as `/lstk:<name>`, **delegate it** = agent, run by Claude on request, never by slash.
+
+| Name                   | Kind                                                   | Mode                                 | Input                                            | Output and path                                                                                                    | Commit?                       | Not for                                                                |
+| ---------------------- | ------------------------------------------------------ | ------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ----------------------------- | ---------------------------------------------------------------------- |
+| `agents-md-author`     | skill                                                  | say it                               | the repo                                         | `AGENTS.md` (root or nested); runs read-only `scripts/recon.mjs`                                                   | Yes                           | Overwriting without judging existing instruction files first           |
+| `repo-onboarding`      | skill                                                  | say it                               | the repo                                         | `docs/PROJECT_OVERVIEW.md` (reuse, update, or create)                                                              | Yes (team doc)                | Setup steps (`local-setup-author`)                                     |
+| `local-setup-author`   | skill                                                  | say it                               | the repo                                         | `docs/LOCAL_SETUP.md`                                                                                              | Yes                           | Code overview (`repo-onboarding`)                                      |
+| `solution-outline`     | skill                                                  | say it                               | requirements                                     | In conversation; `docs/design/<name>.md` only when asked                                                           | Yes if written; mark as draft | One tech choice (`tech-eval`), one decision (`adr-author`)             |
+| `tech-eval`            | skill                                                  | say it                               | the options to compare                           | In conversation; `docs/research/<topic>.md` only when asked. Spawns `researcher` agents                            | Yes if written                | A decision already made (`adr-author`)                                 |
+| `adr-author`           | skill                                                  | say it                               | a decision already made                          | `docs/adr/NNNN-kebab-title.md` plus `docs/adr/README.md` index, or the repo's own convention                       | Yes                           | Comparing options (`tech-eval`), explaining a repo                     |
+| `architecture-review`  | skill                                                  | type it                              | a design doc, or a CDK and app codebase          | `docs/reviews/architecture-review-<name>.md`, or inline                                                            | Team choice (a review record) | One tech choice, threat analysis, IAM only                             |
+| `threat-model`         | skill                                                  | type it                              | code and infra, or a design doc                  | `docs/threat-models/<name>.md`, or inline                                                                          | Team choice; usually yes      | Security audit, pen test, code review, IAM only                        |
+| `cdk-iam-review`       | skill                                                  | type it                              | an AWS CDK TypeScript app                        | `docs/reviews/cdk-iam-review-<name>.md`, or inline; diffs shown, never applied                                     | Team choice                   | Other IaC, design review, threat analysis                              |
+| `prototype`            | skill                                                  | type it                              | an idea                                          | `prototypes/<name>/` (Vite + React mock or one Lambda), `PROTOTYPE.md`; scaffolds with `scripts/scaffold.mjs`      | Team choice; throwaway        | Production code, estimating, gap analysis                              |
+| `promote-prototype`    | skill                                                  | type it                              | a `prototypes/<name>/`                           | `prototypes/<name>/PROMOTION-GAPS.md`, or inline; never edits the prototype                                        | Team choice                   | Scoping new work, design review                                        |
+| `commit-messages`      | skill                                                  | say it                               | the staged change                                | A commit message (the repo's convention, else `feat`/`fix`/`chore`/`doc`)                                          | n/a                           | n/a                                                                    |
+| `create-pull-request`  | skill                                                  | type it                              | the current branch                               | A draft GitHub PR using the repo's template; `gh` required                                                         | n/a                           | n/a                                                                    |
+| `stack-profile`        | skill                                                  | background (`user-invocable: false`) | n/a                                              | None. Default stack for use only where the repo is silent                                                          | n/a                           | Not listed in menus; the repo's `AGENTS.md` always wins                |
+| `code-reviewer`        | agent (`tools: Read, Grep, Glob`)                      | delegate it                          | the diff or paths, plus the intent of the change | A fixed-format report: Scope, Summary, Findings, Test gaps, Questions for the author, Not reviewed. Writes no file | n/a                           | Writing or fixing code, explaining code, design review, security audit |
+| `researcher`           | agent (`tools: Read, Grep, Glob, WebFetch, WebSearch`) | delegate it                          | one focused question                             | A sourced report: Question, Findings, Gaps and uncertainty, Suggested follow-ups. Writes no file                   | n/a                           | Changing files                                                         |
+| `lstk-guardrails:init` | skill (guardrails plugin)                              | type it                              | a scope choice: user or project                  | Merges deny and ask rules (optional allow) into Claude Code settings via `scripts/merge-settings.mjs`              | n/a (settings file)           | n/a                                                                    |
+
+The `agents-md-author`, `repo-onboarding`, and `local-setup-author` skills treat each other's outputs as inputs. They link, never copy, and never modify the others' files.
+
+**Gaps the matrix confirms (content principle):** no skill implements a feature, fixes a bug, or improves test coverage. Those steps are native Claude Code.
+
+**Counts:** fourteen lstk skills (thirteen user-invocable, plus background `stack-profile`), two agents, one guardrails skill (`init`).
+
+#### Verified Claude Code facts (step 1.2)
+
+Verified 2026-11-13 against the official docs (code.claude.com) for Claude Code `2.1.323`. Guides carry "Last verified against `lstk` 0.4.0 and Claude Code 2.1.323".
+
+- **Plan mode (Q2).** `Shift+Tab` cycles permission modes until the status bar shows plan mode, or prefix one prompt with `/plan`, or start with `claude --permission-mode plan`. Claude reads and proposes a plan, and edits stay blocked until the user approves. At the approval prompt press `Esc` before `Shift+Tab`, because `Shift+Tab` there approves the plan. `Ctrl+G` opens the plan in an editor. Doc: `permission-modes`, `common-workflows`.
+- **Delegating to an agent.** Natural language ("have the code-reviewer subagent review...") usually delegates. `@agent-lstk:code-reviewer` guarantees it. The scoped name is `lstk:code-reviewer`. **A subagent does not see the conversation, prior skills, or files already read.** It gets its own prompt, the delegation message, the `CLAUDE.md` hierarchy, and a git status snapshot. So every hand-off prompt must carry the diff or paths and the intent (F2). Doc: `sub-agents`.
+- **Skill invocation.** Plugin skills are `/<plugin>:<skill>`, for example `/lstk:adr-author`. A bare `/<skill>` also works unless the name collides. `disable-model-invocation: true` means Claude never loads the skill on its own, and only the slash command runs it. `user-invocable: false` hides it from the `/` menu and Claude loads it automatically (`stack-profile`). Doc: `skills`.
+- **What is loaded.** `/` menu and `/skills` list skills. `/plugin` Installed and Errors tabs, and `claude plugin list`, list plugins. **Not confirmed:** an in-session command that lists loaded agents (`/agents` is documented as a reminder to ask Claude to manage subagents). The guides must not promise one.
+- **Install.** `/plugin marketplace add <owner/repo | ./local/path>` (a local path needs the `./` prefix), then `/plugin install <plugin>@<marketplace>` and choose a scope. After a local change: `/plugin marketplace update lstk`, update the plugin, then `/reload-plugins`. Local marketplaces do not auto-update. Doc: `plugins/install`.
+- **Hooks.** A `PreToolUse` hook returning `permissionDecision` `deny` cancels the call and sends the reason to Claude. `ask` shows the normal prompt. A `deny` holds in every permission mode. **Not confirmed:** that the JSON reason text is shown to the user as well as to Claude. The FAQ says "ask Claude what was blocked and why" instead of promising a visible message. Hooks do not run for `@`-referenced files. Doc: `hooks`, `hooks-guide`.
+
+#### Manifest check (Q4, step 1.3)
+
+On a scratch copy, `claude plugin validate --strict` passed for the marketplace and both plugins with `keywords` added to both `plugin.json` files and `homepage`, `repository`, `license`, and `keywords` added to both marketplace entries. Both `plugin.json` files **already** carry `license`, `repository`, and `homepage`, so only `keywords` is new. Manifests were not changed in Phase 1. The plugin-directory profile (`--profile directory`, not used by `npm run validate`) flags `README.md` missing in each plugin folder (`README_MISSING`). A root README counts per its own note, but a copy outside git did not see it. Not a blocker. Phase 8 may add a short `README.md` to each plugin if the directory profile matters for listing.
+
+#### Decisions
+
+- **Q1 (header).** Standard header, no YAML front matter. Under the H1: one-line purpose, then `> Last verified against lstk X and Claude Code Y on YYYY-MM-DD.` Phase 6 sets the real date per recipe.
+- **Q2 (native features).** Name them, link the Claude Code docs, do not re-document. Plan mode is `Shift+Tab` or `/plan`. Agents are delegated by name or `@agent-lstk:<name>`. Never claim a command lists agents.
+- **Q3 (next-skill handoffs).** Guides carry the sequencing. Skills keep their existing by-name handoffs. No skill edits in M6 unless Phase 6 finds a wrong one.
+- **Q4 (manifest metadata).** Yes. `keywords` is accepted. Add it in Phase 8, with a patch bump of each plugin whose `plugin.json` changes. Marketplace-entry metadata (`homepage`, `repository`, `license`, `keywords`) is also accepted, and marketplace-only edits need no plugin bump.
+
+#### Recipe template (Phases 2 to 5)
+
+Each recipe is an H3 or H2 section with these headings in order, as bold lead-ins or H4s:
+
+1. **When to use it.** One or two sentences.
+2. **Steps.** A numbered list. Each step names the tool and the invocation mode in brackets: `[type it]`, `[say it]`, `[delegate it]`, or `[plain Claude Code]`.
+3. **Prompt.** A copy-paste prompt per step, in a fenced block. Agent prompts carry the diff or paths and the intent.
+4. **Produces.** The artifact path and whether to commit it (from the matrix).
+5. **Skip it when.** Conditions under which a step is unnecessary.
+6. **What lstk adds here.** The skills and agents the recipe uses and what each contributes.
+7. **What is plain Claude Code here.** Steps that no skill supports.
+8. **Example.** A link into `docs/examples/` when one exists.
+
+Rules: reference skills by name only, never copy a description (the README table is the single source). Use `/lstk:<name>` for slash invocation. Use Example Orders and placeholders. Never tell a user to disable a hook, edit permissions to bypass a guardrail, or skip permission prompts.
+
+#### Test notes for later phases
+
+`tests/guides.test.mjs` checks: relative links in `README.md` and `docs/guides/*.md` (fenced and inline code ignored), every `/lstk:<name>` or `lstk:<name>` and `/lstk-guardrails:<name>` exists as a skill (or, for `lstk:`, an agent), the README mentions every user-invocable skill and agent, `lifecycle.md` (once it exists) mentions every user-invocable skill and agent, `getting-started.md` (once it exists) names `/lstk-guardrails:init`, and guides never mention guardrail-weakening steps outside a "never" rule. Link anchors (`#section`) are not checked. Agent mentions are checked only in `lstk:<agent>` form; the lifecycle test covers bare agent names.
+
+**Handoff to Phase 2:** the matrix, the verified facts, the template, and the Q1 to Q4 decisions above. Legend wording to use: **type it** (slash-only), **say it** (auto-triggers; also callable by slash), **delegate it** (agent), **plain Claude Code** (no lstk skill).
