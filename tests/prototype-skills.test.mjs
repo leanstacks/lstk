@@ -192,3 +192,39 @@ describe('promote-prototype output template', () => {
     }
   });
 });
+
+// F1: the skills never tell a user to weaken a guardrail. A line may mention these only as a "never" rule.
+const GUARDRAIL_WEAKENING =
+  /disabl\w*\s+(?:a\s+|the\s+|any\s+|your\s+)?(?:lstk[- ]?guardrails?\s+)?hooks?\b|~\/\.claude\/settings(?:\.local)?\.json|settings\.json|dangerously-skip-permissions|bypassPermissions|unprotectPatterns/i;
+
+describe('prototype skills and guardrails', () => {
+  const files = ['prototype', 'promote-prototype'].flatMap((skill) => {
+    const dir = path.join(SKILLS_DIR, skill);
+    return [...walk(dir)].filter((f) => f.endsWith('.md') && !f.includes(`${path.sep}templates${path.sep}`));
+  });
+
+  it('finds the skill files', () => {
+    expect(files.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it.each([
+    ['disable a hook', true],
+    ['Disable the hooks first', true],
+    ['edit ~/.claude/settings.json', true],
+    ['run with --dangerously-skip-permissions', true],
+    ['add it to unprotectPatterns', true],
+    ['Report the block and stop', false],
+  ])('pattern check: %s', (line, hit) => {
+    expect(GUARDRAIL_WEAKENING.test(line)).toBe(hit);
+  });
+
+  it('mentions guardrail-weakening steps only in a "never" rule', () => {
+    for (const file of files) {
+      for (const line of readFileSync(file, 'utf8').split('\n')) {
+        if (GUARDRAIL_WEAKENING.test(line)) {
+          expect(line, `${path.relative(ROOT, file)}: ${line}`).toMatch(/\b(never|do not|don't|not)\b/i);
+        }
+      }
+    }
+  });
+});

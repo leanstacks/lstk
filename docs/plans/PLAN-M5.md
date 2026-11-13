@@ -251,7 +251,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 2: web and Lambda templates, scaffold script, tests, real run
 - [x] Phase 3: `prototype` skill, evals, manual run
 - [x] Phase 4: `promote-prototype` skill, output template, evals, manual run
-- [ ] Phase 5: guardrail interaction runs and docs
+- [x] Phase 5: guardrail interaction runs and docs
 - [ ] Phase 6: examples, review, release `lstk` 0.4.0 (tag after merge)
 - [ ] `PLAN.md` M5 status updated
 
@@ -441,3 +441,30 @@ Wording avoids "ready", "secure", "compliant", and "complete".
   columns are `id`, `category`, `gap`, `location`, `evidence`, `effort`, `confidence`.
 - Misses: the no-argument path, inline mode, and the missing-`PROTOTYPE.md` path were not exercised. Phase 5 must try
   the unsafe write (outside `prototypes/<name>/PROMOTION-GAPS.md`) with the hooks live, because `Write` is unscoped.
+
+### Phase 5 — As built
+
+- **Live runs** (Claude Code 2.1.323, both plugins via `--plugin-dir`, hooks live, scratch repos, single runs). Full table
+  in `tests/evals/RESULTS.md`.
+  - Both shapes scaffolded and tailored by `/lstk:prototype` with no false block from `protect-files` or
+    `block-cdk-mutate`.
+  - `cdk deploy` was denied by the hook with its actionable message, `cdk bootstrap` asked, `.env`, root
+    `package-lock.json`, and `.git/config` writes were denied, and `.env.example` was allowed.
+  - In the Lambda skill run, the skill itself declined the "deploy it" request. In the `promote-prototype` run, the skill
+    refused a second report copy, an edit to prototype code, and a `.env`. Nothing was written outside
+    `PROMOTION-GAPS.md`.
+- **No hook or template changed** (steps 5.3). No fixture row and no `lstk-guardrails` release were needed.
+- **Step 5.4:** a "Prototypes and guardrails" section in `README.md` and `docs/ARCHITECTURE.md`.
+- **Step 5.5:** `tests/prototype-skills.test.mjs` gained a guardrail-weakening check over both skills' Markdown (not the
+  templates). The patterns (disabling a hook, `settings.json`, `--dangerously-skip-permissions`, `bypassPermissions`,
+  `unprotectPatterns`) may appear only on a "never", "do not", or "not" line.
+- **Finding:** `promote-prototype` has an unscoped `Write`, so its one-report-path rule is prompt-only. It held in the run.
+  Documented, not fixed, because the plugin `allowed-tools` format has no verified path scope for `Write`.
+
+### Phase 5 — Handoff
+
+- Release-note text: "Both prototype skills run with the guardrail hooks on. Prototypes do not deploy, and the skills
+  never ask a user to weaken a guardrail. `promote-prototype` limits itself to one report file by instruction."
+- Not exercised, for Phase 6 to note as limits: interactive `ask` handling, a `.claude/lstk.json` override run, and an
+  evasion attempt through an indirect script. The Phase 6 smoke test should run the skills from the installed cache.
+- Carry-over for M6: consider a path-scoped `Write` if Claude Code documents one for skills.

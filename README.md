@@ -120,6 +120,21 @@ git.
   are the backstop.
 - **The real guarantee is credentials.** Use a read-only AWS identity, and do not give the agent deploy credentials.
 
+### Prototypes and guardrails
+
+The prototype workflow (`/lstk:prototype`, `/lstk:promote-prototype`) runs with the hooks on.
+
+- **Hooks stay on.** Scaffolding writes no protected path (no `.env`, no lockfile), so the hooks do not get in the way.
+  `npm install` writes `package-lock.json` through Bash, which `protect-files` does not see.
+- **Prototypes do not deploy.** The Lambda shape runs locally only and ships no CDK app. `block-cdk-mutate` denies
+  `cdk deploy`, and the skills never ask you to disable a hook, edit your permission settings, or skip permission prompts.
+  If a hook blocks a write, the skill reports the block and stops.
+- **Legitimate overrides are yours to make.** To let the agent edit a protected path in one project, add the pattern to
+  `unprotectPatterns` in `.claude/lstk.json` yourself. The skills never do this for you.
+- **Limits.** A hook sees the command or path, not its effects. `promote-prototype` limits itself to one report file by
+  its own instructions, and `Write` is not path-scoped, so that rule is text and not enforcement. Only `protect-files`
+  stops a write to a protected path.
+
 ### Install and init
 
 1. Install the plugin (see [Install](#install)).
