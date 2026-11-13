@@ -5,6 +5,33 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [lstk 0.4.0]
+
+### Added
+
+- `lstk` skills `prototype` and `promote-prototype`. Both set `disable-model-invocation: true`.
+  - `prototype` scaffolds a throwaway prototype in `prototypes/<name>/` in one of two shapes (`web`: Vite, React, and
+    TypeScript with a mocked API, or `lambda`: one handler with local invocation and a test). It writes `PROTOTYPE.md`
+    with seven fixed sections that state "throwaway by default", what is faked, and known shortcuts. It ships
+    templates and `scripts/scaffold.mjs` (Node built-ins only), which refuses a non-empty target and path traversal.
+  - `promote-prototype` reads a prototype statically and writes `prototypes/<name>/PROMOTION-GAPS.md`: a cited gap list
+    with relative effort (`S`, `M`, `L`, `XL`, never hours or cost), a promotion order, and `Not reviewed` and
+    `Confidence and limits` sections.
+- Prototypes and guardrails notes in the README and `docs/ARCHITECTURE.md`. Both skills run with the guardrail hooks on,
+  prototypes do not deploy, and the skills never ask a user to weaken a guardrail. `promote-prototype` limits itself to
+  one report file by instruction.
+- Tests: scaffold script tests (including the real `protect-files` hook over every scaffolded path), template
+  structure and pinned-dependency checks, a guardrail-wording check on skill text, and example headings checked against
+  each contract.
+- Worked examples `docs/examples/prototype.md` and `docs/examples/promote-prototype.md`, and manual run records in
+  `tests/evals/RESULTS.md`.
+
+### Changed
+
+- `lstk` is `0.4.0`. `lstk-guardrails` is unchanged.
+- Template dependencies are pinned to exact versions as of 2026-11-12. Run `npm install`, then `npm outdated`, in a new
+  prototype.
+
 ## [lstk 0.3.0]
 
 ### Added

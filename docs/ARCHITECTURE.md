@@ -190,6 +190,18 @@ Verified in M3 Phase 1 (Claude Code 2.1.322, 2026-11-11) against the sub-agents 
   of `protect-files` scope.
 - Live evidence is in `tests/evals/RESULTS.md` (M5 Phase 5).
 
+### Prototype skills (as built in M5)
+
+- **Two contracts.** `PROTOTYPE.md` has seven sections in a fixed order (`Status`, `Purpose`, `How to run`,
+  `What is faked`, `Known shortcuts`, `Not covered`, `Promotion`). `PROMOTION-GAPS.md` has eight (`Scope and sources`,
+  `Summary`, `What is faked`, `Gaps`, `Promotion order`, `Hand-offs`, `Not reviewed`, `Confidence and limits`) and a
+  seven-column `Gaps` table. Tests check the templates and the worked examples against both.
+- **Relative effort.** Gaps are sized `S`, `M`, `L`, or `XL` against the prototype and its stack, never in hours or cost.
+  The sizes are inputs to `solution-outline`, not estimates.
+- **No deploy.** Prototypes never include deployable infrastructure. IaC is counted as a gap by `promote-prototype`.
+- **Templates and script.** Templates live in `skills/prototype/templates/` with pinned dependencies and are copied by
+  `scripts/scaffold.mjs`, which resolves them through `${CLAUDE_SKILL_DIR}`.
+
 ### Reference skills and skill-to-skill use
 
 - `user-invocable: false` hides a skill from the `/` menu and from `/name`, but Claude can still load it through the
