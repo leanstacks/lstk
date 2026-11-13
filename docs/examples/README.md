@@ -1,7 +1,7 @@
 # Worked examples
 
 One fictional scenario runs through these examples: **Example Orders**, a small order-tracking API for a made-up
-retailer. The skills and the agent read as one lifecycle: design, then review and harden the built result.
+retailer. The skills and the agent read as one lifecycle: design, prototype, then review and harden the built result.
 
 ```mermaid
 flowchart LR
@@ -15,6 +15,11 @@ flowchart LR
     F -- "IAM concerns" --> H["cdk-iam-review<br/>least-privilege review"]
     G -- "IAM detail" --> H
     F -. "decision surfaced" .-> C
+    A -- "idea to test" --> P["prototype<br/>throwaway scaffold"]
+    B -- "idea to test" --> P
+    P -- "idea survives" --> Q["promote-prototype<br/>gap list"]
+    Q -- "gaps feed estimates" --> A
+    P -. "idea does not survive" .-> X["discard"]
 ```
 
 | Example                                          | Skill                   | Shows                                                      |
@@ -26,6 +31,8 @@ flowchart LR
 | [architecture-review.md](architecture-review.md) | `architecture-review`   | Findings by pillar and trade-offs to decide.               |
 | [threat-model.md](threat-model.md)               | `threat-model`          | A data-flow diagram and a STRIDE threat table.             |
 | [cdk-iam-review.md](cdk-iam-review.md)           | `cdk-iam-review`        | A principal inventory, findings, and shown-only diffs.     |
+| [prototype.md](prototype.md)                     | `prototype`             | A scaffolded web prototype and its `PROTOTYPE.md`.         |
+| [promote-prototype.md](promote-prototype.md)     | `promote-prototype`     | A cited gap list with relative effort for that prototype.  |
 
 `stack-profile` has no example of its own. It is reference-only, and its effect is visible in the **Stack** lines of the
 design examples.

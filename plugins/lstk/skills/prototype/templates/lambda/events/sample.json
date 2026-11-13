@@ -1,0 +1,27 @@
+{
+  "version": "2.0",
+  "routeKey": "GET /orders/{id}",
+  "rawPath": "/orders/ORD-1001",
+  "rawQueryString": "",
+  "headers": {},
+  "pathParameters": { "id": "ORD-1001" },
+  "requestContext": {
+    "accountId": "000000000000",
+    "apiId": "example",
+    "domainName": "example.invalid",
+    "domainPrefix": "example",
+    "http": {
+      "method": "GET",
+      "path": "/orders/ORD-1001",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "192.0.2.1",
+      "userAgent": "local"
+    },
+    "requestId": "local-request",
+    "routeKey": "GET /orders/{id}",
+    "stage": "$default",
+    "time": "05/Jan/2026:09:00:00 +0000",
+    "timeEpoch": 1767603600000
+  },
+  "isBase64Encoded": false
+}

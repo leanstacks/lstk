@@ -16,6 +16,8 @@ const EXAMPLES_REQUIRED = [
   'architecture-review',
   'threat-model',
   'cdk-iam-review',
+  'prototype',
+  'promote-prototype',
 ];
 
 // The code-reviewer agent defines its report format in the agent prompt and has no template file, so
@@ -25,7 +27,12 @@ const AGENT_EXAMPLES = {
 };
 
 // Review skills whose examples must follow the contract headings in references/output-template.md.
-const CONTRACT_SKILLS = ['architecture-review', 'threat-model', 'cdk-iam-review'];
+const CONTRACT_SKILLS = ['architecture-review', 'threat-model', 'cdk-iam-review', 'promote-prototype'];
+
+// `prototype` has no output template file. Its contract is the PROTOTYPE.md section list (PLAN-M5 Phase 1).
+const LITERAL_EXAMPLES = {
+  prototype: ['Status', 'Purpose', 'How to run', 'What is faked', 'Known shortcuts', 'Not covered', 'Promotion'],
+};
 
 const h2 = (text) => [...text.matchAll(/^## (.+?)\s*$/gm)].map((m) => m[1]);
 
@@ -59,6 +66,11 @@ describe('worked examples', () => {
     const expected = h2(template);
     expect(expected.length, `no contract headings in ${skill} template`).toBeGreaterThan(0);
     expect(inOrder(expected, h2(example)), `${skill}.md headings vs ${expected.join(' > ')}`).toBe(true);
+  });
+
+  it.each(Object.keys(LITERAL_EXAMPLES))('%s example shows every PROTOTYPE.md section in order', (skill) => {
+    const example = readFileSync(path.join(EXAMPLES_DIR, `${skill}.md`), 'utf8');
+    expect(inOrder(LITERAL_EXAMPLES[skill], h2(example))).toBe(true);
   });
 
   it.each(Object.keys(AGENT_EXAMPLES))('%s agent example follows its report format in order', (agent) => {

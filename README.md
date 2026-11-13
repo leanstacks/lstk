@@ -3,7 +3,7 @@
 A [Claude Code](https://code.claude.com) plugin marketplace that helps engineers and architects research, design,
 develop, review, and harden applications, and prototype quickly. It is AWS-first and TypeScript-first.
 
-> **Status:** pre-1.0. `lstk` is `0.3.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships twelve skills and two agents so far, and
+> **Status:** pre-1.0. `lstk` is `0.4.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships fourteen skills and two agents so far, and
 > more arrive in later milestones. See [docs/PLAN.md](docs/PLAN.md).
 
 ## Plugins
@@ -45,6 +45,8 @@ The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 | `architecture-review` | User-invoked only                              | Design or CDK review by pillar, with trade-offs to decide. Writes `docs/reviews/`.           |
 | `threat-model`        | User-invoked only                              | STRIDE threat table from code and infra, with mitigations. Writes `docs/threat-models/`.     |
 | `cdk-iam-review`      | User-invoked only                              | Static IAM review of CDK TypeScript, with shown-only diffs. Writes `docs/reviews/`.          |
+| `prototype`           | User-invoked only                              | Throwaway web or Lambda prototype in `prototypes/<name>/`, with a `PROTOTYPE.md`.            |
+| `promote-prototype`   | User-invoked only                              | Cited gap list with relative effort for taking a prototype to production.                    |
 
 ### Agents
 
@@ -53,7 +55,7 @@ The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 | `researcher`    | `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch` | Read-only research that returns a sourced report. Used by `tech-eval`. |
 | `code-reviewer` | `Read`, `Grep`, `Glob`                          | Read-only change review. The caller supplies the diff or paths.        |
 
-See [docs/examples](docs/examples/README.md) for worked examples of the design and review skills.
+See [docs/examples](docs/examples/README.md) for worked examples of the design, review, and prototype skills.
 
 Skills defer to the target repo: its `AGENTS.md`, `CONTRIBUTING.md`, and templates win over the skill's defaults.
 
@@ -119,6 +121,21 @@ git.
 - **Hooks fail open.** An unexpected internal error prints a warning to stderr and allows the call. The permission rules
   are the backstop.
 - **The real guarantee is credentials.** Use a read-only AWS identity, and do not give the agent deploy credentials.
+
+### Prototypes and guardrails
+
+The prototype workflow (`/lstk:prototype`, `/lstk:promote-prototype`) runs with the hooks on.
+
+- **Hooks stay on.** Scaffolding writes no protected path (no `.env`, no lockfile), so the hooks do not get in the way.
+  `npm install` writes `package-lock.json` through Bash, which `protect-files` does not see.
+- **Prototypes do not deploy.** The Lambda shape runs locally only and ships no CDK app. `block-cdk-mutate` denies
+  `cdk deploy`, and the skills never ask you to disable a hook, edit your permission settings, or skip permission prompts.
+  If a hook blocks a write, the skill reports the block and stops.
+- **Legitimate overrides are yours to make.** To let the agent edit a protected path in one project, add the pattern to
+  `unprotectPatterns` in `.claude/lstk.json` yourself. The skills never do this for you.
+- **Limits.** A hook sees the command or path, not its effects. `promote-prototype` limits itself to one report file by
+  its own instructions, and `Write` is not path-scoped, so that rule is text and not enforcement. Only `protect-files`
+  stops a write to a protected path.
 
 ### Install and init
 

@@ -264,6 +264,13 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 | `promote-prototype` skill | Runs a gap analysis against production expectations (tests, auth, error handling, IaC, observability) and emits a **gap list with relative effort**, which feeds estimates              |
 | Guardrail interaction     | Hooks stay active. Prototypes get speed from scaffolding, not from weakened safety                                                                                                      |
 
+**Status: done (`lstk` 0.4.0).** As built, see `docs/plans/PLAN-M5.md`:
+
+- `prototype` scaffolds `web` or `lambda` shapes into `prototypes/<name>/` through `scripts/scaffold.mjs` (Node built-ins only, templates pinned, no CDK app, no deploy). It writes a `PROTOTYPE.md` with seven fixed sections.
+- `promote-prototype` writes `prototypes/<name>/PROMOTION-GAPS.md` using a fixed eight-section contract and a seven-column gap table. Effort is relative (`S`, `M`, `L`, `XL`), never hours or cost.
+- Both skills set `disable-model-invocation: true` and run with the hooks on. No hook changed. `promote-prototype` has an unscoped `Write`, so its one-report-path rule is a prompt rule.
+- A test checks that skill text never tells users to weaken a guardrail. Examples for both skills are in `docs/examples/`.
+
 ### M6 — Backlog (grow from real use)
 
 - Scaffold skills: `nestjs-module`, `lambda-handler`, `react-feature`, `cdk-construct`.

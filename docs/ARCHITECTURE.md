@@ -176,6 +176,32 @@ Verified in M3 Phase 1 (Claude Code 2.1.322, 2026-11-11) against the sub-agents 
 - **Fixture.** `tests/fixtures/sample-repo/` carries eight seeded issues with an answer key that a test keeps in sync.
   It is excluded from scanners.
 
+### Prototypes and guardrails (M5)
+
+- **Hooks stay on.** Neither prototype skill asks to disable a hook, edit settings, or skip permission prompts. A test
+  (`tests/prototype-skills.test.mjs`) fails if skill text mentions those steps outside a "never" rule.
+- **No deploy path.** The Lambda template has no CDK app and no bundler, so `cdk deploy` is never part of the workflow.
+  `block-cdk-mutate` denies it if a user or the model asks.
+- **Templates avoid protected paths.** The template tree has no `.env` and no lockfile, and the `.gitignore` ships as
+  `_gitignore`. A test runs the real `protect-files` hook over every scaffolded path.
+- **Unscoped `Write`.** `promote-prototype` has `Write` without a path scope, so "one report path" is a prompt rule. In
+  a live run it refused a second write and a `.env` write. For a protected path, `protect-files` is the enforcement.
+- **A hook sees the call, not its effects.** `npm install` (a lockfile write) and any script run through Bash are out
+  of `protect-files` scope.
+- Live evidence is in `tests/evals/RESULTS.md` (M5 Phase 5).
+
+### Prototype skills (as built in M5)
+
+- **Two contracts.** `PROTOTYPE.md` has seven sections in a fixed order (`Status`, `Purpose`, `How to run`,
+  `What is faked`, `Known shortcuts`, `Not covered`, `Promotion`). `PROMOTION-GAPS.md` has eight (`Scope and sources`,
+  `Summary`, `What is faked`, `Gaps`, `Promotion order`, `Hand-offs`, `Not reviewed`, `Confidence and limits`) and a
+  seven-column `Gaps` table. Tests check the templates and the worked examples against both.
+- **Relative effort.** Gaps are sized `S`, `M`, `L`, or `XL` against the prototype and its stack, never in hours or cost.
+  The sizes are inputs to `solution-outline`, not estimates.
+- **No deploy.** Prototypes never include deployable infrastructure. IaC is counted as a gap by `promote-prototype`.
+- **Templates and script.** Templates live in `skills/prototype/templates/` with pinned dependencies and are copied by
+  `scripts/scaffold.mjs`, which resolves them through `${CLAUDE_SKILL_DIR}`.
+
 ### Reference skills and skill-to-skill use
 
 - `user-invocable: false` hides a skill from the `/` menu and from `/name`, but Claude can still load it through the
