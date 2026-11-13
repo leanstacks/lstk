@@ -9,7 +9,7 @@ const TEMPLATES_DIR = path.join(SKILLS_DIR, 'prototype/templates');
 
 // M5 skills. Each body must have an output contract and a limits section (PLAN-M5 F7). Grown per phase:
 // `prototype` in Phase 3, `promote-prototype` in Phase 4. Starts empty so an in-progress phase never fails.
-export const PROTOTYPE_SKILLS_REQUIRE_SECTIONS = ['prototype'];
+export const PROTOTYPE_SKILLS_REQUIRE_SECTIONS = ['prototype', 'promote-prototype'];
 
 const DEPENDENCY_FIELDS = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
 // An exact version, with an optional prerelease suffix. Ranges, tags, URLs, and `latest` are not pins.
@@ -147,5 +147,48 @@ describe('prototype templates', () => {
   it.each(packages.map((f) => path.relative(TEMPLATES_DIR, f)))('%s pins every dependency', (rel) => {
     const pkg = JSON.parse(readFileSync(path.join(TEMPLATES_DIR, rel), 'utf8'));
     expect(unpinnedDependencies(pkg)).toEqual([]);
+  });
+});
+
+const GAP_SECTIONS = [
+  'Scope and sources',
+  'Summary',
+  'What is faked',
+  'Gaps',
+  'Promotion order',
+  'Hand-offs',
+  'Not reviewed',
+  'Confidence and limits',
+];
+const GAP_COLUMNS = ['id', 'category', 'gap', 'location', 'evidence', 'effort', 'confidence'];
+
+describe('promote-prototype output template', () => {
+  const dir = path.join(SKILLS_DIR, 'promote-prototype');
+  const template = readFileSync(path.join(dir, 'references/output-template.md'), 'utf8');
+  const skill = readFileSync(path.join(dir, 'SKILL.md'), 'utf8');
+
+  it('has the contract sections, in order', () => {
+    expect([...template.matchAll(/^## (.+)$/gm)].map((m) => m[1])).toEqual(GAP_SECTIONS);
+  });
+
+  it('has the gap table columns, in order', () => {
+    const header = template.split('\n').find((l) => /^\| id\s/.test(l));
+    expect(
+      header
+        .split('|')
+        .slice(1, -1)
+        .map((c) => c.trim()),
+    ).toEqual(GAP_COLUMNS);
+  });
+
+  it('names the same sections and columns in SKILL.md', () => {
+    for (const s of GAP_SECTIONS) expect(skill).toContain(`\`${s}\``);
+    expect(skill).toContain(GAP_COLUMNS.map((c) => `\`${c}\``).join(', '));
+  });
+
+  it('never uses the banned verdict words outside a "never" rule', () => {
+    for (const line of skill.split('\n')) {
+      if (/\b(ready|secure|compliant|complete)\b/i.test(line)) expect(line, line).toMatch(/never|not|no /i);
+    }
   });
 });

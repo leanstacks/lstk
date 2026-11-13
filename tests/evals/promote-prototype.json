@@ -1,0 +1,54 @@
+{
+  "skill": "promote-prototype",
+  "note": "promote-prototype sets disable-model-invocation, so the only positive cases are explicit slash invocations. Natural-language requests are false because the model must not auto-pick the skill. Near-misses are architecture-review, solution-outline, prototype, and actually rewriting the prototype.",
+  "prompts": [
+    {
+      "id": "promote-prototype-01",
+      "prompt": "/lstk:promote-prototype prototypes/order-dashboard",
+      "shouldTrigger": true,
+      "note": "Explicit invocation with a prototype path."
+    },
+    {
+      "id": "promote-prototype-02",
+      "prompt": "/lstk:promote-prototype what would it take to productionize the shipping webhook prototype?",
+      "shouldTrigger": true,
+      "note": "Explicit invocation with a natural-language question."
+    },
+    {
+      "id": "promote-prototype-03",
+      "prompt": "/lstk:promote-prototype",
+      "shouldTrigger": true,
+      "note": "Explicit invocation with no path; the skill asks once which prototype."
+    },
+    {
+      "id": "promote-prototype-04",
+      "prompt": "Do a gap analysis of prototypes/order-dashboard for production.",
+      "shouldTrigger": false,
+      "note": "disable-model-invocation: the model must not auto-pick the skill; it may suggest the slash command."
+    },
+    {
+      "id": "promote-prototype-05",
+      "prompt": "Review the architecture of our order service design doc for weak points.",
+      "shouldTrigger": false,
+      "note": "Near-miss: design review belongs to architecture-review."
+    },
+    {
+      "id": "promote-prototype-06",
+      "prompt": "Outline a solution for the order platform and estimate staffing.",
+      "shouldTrigger": false,
+      "note": "Near-miss: scope and staffing belong to solution-outline."
+    },
+    {
+      "id": "promote-prototype-07",
+      "prompt": "Prototype an order dashboard for warehouse staff.",
+      "shouldTrigger": false,
+      "note": "Near-miss: building a prototype belongs to prototype."
+    },
+    {
+      "id": "promote-prototype-08",
+      "prompt": "Turn the order dashboard prototype into production code with auth and tests.",
+      "shouldTrigger": false,
+      "note": "The skill never rewrites a prototype; it only reports gaps."
+    }
+  ]
+}

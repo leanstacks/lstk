@@ -1,5 +1,26 @@
 # Eval results
 
+## 2026-11-13 (M5 Phase 4: `promote-prototype` manual run)
+
+- **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk` and `--plugin-dir plugins/lstk-guardrails`, `--permission-mode dontAsk`,
+  headless `claude -p`, invoked as `/lstk:promote-prototype prototypes/shipping-webhook` in a scratch repo (only
+  `AGENTS.md`). The input was a Lambda prototype scaffolded by `scaffold.mjs`, then edited to seed gaps. Single run, no
+  tune. Not a trigger eval: `disable-model-invocation` means only the explicit invocation was tried.
+- **Seeded gaps:** no real auth (a hardcoded shared secret), no error path (unguarded `JSON.parse`, a 200 for a rejected
+  request), `console.log` of the raw body, in-memory state, one thin test, no IaC, and a `PROTOTYPE.md` that disagrees
+  with the code ("three handler cases", a missing-id check that does not exist).
+- **Found:** all of them. 13 gaps, each cited to `path:line` or a `PROTOTYPE.md` section, sized S to XL (3 S, 6 M, 3 L,
+  1 XL), with a promotion order that names dependencies. It added `security` and `data` with stated reasons. The secret
+  value was not echoed (0 occurrences). No "ready", "secure", "compliant", "complete", hours, or days in the report.
+- **Also found (true, unseeded):** the template's `events/sample.json` is a `GET /orders/{id}` event that does not
+  exercise the rewritten webhook, and secret comparison is not constant-time.
+- **Missed:** none of the seeded gaps. Extras are judgment calls (G5 replay protection and G10 contract tests are
+  generic, at low or medium confidence).
+- **Notes:** the model could not run `ls` (Bash is not allowed by the skill, and `dontAsk` denied it), so it read the
+  files it knew about and said so under limits. The "ask once" path (`/lstk:promote-prototype` with no argument), the
+  inline answer, and a prototype with no `PROTOTYPE.md` were not exercised. Cited line numbers were spot-checked by hand
+  against the seeded files and matched. Whether the ordering (IaC first) is the best one is a judgment call.
+
 ## 2026-11-12 (M5 Phase 3: `prototype` manual run)
 
 - **Claude Code:** 2.1.322, `--plugin-dir plugins/lstk` and `--plugin-dir plugins/lstk-guardrails` (hooks live),

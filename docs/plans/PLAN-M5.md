@@ -250,7 +250,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [ ] Phase 1: decisions Q1, Q2, Q6; `PROTOTYPE.md` and gap-list contracts; test scaffolding
 - [x] Phase 2: web and Lambda templates, scaffold script, tests, real run
 - [x] Phase 3: `prototype` skill, evals, manual run
-- [ ] Phase 4: `promote-prototype` skill, output template, evals, manual run
+- [x] Phase 4: `promote-prototype` skill, output template, evals, manual run
 - [ ] Phase 5: guardrail interaction runs and docs
 - [ ] Phase 6: examples, review, release `lstk` 0.4.0 (tag after merge)
 - [ ] `PLAN.md` M5 status updated
@@ -411,3 +411,33 @@ Wording avoids "ready", "secure", "compliant", and "complete".
 - Misses: the no-argument "ask once" path and the tailored code's behavior were not exercised. Tests and install were
   not run on the generated prototypes. Phase 5 must still run the unsafe-path attempts with the hooks live.
 - Phase 4 can use a prototype scaffolded by the script (or the scratch ones, which are not committed) as its input.
+
+### Phase 4 — As built
+
+- `skills/promote-prototype/SKILL.md`: `disable-model-invocation: true`, `allowed-tools: Read, Glob, Grep, Write`.
+  `Write` is not path-scoped, so the single-report-path rule is text only. Phase 5 must try a write outside the report
+  path. The workflow is ground, read the prototype, check categories, write cited gaps, size and order, write the report.
+  It has `Output contract`, `Rules`, `Limits`, and `Hand-offs` sections, and is in `PROTOTYPE_SKILLS_REQUIRE_SECTIONS`.
+- `references/categories.md`: the five core categories (`tests`, `auth`, `error-handling`, `iac`, `observability`) with
+  checks, the conditional ones (`security`, `data`, `ops`, `performance`, each needing a stated reason), and sizing hints.
+- `references/output-template.md`: the eight sections of the gap-list contract and the seven-column `Gaps` table.
+- Q7: writes `prototypes/<name>/PROMOTION-GAPS.md`, or inline on request. Q8: no delegation to agents. Q9: the effort
+  scale from the Phase 1 contract is stated in `SKILL.md` and repeated in the report's `Scope and sources`.
+- `tests/evals/promote-prototype.json`: 8 prompts. As with `prototype`, the positives are explicit slash invocations,
+  and natural-language prompts are `false` (this differs from plan step 4.7). Near-misses cover `architecture-review`,
+  `solution-outline`, `prototype`, and rewriting the prototype.
+- `tests/prototype-skills.test.mjs`: a `promote-prototype output template` block checks the template's `##` headings
+  and gap-table columns against the contract, checks that `SKILL.md` names the same sections and columns, and checks
+  that banned verdict words appear only on a "never" or "not" line.
+- **Manual run:** all seeded gaps found, no secret echoed, no tune needed. Details are in `tests/evals/RESULTS.md`.
+
+### Phase 4 — Handoff
+
+- Final `description` and `allowed-tools` are in `skills/promote-prototype/SKILL.md`.
+- Category list: `tests`, `auth`, `error-handling`, `iac`, `observability`, plus conditional `security`, `data`, `ops`,
+  `performance`.
+- Output template headings (Phase 6's example test reads them, in this order): `Scope and sources`, `Summary`,
+  `What is faked`, `Gaps`, `Promotion order`, `Hand-offs`, `Not reviewed`, `Confidence and limits`. The `Gaps` table
+  columns are `id`, `category`, `gap`, `location`, `evidence`, `effort`, `confidence`.
+- Misses: the no-argument path, inline mode, and the missing-`PROTOTYPE.md` path were not exercised. Phase 5 must try
+  the unsafe write (outside `prototypes/<name>/PROMOTION-GAPS.md`) with the hooks live, because `Write` is unscoped.
