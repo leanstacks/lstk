@@ -433,3 +433,26 @@ Rules: reference skills by name only, never copy a description (the README table
 - Guides carry the header `> Last verified against lstk 0.4.0 and Claude Code 2.1.323 on 2026-11-13.` Phase 6 sets the real per-recipe date.
 - `getting-started.md` says to check the install with `/` and `/skills`, not an agent-listing command (not confirmed to exist).
 - `lifecycle.md` links the loop variants to the four recipe files, and the `Guardrails apply throughout` section links the README guardrail model.
+
+### Phase 3 record — existing-project workflows
+
+**Done:** `docs/guides/existing-projects.md` has the shared implementation loop and four recipes (add a feature, enhance an existing feature, fix a bug, improve test coverage), each with every template heading. All H2 titles are unchanged, so the guides index anchors still resolve. `npm run check` passes.
+
+**Shared loop step names (reuse in Phase 4):** Ground, Plan, Implement, Check, Review, Commit, Pull request. The loop lives at `existing-projects.md#shared-implementation-loop`. Recipes enter it at step 2 (Plan) once their front steps are done.
+
+**Copy-paste prompts to reuse:**
+
+- Plan (plan mode): `Plan this change: <what and why>. Read the code that is involved first. List the files you expect to touch, the tests you will add, and anything you are unsure about. Do not edit anything yet.`
+- Review hand-off: `Run git diff main...HEAD, then delegate the diff to the lstk:code-reviewer agent. Intent: <...>. Show me its report as it is, and do not fix anything yet.`
+- Commit: `Commit the staged changes with the commit-messages skill.`
+- PR: `/lstk:create-pull-request`
+
+**Statements that depend on model behavior (Phase 6 must test):**
+
+- Delegating with a pasted `git diff main...HEAD` makes Claude run git and pass the diff to `code-reviewer` (the agent has no shell).
+- `commit-messages` picks `fix` for a bug-fix commit and `chore` for a tests-only change.
+- `repo-onboarding` and `agents-md-author` trigger from the plain-words prompts shown.
+- `threat-model` asks for the design doc or code to model after `/lstk:threat-model`.
+- Plan mode (`Shift+Tab` or `/plan`) blocks edits as described.
+
+**Notes:** The branch in use is `10-m6-backlog` (the plan names `10-m6-docs-and-polish`). No skill text was changed.
