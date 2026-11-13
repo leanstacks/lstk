@@ -10,7 +10,7 @@ A new project differs from an existing one at the **front** of the loop. An exis
 [shared implementation loop](existing-projects.md#shared-implementation-loop) instead of repeating it.
 
 **The honest limit.** lstk has **no skill that scaffolds a production repo**. `prototype` builds a throwaway spike, and
-that is all. The closest path today is in [Start a repo with the default stack](#start-a-repo-with-the-default-stack).
+that is all. The closest path today, for the default stack or your own, is in [Start a repo with a chosen stack](#start-a-repo-with-a-chosen-stack).
 
 The legend for the step tags (`[type it]`, `[say it]`, `[delegate it]`, `[plain Claude Code]`) is in the
 [lifecycle map](lifecycle.md#how-to-invoke-each-piece). Example prompts use the fictional Example Orders system.
@@ -94,67 +94,107 @@ lists options and trade-offs and leaves the choice to you.
 [adr-author](../examples/adr-author.md), [architecture-review](../examples/architecture-review.md), and
 [threat-model](../examples/threat-model.md).
 
-## Start a repo with the default stack
+## Start a repo with a chosen stack
 
-**When to use it.** The design is settled and you want an empty repo that follows the default stack: TypeScript ESM,
-Vitest, oxlint, Prettier, and, as the design needs, NestJS, Lambda, Vite and React, or CDK.
+**When to use it.** The design is settled and you want an empty repo with a skeleton that passes its checks. Pick one
+variant:
 
-**The limit.** No lstk skill scaffolds a production repo. A scaffold skill would encode stack opinions and template
-versions that age, so they are deferred until real use shows which one is worth maintaining. The proposals are tracked
-in the backlog: <!-- ISSUE-SLOT: scaffold skills and backlog tracking issue, filled in Phase 7 -->the issue links are
-added when the backlog is filed. Until then, Claude Code builds the skeleton.
+- **Default stack.** TypeScript ESM, Vitest, oxlint, Prettier, and, as the design needs, NestJS, Lambda, Vite and React,
+  or CDK. `stack-profile` supplies the defaults.
+- **Bespoke stack.** You choose part or all of the stack, for example Python and FastAPI, or Go. You write a short
+  **stack brief**, and it overrides the defaults. The repo's own statements always win over `stack-profile`, so a brief
+  that names a tool replaces the default for that tool. `stack-profile` itself does not cover non-TypeScript or
+  non-AWS targets, so for those everything comes from your brief.
+
+**The limit.** No lstk skill scaffolds a production repo, for any stack. A scaffold skill would encode stack opinions
+and template versions that age, so they are deferred until real use shows which one is worth maintaining. The proposals
+are tracked in the backlog: <!-- ISSUE-SLOT: scaffold skills and backlog tracking issue, filled in Phase 7 -->the issue
+links are added when the backlog is filed. Until then, Claude Code builds the skeleton.
+
+A second limit applies to `agents-md-author`. It records only what it can verify in the repo (manifests, scripts, CI),
+never a stack taken from a prompt. That is why the skeleton comes before `AGENTS.md` in the steps below.
 
 **Steps.**
 
-1. **Set the defaults.** `stack-profile` loads on its own when Claude needs stack defaults. Tell Claude to use it, and
-   say which parts of the stack apply. The defaults cover the language, test runner, linter, formatter, and
-   infrastructure style. [say it]
-2. **Create the skeleton.** Ask Claude to create the repo layout, the package files, and one script that runs every
-   quality gate, such as `npm run check`. Use plan mode first and read the plan. [plain Claude Code]
-3. **Run the gate.** Run `npm run check`. A new repo should pass it before any feature code exists. [plain Claude Code]
-4. **Document the repo.** Run `agents-md-author`. It records the commands and conventions you just set up in
-   `AGENTS.md`, so every later session starts grounded. [say it]
-5. **Verify the setup.** Run `local-setup-author`. It writes `docs/LOCAL_SETUP.md` and checks that the steps work from a
+1. **Set the stack.** [say it for the default, plain Claude Code for a bespoke stack]
+   - _Default:_ tell Claude to use `stack-profile` and say which parts apply. The defaults cover the language, test
+     runner, linter, formatter, and infrastructure style.
+   - _Bespoke:_ write the stack brief (see the prompt below), either in the prompt or in a file such as
+     `docs/design/stack.md`. State the language and version, framework, test, lint, and format tools, the repo layout,
+     the one command that runs every check, and the deployment shape. Say which defaults you are replacing.
+2. **Outline and record (bespoke, recommended).** Run `solution-outline` against the brief for a draft design and its
+   key decisions. Run `adr-author` for the stack choice, so the override is recorded with its reasons. If you are still
+   choosing between stacks, run `tech-eval` first. [say it]
+3. **Create the skeleton.** Ask Claude to build the repo layout, the package or build files, one example test, and one
+   command that runs every check, such as `npm run check`, `make check`, or `uv run pytest`. Use plan mode first and
+   read the plan. [plain Claude Code]
+4. **Run the check.** A new repo should pass it before any feature code exists. [plain Claude Code]
+5. **Document the repo.** Run `agents-md-author`. It records the commands and conventions that now exist in the
+   skeleton in `AGENTS.md`, so every later session starts grounded. [say it]
+6. **Verify the setup.** Run `local-setup-author`. It writes `docs/LOCAL_SETUP.md` and checks that the steps work from a
    fresh clone. [say it]
-6. **Commit and open the first PR.** Use `commit-messages`, then `create-pull-request`. [say it, then type it]
+7. **Commit and open the first PR.** Use `commit-messages`, then `create-pull-request`. [say it, then type it]
 
 **Prompt.**
 
 ```text
-Step 1:
+Step 1, default stack:
 Use the stack-profile defaults for this repo: <the parts that apply, for example TypeScript ESM, Vitest, oxlint,
 Prettier, and a NestJS service>. Where I say otherwise, I win.
 ```
 
 ```text
-Step 2, in plan mode:
-Plan the repo skeleton for <system>. Include the folder layout, the package files, the tsconfig, the lint and format
-config, one example test, and a single npm run check command that runs lint, format check, and tests. Do not edit
-anything yet.
+Step 1, bespoke stack (in the prompt or in docs/design/stack.md):
+Stack brief for <system>.
+Language and runtime: <for example Python 3.13>.
+Framework: <for example FastAPI>.
+Tests, lint, and format: <for example pytest, ruff check, ruff format>.
+The one check command: <for example make check>.
+Repo layout: <for example src/<package>/, tests/, infra/>.
+Deployment shape: <for example a container on ECS>.
+Defaults I am replacing: <for example all of stack-profile except CDK for infra>.
 ```
 
 ```text
-Step 4:
-Create an AGENTS.md for this repo with the agents-md-author skill.
+Step 2, bespoke stack:
+Outline a solution with the solution-outline skill. Use docs/design/stack.md as the stack. Do not substitute
+stack-profile defaults for anything it states. Requirements: <requirements>.
+```
+
+```text
+Step 3, in plan mode:
+Plan the repo skeleton for <system> from docs/design/stack.md. Include the folder layout, the build and package files,
+the lint and format config, one example test, and a single command that runs every check. Do not edit anything yet.
 ```
 
 ```text
 Step 5:
+Create an AGENTS.md for this repo with the agents-md-author skill.
+```
+
+```text
+Step 6:
 Create docs/LOCAL_SETUP.md with the local-setup-author skill and verify each step from a clean checkout.
 ```
 
-**Produces.** The repo skeleton, `AGENTS.md`, and `docs/LOCAL_SETUP.md`. Commit all of them.
+**Produces.** The repo skeleton, `AGENTS.md`, and `docs/LOCAL_SETUP.md`. For a bespoke stack also the stack brief
+(`docs/design/stack.md` or similar), `docs/design/<name>.md` if you asked `solution-outline` to write it, and the ADR
+for the stack choice. Commit all of them. Keep the stack brief only until the repo's own files state the stack. After
+that, `AGENTS.md` is the source and the brief is history.
 
 **Skip it when.**
 
 - Step 1: the repo is in an existing monorepo that already states its stack. Its `AGENTS.md` wins.
-- Step 5: you are the only developer and the repo has a single command to run.
+- Step 2: the stack choice is small and you will explain it in the PR instead.
+- Step 6: you are the only developer and the repo has a single command to run.
 
-**What lstk adds here.** `stack-profile` for the defaults. `agents-md-author` and `local-setup-author` document and
-verify what you built. The guardrail hooks stay on, and `.env` and lockfiles are protected from the first commit.
+**What lstk adds here.** `stack-profile` for the defaults, or the precedence rule that makes your brief win.
+`solution-outline` and `adr-author` for a bespoke design and its recorded decision. `agents-md-author` and
+`local-setup-author` document and verify what you built. The guardrail hooks stay on, and `.env` and lockfiles are
+protected from the first commit.
 
-**What is plain Claude Code here.** The skeleton itself. Treat the generated files as a first draft. Check the versions
-of every dependency it pins before you rely on it.
+**What is plain Claude Code here.** The skeleton itself, and all knowledge of a bespoke stack. Treat the generated files
+as a first draft, and check the versions of every dependency it pins before you rely on it.
 
 **Example.** The skill outputs for [adr-author](../examples/adr-author.md) and the design recipes above show the
 documents. There is no example of a scaffolded repo, because no skill makes one.
@@ -178,7 +218,7 @@ Typical cases are a question about feasibility, a demo for a client conversation
    It never edits the prototype. [type it]
 5. **Turn the gaps into scope.** Give the gap list to `solution-outline` to get an estimate as ranges. [say it]
 6. **Build for real.** Start a new repo or module. Follow
-   [Start a repo with the default stack](#start-a-repo-with-the-default-stack) or the
+   [Start a repo with a chosen stack](#start-a-repo-with-a-chosen-stack) or the
    [shared loop](existing-projects.md#shared-implementation-loop). Do not grow the prototype into the product.
 
 **Prompt.**
@@ -271,8 +311,8 @@ to reverse.
 
 Architects mostly use the design recipes, engineers mostly use the loop, and both use the review recipes.
 
-| Role      | Usually uses                                                                                                                                                                                                    |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Architect | [Create a solution design](#create-a-solution-design), [Prototype first, then promote](#prototype-first-then-promote), and [Review a design](review-and-hardening.md#review-a-design)                           |
-| Engineer  | [Start a repo with the default stack](#start-a-repo-with-the-default-stack), the [shared loop](existing-projects.md#shared-implementation-loop), and [Review a change](review-and-hardening.md#review-a-change) |
-| Both      | [Harden a service](review-and-hardening.md#harden-a-service) and [Before a release or client handoff](review-and-hardening.md#before-a-release-or-client-handoff)                                               |
+| Role      | Usually uses                                                                                                                                                                                              |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Architect | [Create a solution design](#create-a-solution-design), [Prototype first, then promote](#prototype-first-then-promote), and [Review a design](review-and-hardening.md#review-a-design)                     |
+| Engineer  | [Start a repo with a chosen stack](#start-a-repo-with-a-chosen-stack), the [shared loop](existing-projects.md#shared-implementation-loop), and [Review a change](review-and-hardening.md#review-a-change) |
+| Both      | [Harden a service](review-and-hardening.md#harden-a-service) and [Before a release or client handoff](review-and-hardening.md#before-a-release-or-client-handoff)                                         |

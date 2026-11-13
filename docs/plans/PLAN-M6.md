@@ -459,11 +459,11 @@ Rules: reference skills by name only, never copy a description (the README table
 
 ### Phase 4 record — new-project workflows
 
-**Done:** `docs/guides/new-projects.md` has four recipes (create a solution design, start a repo with the default stack, prototype first then promote, implement features in a new project) plus a "Who does what" table (architect, engineer, both). Every recipe has each template heading. H2 titles are unchanged, so the guides index anchors still resolve. The file links back to the shared loop in `existing-projects.md` and repeats none of it. `npm run check` passes. No skill text was changed.
+**Done:** `docs/guides/new-projects.md` has four recipes (create a solution design, start a repo with a chosen stack, prototype first then promote, implement features in a new project) plus a "Who does what" table (architect, engineer, both). Every recipe has each template heading. H2 titles are unchanged, so the guides index anchors still resolve. The file links back to the shared loop in `existing-projects.md` and repeats none of it. `npm run check` passes. No skill text was changed.
 
 **Scaffolding limit wording (intro and recipe 2):** "lstk has **no skill that scaffolds a production repo**. `prototype` builds a throwaway spike, and that is all." Recipe 2 adds that a scaffold skill would encode stack opinions and template versions that age, so it is deferred until real use shows which is worth maintaining.
 
-**Issue slot Phase 7 must fill (step 7.4):** in `new-projects.md`, recipe "Start a repo with the default stack", paragraph "The limit.", the HTML comment `<!-- ISSUE-SLOT: scaffold skills and backlog tracking issue, filled in Phase 7 -->` and the clause after it ("the issue links are added when the backlog is filed. Until then, ..."). Replace both with links to the four scaffold-skill issues and the "Backlog review" issue, and reword the sentence to read cleanly.
+**Issue slot Phase 7 must fill (step 7.4):** in `new-projects.md`, recipe "Start a repo with a chosen stack", paragraph "The limit.", the HTML comment `<!-- ISSUE-SLOT: scaffold skills and backlog tracking issue, filled in Phase 7 -->` and the clause after it ("the issue links are added when the backlog is filed. Until then, ..."). Replace both with links to the four scaffold-skill issues and the "Backlog review" issue, and reword the sentence to read cleanly.
 
 **Statements that depend on model behavior (Phase 6 must test, in addition to the Phase 3 list):**
 
@@ -473,3 +473,5 @@ Rules: reference skills by name only, never copy a description (the README table
 - `prototype` asks its one clarifying question, and `promote-prototype` accepts `prototypes/<name>/` and writes `PROMOTION-GAPS.md`.
 - `stack-profile` loads on the prompt "Use the stack-profile defaults" (background skill, no slash command).
 - `solution-outline` accepts `PROMOTION-GAPS.md` as an input when named in the prompt.
+
+**Follow-up (user request):** recipe 2 was renamed "Start a repo with a chosen stack" and now has a default-stack and a bespoke-stack variant. The bespoke variant uses a user-written stack brief (prompt or `docs/design/stack.md`), `solution-outline`, and `adr-author`. The anchor is now `#start-a-repo-with-a-chosen-stack`, updated in the guides index and in `new-projects.md`. Documented limit: `agents-md-author` records only what it can verify in the repo, so the skeleton comes before `AGENTS.md`. Phase 6 must also test: `agents-md-author` on a near-empty skeleton repo, and `solution-outline` honoring a stack brief over `stack-profile` defaults. Evidence for the scaffold-skill issues: note each bespoke stack a user asks for.

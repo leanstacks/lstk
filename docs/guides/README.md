@@ -16,7 +16,7 @@ Task-first guides for people using the lstk plugins. For install and the full sk
 | Fix a bug                                              | [Existing projects](existing-projects.md#fix-a-bug)                                |
 | Improve test coverage                                  | [Existing projects](existing-projects.md#improve-test-coverage)                    |
 | Design a new solution                                  | [New projects](new-projects.md#create-a-solution-design)                           |
-| Start a repo with the default stack                    | [New projects](new-projects.md#start-a-repo-with-the-default-stack)                |
+| Start a repo with a chosen stack                       | [New projects](new-projects.md#start-a-repo-with-a-chosen-stack)                   |
 | Try an idea quickly, then decide                       | [New projects](new-projects.md#prototype-first-then-promote)                       |
 | Review a code change                                   | [Review and hardening](review-and-hardening.md#review-a-change)                    |
 | Review a design or a CDK app                           | [Review and hardening](review-and-hardening.md#review-a-design)                    |
