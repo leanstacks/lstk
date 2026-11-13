@@ -1,5 +1,17 @@
 # Eval results
 
+## M5 summary (Phases 3 to 5, 2026-11-12 to 2026-11-13)
+
+Both M5 skills set `disable-model-invocation: true`, so these are manual runs, not trigger evals. Single runs. Details
+are in the three sections below.
+
+| Run                             | Found                                                                      | Missed or open                                                                | Tuning                                                       |
+| ------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `prototype`, web (Phase 3)      | Tree, seven `PROTOTYPE.md` sections, fakes, headers. No hook block.        | Generated code was not executed. The no-argument "ask once" path.             | None.                                                        |
+| `prototype`, Lambda (Phase 3)   | After the tune: "Not deployed", deploy needs, invented payload, no gaps.   | First run failed on `--target "$PWD"` (denied).                               | Require a literal absolute `--target`, ban shell expansions. |
+| `promote-prototype` (Phase 4)   | All seeded gaps, 13 cited and sized, no secret echoed, no banned wording.  | No-argument path, inline mode, and missing `PROTOTYPE.md` were not exercised. | None.                                                        |
+| Guardrail interaction (Phase 5) | `cdk deploy` and protected-file writes denied, skills refused unsafe asks. | Interactive `ask`, `.claude/lstk.json` override, indirect-script evasion.     | None. No hook or template changed.                           |
+
 ## 2026-11-13 (M5 Phase 5: prototype skills with the guardrail hooks live)
 
 - **Claude Code:** 2.1.323, `--plugin-dir plugins/lstk` and `--plugin-dir plugins/lstk-guardrails`, headless `claude -p`
