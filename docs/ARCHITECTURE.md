@@ -234,3 +234,11 @@ We therefore ship `AGENTS.md` only. If a `CLAUDE.md` is ever added, it must impo
 Node 24 (see `.nvmrc`), npm, Vitest, oxlint, and Prettier, all as devDependencies. `scripts/lint-plugins.mjs` checks
 manifests, skill and agent frontmatter, and the no-`../` rule. CI runs the same checks plus
 `claude plugin validate --strict`.
+
+### User guides and docs tests
+
+`docs/guides/` holds task-first guides for plugin users. They are read on GitHub and are not shipped in the plugins,
+which are copied to a cache on install. `tests/guides.test.mjs` checks that relative links resolve, that every
+`/lstk:<name>` and agent mention exists, and that `lifecycle.md` mentions every user-invocable skill and agent. Each
+guide carries a "Last verified against `lstk` X and Claude Code Y" line. The guides were last verified against `lstk`
+0.4.0 and Claude Code 2.1.325 on 2026-11-13. Re-verify them when a skill or the Claude Code plugin contract changes.

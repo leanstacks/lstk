@@ -63,7 +63,10 @@ lstk/
 │           └── convenience.json      # allow (opt-in)
 ├── tests/                            # Vitest: hooks, merge script, frontmatter lint
 ├── scripts/lint-plugins.mjs          # manifest and frontmatter validation
-├── docs/                             # ARCHITECTURE.md, CONTRIBUTING.md, this plan
+├── docs/                             # ARCHITECTURE.md, CONTRIBUTING.md, HOW-IT-WAS-BUILT.md, this plan
+│   ├── guides/                       # user guides (not shipped in the plugins)
+│   ├── examples/                     # worked examples
+│   └── plans/                        # per-milestone plans
 ├── .github/workflows/ci.yml
 ├── package.json                      # devDeps only: vitest, oxlint, prettier
 ├── AGENTS.md
@@ -273,6 +276,8 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 
 ### M6 — Backlog (grow from real use)
 
+**Status: done (`lstk` 0.4.1).** As built, see `docs/plans/PLAN-M6.md`: user guides in `docs/guides/` with docs tests, a README that routes to them, `keywords` and marketplace metadata, and `docs/HOW-IT-WAS-BUILT.md`. The items below were triaged, not built. Each is a `backlog` issue (#15 `nestjs-module`, #16 `lambda-handler`, #17 `react-feature`, #18 `cdk-construct`, #19 AWS MCP servers, #20 `PostToolUse` hook), tracked by #21 with a review checkpoint of 2026-12-12. The demo is an annotated transcript (`docs/guides/walkthrough-bug-fix.md`). No asciinema recording exists.
+
 - Scaffold skills: `nestjs-module`, `lambda-handler`, `react-feature`, `cdk-construct`.
 - AWS docs and CDK MCP servers: off by default, documented credentials surface, verify maintained servers at that time.
 - `PostToolUse` hook to run Prettier and oxlint on edited files. It must detect tool presence and fail soft.
@@ -365,7 +370,7 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 
 ## 12. Deferred and open items
 
-- AWS MCP servers (deferred, M6).
+- AWS MCP servers (deferred, issue #19). Scaffold skills (#15 to #18) and the `PostToolUse` hook (#20) are deferred the same way, tracked in #21.
 - Whether to build a small Windows/WSL story (out of scope, macOS and Linux only).
 - Whether a second guardrail layer should include a `UserPromptSubmit` or `PostToolUse` hook (evaluate after M1 use).
 - Public marketplace listing and discoverability (after `0.1.0`).

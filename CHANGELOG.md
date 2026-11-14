@@ -5,6 +5,24 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [lstk 0.4.1]
+
+### Added
+
+- User guides in `docs/guides/`: getting started, a lifecycle map, recipes for existing projects, new projects, and
+  review and hardening, an FAQ, and an annotated bug-fix walkthrough. `tests/guides.test.mjs` checks that links resolve
+  and that every skill and agent is mapped.
+- `docs/HOW-IT-WAS-BUILT.md`, and issue templates for skill proposals and friction reports.
+- `keywords` in the `lstk` manifest, and `homepage`, `repository`, `license`, and `keywords` on both marketplace
+  entries.
+
+### Changed
+
+- The README is a landing page that routes to the guides. The skill and agent tables are unchanged.
+- `architecture-review`, `cdk-iam-review`, and `threat-model` tell the model to write report files with the Write tool,
+  which creates the folder, instead of shell commands that a permission prompt may deny.
+- `lstk` is `0.4.1`. `lstk-guardrails` is unchanged.
+
 ## [lstk 0.4.0]
 
 ### Added

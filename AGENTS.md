@@ -13,7 +13,8 @@ lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) a
 - `scripts/lint-plugins.mjs`: manifest and frontmatter linter.
 - `tests/`: Vitest tests. `tests/fixtures/hook-matrix.json` is the allow, ask, and deny matrix for the hooks.
   `tests/evals/<skill>.json` holds each skill's trigger evals.
-- `docs/`: plan, architecture, and contributing guides.
+- `docs/`: plan, architecture, and contributing guides. `docs/guides/` holds user guides, and `tests/guides.test.mjs`
+  checks their links and that every skill and agent is mapped.
 
 ## Commands
 

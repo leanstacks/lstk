@@ -522,3 +522,11 @@ Rules: reference skills by name only, never copy a description (the README table
 **Decision (changes step 7.4):** the guides do not link the backlog issues. Guides describe current behavior, and the backlog is ungroomed. The `ISSUE-SLOT` comment in `new-projects.md` and the backlog line in `faq.md` were removed, and the scaffolding limit now reads as a plain statement. Phase 8 must not add backlog links to the guides.
 
 **Handoff to Phase 8:** issue numbers above. Still due: the `lstk` `0.4.1` bump with `keywords`, `CHANGELOG.md`, the README restructure linking `walkthrough-bug-fix.md`, and the public-safety read.
+
+### Phase 8 record — README, polish, and release
+
+**Done:** `README.md` is a landing page (status line fixed, "Start here", install, "Workflows at a glance" with the lifecycle diagram and a six-row table, the unchanged skill and agent tables, guardrail model, and a "For maintainers" section). `docs/HOW-IT-WAS-BUILT.md` written and linked. `keywords` added to the `lstk` `plugin.json`, which bumps it to `0.4.1`. `lstk-guardrails` has no manifest change, so it stays `0.1.0`. Both marketplace entries gained `homepage`, `repository`, `license`, and `keywords`. `CHANGELOG.md`, `docs/PLAN.md` (M6 status, layout, deferred list), `docs/ARCHITECTURE.md`, `docs/CONTRIBUTING.md`, and `AGENTS.md` updated. `npm run check` and `npm run validate` pass. Public-safety grep over the new docs found nothing.
+
+**Demo (Q5):** the annotated transcript `docs/guides/walkthrough-bug-fix.md`, linked from the README. No asciinema recording exists. Human step if wanted: record `claude` on a copy of `tests/fixtures/sample-repo` running the "fix a bug" recipe prompts.
+
+**Not done:** the `lstk-v0.4.1` tag. Create it after the pull request merges. The `Closes #10` line goes in the pull request description.
