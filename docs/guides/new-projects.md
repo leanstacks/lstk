@@ -109,9 +109,7 @@ variant:
   non-AWS targets, so for those everything comes from your brief.
 
 **The limit.** No lstk skill scaffolds a production repo, for any stack. A scaffold skill would encode stack opinions
-and template versions that age, so they are deferred until real use shows which one is worth maintaining. The proposals
-are tracked in the backlog: <!-- ISSUE-SLOT: scaffold skills and backlog tracking issue, filled in Phase 7 -->the issue
-links are added when the backlog is filed. Until then, Claude Code builds the skeleton.
+and template versions that age, so none is offered. Claude Code builds the skeleton.
 
 A second limit applies to `agents-md-author`. It records only what it can verify in the repo (manifests, scripts, CI),
 never a stack taken from a prompt. That is why the skeleton comes before `AGENTS.md` in the steps below.

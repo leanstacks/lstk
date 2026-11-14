@@ -514,3 +514,11 @@ Rules: reference skills by name only, never copy a description (the README table
 **Transcript (Q5):** `docs/guides/walkthrough-bug-fix.md`, from real headless output on the fixture, linked from the guides index. It stops before the pull request step. Phase 8 links it from the README.
 
 **Handoff to Phase 7 and 8:** the `lstk` `0.4.1` bump (skill wording fix plus `keywords`) and a `CHANGELOG.md` entry are due in Phase 8. The fixture-only transcript needs the Phase 8 public-safety read.
+
+### Phase 7 record — backlog issues
+
+**Done:** `.github/ISSUE_TEMPLATE/skill-proposal.md` added. Six `backlog` issues created with the four promotion criteria: #15 `nestjs-module`, #16 `lambda-handler`, #17 `react-feature`, #18 `cdk-construct`, #19 AWS MCP servers, #20 `PostToolUse` formatting hook. #21 "Backlog review" is the tracking issue, with a checklist and the review checkpoint **2026-12-12** (or the third `friction` issue on one theme). The user approved the drafts first. Scaffold issues carry no Phase 6 evidence, so they stay in plan order.
+
+**Decision (changes step 7.4):** the guides do not link the backlog issues. Guides describe current behavior, and the backlog is ungroomed. The `ISSUE-SLOT` comment in `new-projects.md` and the backlog line in `faq.md` were removed, and the scaffolding limit now reads as a plain statement. Phase 8 must not add backlog links to the guides.
+
+**Handoff to Phase 8:** issue numbers above. Still due: the `lstk` `0.4.1` bump with `keywords`, `CHANGELOG.md`, the README restructure linking `walkthrough-bug-fix.md`, and the public-safety read.

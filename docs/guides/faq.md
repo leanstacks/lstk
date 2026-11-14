@@ -123,8 +123,6 @@ adds what surrounds them: grounding (`AGENTS.md`, `repo-onboarding`), review (`c
 - **It does not cover other IaC.** `cdk-iam-review` covers AWS CDK in TypeScript only.
 - **It does not support other agents or Windows.** lstk is for Claude Code on macOS and Linux.
 
-Ideas that are not built yet are tracked in the backlog. The links are added when the backlog is filed.
-
 ## Are these guides installed with the plugins?
 
 No. The guides live in the repository and are read on GitHub. Plugins are copied to a cache without `docs/`, so they
