@@ -1,17 +1,28 @@
 {
   "name": "lstk",
   "description": "LeanStacks Agentic Toolkit: a Claude Code plugin marketplace.",
-  "owner": { "name": "LeanStacks", "url": "https://leanstacks.com" },
+  "owner": {
+    "name": "LeanStacks",
+    "url": "https://leanstacks.com"
+  },
   "plugins": [
     {
       "name": "lstk",
       "source": "./plugins/lstk",
-      "description": "LeanStacks Agentic Toolkit: research, design, develop, review, harden, prototype."
+      "description": "LeanStacks Agentic Toolkit: research, design, develop, review, harden, prototype.",
+      "homepage": "https://github.com/leanstacks/lstk",
+      "repository": "https://github.com/leanstacks/lstk",
+      "license": "MIT",
+      "keywords": ["claude-code", "plugin", "aws", "typescript", "agents", "skills", "code-review", "architecture"]
     },
     {
       "name": "lstk-guardrails",
       "source": "./plugins/lstk-guardrails",
-      "description": "Deterministic guardrail hooks and a settings bootstrap for safer agentic coding."
+      "description": "Deterministic guardrail hooks and a settings bootstrap for safer agentic coding.",
+      "homepage": "https://github.com/leanstacks/lstk",
+      "repository": "https://github.com/leanstacks/lstk",
+      "license": "MIT",
+      "keywords": ["claude-code", "plugin", "guardrails", "hooks", "safety", "aws-cdk"]
     }
   ]
 }

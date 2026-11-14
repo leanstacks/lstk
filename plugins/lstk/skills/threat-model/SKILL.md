@@ -31,7 +31,7 @@ The repo's `AGENTS.md`, `CLAUDE.md`, and tool config win. Apply the `stack-profi
 
 ## Output contract
 
-Write `docs/threat-models/<name>.md`, where `<name>` is a short kebab-case name for the system. If the user prefers, return the same content inline. Create `docs/threat-models/` if it is missing. Write nowhere else.
+Write `docs/threat-models/<name>.md`, where `<name>` is a short kebab-case name for the system. If the user prefers, return the same content inline. Use the Write tool, which creates `docs/threat-models/` if it is missing. Do not write the file with shell commands. Write nowhere else.
 
 Sections, in this order:
 

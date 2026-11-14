@@ -87,6 +87,12 @@ without reading what it changes.
 - **Fixtures are public.** Apply the checklist above to every matrix row and fixture.
 - Plugins ship no shell scripts or fixtures, and tests must not depend on `bash` or `jq`.
 
+## User guides
+
+`docs/guides/` is for plugin users. Update the guides in the same change as a skill or agent: the README skill table is
+the only place that describes a skill, and guides reference skills by name. Run `npm test` to check links and coverage,
+and refresh the "Last verified" line when you re-run a recipe.
+
 ## Versioning
 
 Installed copies are cached by `version`, so **an unbumped change does not reach users**. Bump `version` in the plugin's

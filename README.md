@@ -3,18 +3,19 @@
 A [Claude Code](https://code.claude.com) plugin marketplace that helps engineers and architects research, design,
 develop, review, and harden applications, and prototype quickly. It is AWS-first and TypeScript-first.
 
-> **Status:** pre-1.0. `lstk` is `0.4.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships fourteen skills and two agents so far, and
-> more arrive in later milestones. See [docs/PLAN.md](docs/PLAN.md).
+> **Status:** pre-1.0. `lstk` is `0.4.1` and `lstk-guardrails` is `0.1.0`. `lstk` ships fourteen skills and two agents.
+> Deferred ideas are tracked in the [backlog review](https://github.com/leanstacks/lstk/issues/21). See
+> [docs/PLAN.md](docs/PLAN.md).
 
-## Plugins
+## Start here
 
-| Plugin            | Purpose                                                                                      |
-| ----------------- | -------------------------------------------------------------------------------------------- |
-| `lstk`            | Lifecycle skills and agents: research, design, develop, review, harden, prototype.           |
-| `lstk-guardrails` | Deterministic guardrail hooks and an `init` skill that bootstraps safer permission settings. |
-
-The plugins install independently, because enforcement posture varies by client. Skills are namespaced by plugin name,
-for example `/lstk:<skill>`.
+- **New to lstk?** Read [Getting started](docs/guides/getting-started.md): install, set up guardrails, and take the first
+  five minutes on your repo.
+- **Know what you want to do?** Use the [guides index](docs/guides/README.md): add a feature, fix a bug, design a
+  system, review a change, harden a service.
+- **Want to see it run?** Read the [bug fix walkthrough](docs/guides/walkthrough-bug-fix.md), an annotated record of one
+  real run.
+- **Curious how it was made?** Read [how it was built](docs/HOW-IT-WAS-BUILT.md).
 
 ## Install
 
@@ -26,6 +27,40 @@ for example `/lstk:<skill>`.
 
 Then run `/lstk-guardrails:init` to merge the guardrail permission rules into your settings (see
 [Install and init](#install-and-init)).
+
+## Plugins
+
+| Plugin            | Purpose                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| `lstk`            | Lifecycle skills and agents: research, design, develop, review, harden, prototype.           |
+| `lstk-guardrails` | Deterministic guardrail hooks and an `init` skill that bootstraps safer permission settings. |
+
+The plugins install independently, because enforcement posture varies by client. Skills are namespaced by plugin name,
+for example `/lstk:<skill>`.
+
+## Workflows at a glance
+
+```mermaid
+flowchart LR
+    D["Discover"] --> P["Plan"]
+    P --> I["Implement"]
+    I --> R["Review"]
+    R --> C["Commit"]
+    C --> PR["Pull request"]
+    PR --> H["Harden"]
+```
+
+lstk covers every stage except **Implement**, which is plain Claude Code made safer by the guardrails and better
+grounded by `AGENTS.md`. See the [lifecycle map](docs/guides/lifecycle.md).
+
+| I want to...                | Start with                                                                                           |
+| --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Learn an unfamiliar repo    | `repo-onboarding`, `agents-md-author`, `local-setup-author`                                          |
+| Add a feature or fix a bug  | [Existing projects](docs/guides/existing-projects.md)                                                |
+| Design a new system         | `solution-outline`, `tech-eval`, `adr-author` ([New projects](docs/guides/new-projects.md))          |
+| Try an idea fast            | `prototype`, then `promote-prototype`                                                                |
+| Review a change or a design | `code-reviewer`, `architecture-review` ([Review](docs/guides/review-and-hardening.md))               |
+| Harden before a release     | `threat-model`, `cdk-iam-review` ([Hardening](docs/guides/review-and-hardening.md#harden-a-service)) |
 
 ## Skills
 
@@ -147,9 +182,13 @@ The prototype workflow (`/lstk:prototype`, `/lstk:promote-prototype`) runs with 
 4. **Remove any old `hooks` block** for these scripts from `~/.claude/settings.json`, otherwise the hooks run twice.
    Run `/reload-plugins` or restart Claude Code.
 
-## Development
+## For maintainers
 
-See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+These documents are for people changing lstk, not for people using it:
+
+- [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/PLAN.md](docs/PLAN.md) and the per-milestone plans in [docs/plans](docs/plans)
+- [docs/HOW-IT-WAS-BUILT.md](docs/HOW-IT-WAS-BUILT.md)
 
 ## License
 
