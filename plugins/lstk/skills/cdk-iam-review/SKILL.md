@@ -50,7 +50,7 @@ Handling:
 
 ## Output contract
 
-Write `docs/reviews/cdk-iam-review-<name>.md`, where `<name>` is a short kebab-case name for the app. If the user prefers, return the same content inline. Create `docs/reviews/` if it is missing. Write nowhere else.
+Write `docs/reviews/cdk-iam-review-<name>.md`, where `<name>` is a short kebab-case name for the app. If the user prefers, return the same content inline. Use the Write tool, which creates `docs/reviews/` if it is missing. Do not write the file with shell commands. Write nowhere else.
 
 Sections, in this order:
 
