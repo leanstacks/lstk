@@ -1,10 +1,14 @@
 {
   "name": "lstk",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "LeanStacks Agentic Toolkit: research, design, develop, review, harden, prototype.",
-  "author": { "name": "LeanStacks", "url": "https://leanstacks.com" },
+  "author": {
+    "name": "LeanStacks",
+    "url": "https://leanstacks.com"
+  },
   "license": "MIT",
   "repository": "https://github.com/leanstacks/lstk",
   "homepage": "https://github.com/leanstacks/lstk",
-  "icon": "./icon.png"
+  "icon": "./icon.png",
+  "keywords": ["claude-code", "plugin", "aws", "typescript", "agents", "skills", "code-review", "architecture"]
 }
