@@ -11,6 +11,7 @@ Task-first guides for people using the lstk plugins. For install and the full sk
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | Install lstk and try it on my repo                     | [Getting started](getting-started.md)                                              |
 | See which skill fits which stage                       | [Lifecycle map](lifecycle.md)                                                      |
+| See a bug fix reviewed and committed, step by step     | [Walkthrough: a bug fix](walkthrough-bug-fix.md)                                   |
 | Add a feature to an existing project                   | [Existing projects](existing-projects.md#add-a-feature)                            |
 | Enhance an existing feature                            | [Existing projects](existing-projects.md#enhance-an-existing-feature)              |
 | Fix a bug                                              | [Existing projects](existing-projects.md#fix-a-bug)                                |

@@ -492,3 +492,25 @@ Rules: reference skills by name only, never copy a description (the README table
 - The release checklist prompt makes the three documentation skills report stale content before editing.
 - `@agent-lstk:code-reviewer` forces delegation, and a hook block message is visible to the user (unconfirmed, so the FAQ says to ask Claude).
 - The FAQ claim that `/skills` and the `/plugin` Installed and Errors tabs show what is loaded.
+
+### Phase 6 record — dogfood walkthrough (partial, in progress)
+
+**Method:** headless `claude -p --plugin-dir ... --permission-mode acceptEdits` on scratch copies of `tests/fixtures/sample-repo` (Claude Code 2.1.325, 2026-11-13). Headless runs cannot test interactive steps.
+
+**Worked as written:** `repo-onboarding` triggered from plain words and wrote `docs/PROJECT_OVERVIEW.md`. Delegating a pasted `git diff main...HEAD` reached `code-reviewer`, and the test-gaps prompt filled its Test gaps section. `commit-messages` chose `fix`. `/lstk:architecture-review` asked once for its input. `/lstk:threat-model` and `/lstk:cdk-iam-review` took inline input and wrote reports, with no code changed. `cdk-iam-review` stopped on non-CDK input. `adr-author` refused an undecided ADR. `solution-outline` wrote a draft `docs/design/<name>.md`. `tech-eval` ran its comparison. `stack-profile` loaded and the repo's `AGENTS.md` won. `prototype` scaffolded `prototypes/<name>/`.
+
+**Not yet tested:** plan mode, `/plugin` install from `./`, `create-pull-request`, `promote-prototype`, the bespoke-stack variant, `solution-outline` taking `PROMOTION-GAPS.md`, the `npm audit` prompt, the release checklist prompt, hook block messages, `@agent-lstk:code-reviewer`, and the interactive clarifying questions.
+
+**Observations to confirm interactively before filing as `friction` (possible artifacts of headless `--plugin-dir`):** `threat-model`, `cdk-iam-review`, and `solution-outline` reported they could not read their own `references/` files (permission denied), and `tech-eval` researchers were denied WebFetch and WebSearch. No guide text was wrong, so no prompt was changed. Step 6.4 (friction issues, user-approved) and 6.5 (transcript) are not done.
+
+**Interactive finding (2026-11-13):** `threat-model` read its `references/` files fine, so the headless read failure was an artifact of `--plugin-dir` runs. The write, however, was attempted as a Bash `mkdir -p … && cat > …` and was denied. Cause: "Create `docs/…/` if it is missing" in `architecture-review`, `cdk-iam-review`, and `threat-model` reads like a shell step. Fixed by telling the skills to use the Write tool (which creates the folder) and not shell commands. The `lstk` patch bump to `0.4.1` is deferred to Phase 8, together with the `keywords` change, so it ships once.
+
+### Phase 6 record — final
+
+**Done:** the maintainer ran the interactive checks (plan mode, `tech-eval` web access, `@agent-lstk:code-reviewer`, hook block message, `prototype` and `promote-prototype`, release checklist, install and `init`). All matched the guides. `create-pull-request` was not run in the walkthrough (no remote in the scratch repo), but the maintainer uses it on every `lstk` branch. The three recipe guides now carry a "Verified" note in place of the interim dogfood note.
+
+**Friction findings:** one, the report-writing skills telling the model to create folders, which led it to shell commands (fixed in `architecture-review`, `cdk-iam-review`, and `threat-model`). No `friction` issue was filed, because it is fixed. No skill or gap was requested twice, so the Phase 7 scaffold-skill issues have no Phase 6 evidence beyond the bespoke-stack and greenfield gap already in the guides.
+
+**Transcript (Q5):** `docs/guides/walkthrough-bug-fix.md`, from real headless output on the fixture, linked from the guides index. It stops before the pull request step. Phase 8 links it from the README.
+
+**Handoff to Phase 7 and 8:** the `lstk` `0.4.1` bump (skill wording fix plus `keywords`) and a `CHANGELOG.md` entry are due in Phase 8. The fixture-only transcript needs the Phase 8 public-safety read.

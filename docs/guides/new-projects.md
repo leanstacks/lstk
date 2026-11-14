@@ -2,7 +2,9 @@
 
 Recipes for designing and starting a new system.
 
-> Last verified against `lstk` 0.4.0 and Claude Code 2.1.323 on 2026-11-13.
+> Last verified against `lstk` 0.4.0 and Claude Code 2.1.325 on 2026-11-13.
+>
+> Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: `solution-outline`, `tech-eval`, `stack-profile` (the repo's `AGENTS.md` won), `adr-author` refusing an undecided ADR, `prototype` with its clarifying question, and `promote-prototype`.
 
 A new project differs from an existing one at the **front** of the loop. An existing project starts from discovery
 (`repo-onboarding`, `agents-md-author`). A new project starts from design (`solution-outline`, `tech-eval`,

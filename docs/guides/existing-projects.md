@@ -2,7 +2,9 @@
 
 Recipes for changing a codebase that already exists.
 
-> Last verified against `lstk` 0.4.0 and Claude Code 2.1.323 on 2026-11-13.
+> Last verified against `lstk` 0.4.0 and Claude Code 2.1.325 on 2026-11-13.
+>
+> Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: the `code-reviewer` hand-off with a pasted diff, the test-gaps prompt, `commit-messages` choosing `fix`, `repo-onboarding` from plain words, and plan mode. `create-pull-request` was not run in this walkthrough (the scratch repo had no remote), but the maintainer uses it on every `lstk` branch. The bug-reproduction and coverage steps are plain Claude Code.
 
 Every recipe here runs the [shared implementation loop](#shared-implementation-loop) and adds a few steps at the front
 or the back. Read the loop first. lstk has **no skill for implementing, bug fixing, or test coverage**. Those steps are

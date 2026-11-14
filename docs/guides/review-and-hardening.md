@@ -2,7 +2,9 @@
 
 Recipes for reviewing changes and designs and hardening a service.
 
-> Last verified against `lstk` 0.4.0 and Claude Code 2.1.323 on 2026-11-13.
+> Last verified against `lstk` 0.4.0 and Claude Code 2.1.325 on 2026-11-13.
+>
+> Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: `code-reviewer` (including `@agent-lstk:code-reviewer` and the Test gaps section), `architecture-review`, `threat-model`, `cdk-iam-review` (including stopping on non-CDK input), the hand-run dependency triage prompt, and the release checklist prompt. A walkthrough finding led to a wording fix in the three report-writing skills, so they write their file with the Write tool and not shell commands.
 
 All of these are reviews. They read code and docs and report what they found. None of them edits your code, runs your
 app, or deploys anything. None certifies that a change, design, or service is correct, secure, or compliant. Each
