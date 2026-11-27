@@ -20,6 +20,8 @@ flowchart LR
     P -- "idea survives" --> Q["promote-prototype<br/>gap list"]
     Q -- "gaps feed estimates" --> A
     P -. "idea does not survive" .-> X["discard"]
+    A -- "approved scope" --> L["plan-author<br/>phase plan"]
+    L --> D
 ```
 
 | Example                                          | Skill                   | Shows                                                      |
@@ -33,6 +35,7 @@ flowchart LR
 | [cdk-iam-review.md](cdk-iam-review.md)           | `cdk-iam-review`        | A principal inventory, findings, and shown-only diffs.     |
 | [prototype.md](prototype.md)                     | `prototype`             | A scaffolded web prototype and its `PROTOTYPE.md`.         |
 | [promote-prototype.md](promote-prototype.md)     | `promote-prototype`     | A cited gap list with relative effort for that prototype.  |
+| [plan-author.md](plan-author.md)                 | `plan-author`           | A phase plan, one finished phase, and its plans-index row. |
 
 `stack-profile` has no example of its own. It is reference-only, and its effect is visible in the **Stack** lines of the
 design examples.

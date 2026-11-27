@@ -18,6 +18,7 @@ const EXAMPLES_REQUIRED = [
   'cdk-iam-review',
   'prototype',
   'promote-prototype',
+  'plan-author',
 ];
 
 // The code-reviewer agent defines its report format in the agent prompt and has no template file, so
@@ -33,6 +34,16 @@ const CONTRACT_SKILLS = ['architecture-review', 'threat-model', 'cdk-iam-review'
 const LITERAL_EXAMPLES = {
   prototype: ['Status', 'Purpose', 'How to run', 'What is faked', 'Known shortcuts', 'Not covered', 'Promotion'],
 };
+
+// `plan-author` has no output-template.md. Its contract is the phase plan section list in references/phase-template.md.
+LITERAL_EXAMPLES['plan-author'] = [
+  '1. Scope',
+  '2. Findings and decisions',
+  '3. Execution order',
+  '4. Phases',
+  '5. Exit checklist',
+  '6. Risks specific to this plan',
+];
 
 const h2 = (text) => [...text.matchAll(/^## (.+?)\s*$/gm)].map((m) => m[1]);
 
@@ -68,7 +79,7 @@ describe('worked examples', () => {
     expect(inOrder(expected, h2(example)), `${skill}.md headings vs ${expected.join(' > ')}`).toBe(true);
   });
 
-  it.each(Object.keys(LITERAL_EXAMPLES))('%s example shows every PROTOTYPE.md section in order', (skill) => {
+  it.each(Object.keys(LITERAL_EXAMPLES))('%s example shows every contract section in order', (skill) => {
     const example = readFileSync(path.join(EXAMPLES_DIR, `${skill}.md`), 'utf8');
     expect(inOrder(LITERAL_EXAMPLES[skill], h2(example))).toBe(true);
   });

@@ -1,6 +1,6 @@
 {
   "skill": "plan-author",
-  "note": "Stub set, finalized in Phase 3 of PLAN-0023. plan-author sets disable-model-invocation, so the only positive cases are explicit slash invocations. Natural-language requests are false because the model must not auto-pick the skill. Near-misses are solution-outline and adr-author.",
+  "note": "plan-author sets disable-model-invocation, so the only positive cases are explicit slash invocations. Natural-language requests are false because the model must not auto-pick the skill. Near-misses are plan mode, solution-outline, adr-author, and editing an existing plan.",
   "prompts": [
     {
       "id": "plan-author-01",
@@ -10,21 +10,51 @@
     },
     {
       "id": "plan-author-02",
+      "prompt": "/lstk:plan-author Milestone 2 of docs/plans/PLAN-MVP-M1.md",
+      "shouldTrigger": true,
+      "note": "Explicit invocation with a milestone reference; selects phase mode."
+    },
+    {
+      "id": "plan-author-03",
       "prompt": "/lstk:plan-author",
       "shouldTrigger": true,
       "note": "Explicit invocation with no input; the skill asks once and stops."
     },
     {
-      "id": "plan-author-03",
+      "id": "plan-author-04",
+      "prompt": "/lstk:plan-author a roadmap for adding order notifications to the order service",
+      "shouldTrigger": true,
+      "note": "Explicit invocation with free text and a roadmap request; selects milestone mode."
+    },
+    {
+      "id": "plan-author-05",
       "prompt": "Create an implementation plan for issue 23.",
       "shouldTrigger": false,
       "note": "disable-model-invocation: the model must not auto-pick the skill; it may suggest the slash command."
     },
     {
-      "id": "plan-author-04",
+      "id": "plan-author-06",
+      "prompt": "Let's use plan mode to think through how to add pagination to the orders endpoint.",
+      "shouldTrigger": false,
+      "note": "Near-miss: a plan mode request belongs to plain Claude Code, not the skill."
+    },
+    {
+      "id": "plan-author-07",
       "prompt": "Outline a solution for the order platform and estimate staffing.",
       "shouldTrigger": false,
       "note": "Near-miss: scope and staffing belong to solution-outline."
+    },
+    {
+      "id": "plan-author-08",
+      "prompt": "Record our decision to use DynamoDB for orders.",
+      "shouldTrigger": false,
+      "note": "Near-miss: recording a decision belongs to adr-author."
+    },
+    {
+      "id": "plan-author-09",
+      "prompt": "Update the status of PLAN-0004 to done.",
+      "shouldTrigger": false,
+      "note": "Near-miss: editing an existing plan is not authoring a new one."
     }
   ]
 }
