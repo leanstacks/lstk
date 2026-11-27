@@ -1,7 +1,7 @@
 # AGENTS.md
 
 lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) and holds two plugins. The plan is in
-`docs/PLAN.md`, and the verified plugin contract is in `docs/ARCHITECTURE.md`.
+`docs/plans/PLAN-MVP-M1.md`, and the verified plugin contract is in `docs/ARCHITECTURE.md`.
 
 ## Layout
 

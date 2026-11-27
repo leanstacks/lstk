@@ -1,8 +1,8 @@
 # PLAN-M0 — Scaffold and Tooling
 
-**Source:** `docs/PLAN.md` §5 (M0), with §3, §4, §7–§11 as supporting context.
+**Source:** `docs/plans/PLAN-MVP-M1.md` §5 (M0), with §3, §4, §7–§11 as supporting context.
 **Branch:** `m0-scaffold-and-tooling`
-**Starting state:** MIT `LICENSE`, scaffolded `.gitignore`, and `docs/PLAN.md`. Nothing else.
+**Starting state:** MIT `LICENSE`, scaffolded `.gitignore`, and `docs/plans/PLAN-MVP-M1.md`. Nothing else.
 **Goal:** An empty but fully wired marketplace. Two empty plugins, tooling, CI, and verified facts about the Claude Code plugin contract. M1 can then start on a solid base.
 
 ---
@@ -62,7 +62,7 @@ Fetch the current Claude Code docs for plugins, plugin marketplaces, hooks, and 
 | Namespacing         | Confirm the skill namespace equals the plugin `name`, giving `/lstk:<skill>`.                                                                                                                           |
 | Claude Code version | Record the version used, for the "last verified against" note.                                                                                                                                          |
 
-**Deliverable:** a findings list (kept in the scratchpad until Step 5). Any deviation from `docs/PLAN.md` §4 is noted, and the plan doc is updated only if the user agrees.
+**Deliverable:** a findings list (kept in the scratchpad until Step 5). Any deviation from `docs/plans/PLAN-MVP-M1.md` §4 is noted, and the plan doc is updated only if the user agrees.
 
 ### Step 2 — Tooling
 
@@ -84,7 +84,7 @@ Create the following.
 - **`package-lock.json`**, from `npm install`. Commit it, since CI uses `npm ci`.
 - **`vitest.config.mjs`**: Node environment, `tests/**/*.test.mjs` include.
 - **`.oxlintrc.json`**: sensible defaults. Enable the `correctness` category and `node` globals. Ignore `node_modules` and any fixtures directory.
-- **`.prettierrc.json`** and **`.prettierignore`**: use the repo's style. LeanStacks defaults have been added to the branch to serve as a starting point. Ignore `package-lock.json`. Check that the existing `docs/PLAN.md` still passes `format:check`, and format it only if the user agrees, because it is an existing file.
+- **`.prettierrc.json`** and **`.prettierignore`**: use the repo's style. LeanStacks defaults have been added to the branch to serve as a starting point. Ignore `package-lock.json`. Check that the existing `docs/plans/PLAN-MVP-M1.md` still passes `format:check`, and format it only if the user agrees, because it is an existing file.
 - **`.editorconfig`** has been added to compliment `.prettierrc.json` with LeanStacks defaults.
 - Confirm `.gitignore` already covers `node_modules/`. Do not edit it unless something is missing.
 
@@ -92,7 +92,7 @@ Create the following.
 
 ### Step 3 — Manifests and empty plugins
 
-Create the structure from `docs/PLAN.md` §3, with the schema adjusted per Step 1.
+Create the structure from `docs/plans/PLAN-MVP-M1.md` §3, with the schema adjusted per Step 1.
 
 ```text
 .claude-plugin/marketplace.json
@@ -149,7 +149,7 @@ plugins/lstk-guardrails/skills/.gitkeep
 
 | File                   | Content                                                                                                                                                                                                                                                                                                                                                                    |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `README.md`            | Skeleton: what lstk is, the two plugins, the install flow from §4, a status line ("pre-release, M0 scaffold"), a placeholder for the "Guardrail model" section (M1), a link to `docs/PLAN.md`, and the license.                                                                                                                                                            |
+| `README.md`            | Skeleton: what lstk is, the two plugins, the install flow from §4, a status line ("pre-release, M0 scaffold"), a placeholder for the "Guardrail model" section (M1), a link to `docs/plans/PLAN-MVP-M1.md`, and the license.                                                                                                                                               |
 | `AGENTS.md`            | Written for this repo: layout, commands (`npm test`, `lint`, `format:check`, `lint:plugins`), conventions (ESM, Node built-ins only in hooks and scripts, plugins self-contained, Markdown plus Mermaid), and the no-`../` rule. Keep it short. Consider whether a `CLAUDE.md` that points to `AGENTS.md` is needed (verify how Claude Code loads `AGENTS.md` per Step 1). |
 | `docs/ARCHITECTURE.md` | The Step 1 findings: manifest schema, version and update behavior, hook JSON contract, skill frontmatter rules, and the validation command. Add "Last verified against Claude Code version X on <date>", plus the layer diagram from §3.                                                                                                                                   |
 | `docs/CONTRIBUTING.md` | Dev setup, the check commands, the public-repo leakage checklist (no client names or personal paths), the skill authoring conventions summary (§8), and the version-bump rule.                                                                                                                                                                                             |
@@ -214,13 +214,13 @@ Open the PR as a draft via the `create-pull-request` skill when the user is read
 
 ## 5. Risks and open questions
 
-| Item                                                         | Handling                                                                                              |
-| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| Empty plugins may fail `validate` or install                 | Step 1 confirms. Fallback is a minimal placeholder component, clearly marked and removed in M1 or M2. |
-| `claude` CLI not available in CI                             | Keep `claude plugin validate` a documented local check, as the main plan allows.                      |
-| Docs differ from the intended manifest shape in `PLAN.md` §4 | Follow the docs, note the deviation in `ARCHITECTURE.md`, and propose a `PLAN.md` edit to the user.   |
-| `docs/PLAN.md` may fail Prettier                             | Prefer `.prettierignore` or a user-approved reformat, rather than silently rewriting the plan.        |
-| Smoke test touches user-level Claude Code state              | Get approval first, and clean up afterward.                                                           |
+| Item                                                                | Handling                                                                                                   |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Empty plugins may fail `validate` or install                        | Step 1 confirms. Fallback is a minimal placeholder component, clearly marked and removed in M1 or M2.      |
+| `claude` CLI not available in CI                                    | Keep `claude plugin validate` a documented local check, as the main plan allows.                           |
+| Docs differ from the intended manifest shape in `PLAN-MVP-M1.md` §4 | Follow the docs, note the deviation in `ARCHITECTURE.md`, and propose a `PLAN-MVP-M1.md` edit to the user. |
+| `docs/plans/PLAN-MVP-M1.md` may fail Prettier                       | Prefer `.prettierignore` or a user-approved reformat, rather than silently rewriting the plan.             |
+| Smoke test touches user-level Claude Code state                     | Get approval first, and clean up afterward.                                                                |
 
 **Decisions the user may want to make before starting**
 
@@ -231,5 +231,5 @@ Open the PR as a draft via the `create-pull-request` skill when the user is read
    - Use simplest approach until a more complex approach is needed.
 3. Whether to run the smoke test directly or have the user run it.
    - User will run it. Provide user with the commands.
-4. Whether to reformat `docs/PLAN.md` to satisfy Prettier or ignore it.
+4. Whether to reformat `docs/plans/PLAN-MVP-M1.md` to satisfy Prettier or ignore it.
    - Reformat.

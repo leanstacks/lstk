@@ -63,10 +63,10 @@ lstk/
 │           └── convenience.json      # allow (opt-in)
 ├── tests/                            # Vitest: hooks, merge script, frontmatter lint
 ├── scripts/lint-plugins.mjs          # manifest and frontmatter validation
-├── docs/                             # ARCHITECTURE.md, CONTRIBUTING.md, HOW-IT-WAS-BUILT.md, this plan
+├── docs/                             # ARCHITECTURE.md, CONTRIBUTING.md, HOW-IT-WAS-BUILT.md
 │   ├── guides/                       # user guides (not shipped in the plugins)
 │   ├── examples/                     # worked examples
-│   └── plans/                        # per-milestone plans
+│   └── plans/                        # PLAN-MVP-M1.md (this plan), per-milestone plans, README.md index
 ├── .github/workflows/ci.yml
 ├── package.json                      # devDeps only: vitest, oxlint, prettier
 ├── AGENTS.md
