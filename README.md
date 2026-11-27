@@ -5,7 +5,7 @@ develop, review, and harden applications, and prototype quickly. It is AWS-first
 
 > **Status:** pre-1.0. `lstk` is `0.5.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships fifteen skills and two agents.
 > Deferred ideas are tracked in the [backlog review](https://github.com/leanstacks/lstk/issues/21). See
-> [docs/plans/PLAN-MVP-M1.md](docs/plans/PLAN-MVP-M1.md).
+> [docs/plans/PLAN-MVP.md](docs/plans/PLAN-MVP.md).
 
 ## Start here
 
@@ -188,7 +188,7 @@ The prototype workflow (`/lstk:prototype`, `/lstk:promote-prototype`) runs with 
 These documents are for people changing lstk, not for people using it:
 
 - [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- [docs/plans/PLAN-MVP-M1.md](docs/plans/PLAN-MVP-M1.md) and the per-milestone plans in [docs/plans](docs/plans)
+- [docs/plans/PLAN-MVP.md](docs/plans/PLAN-MVP.md) and the per-milestone plans in [docs/plans](docs/plans)
 - [docs/HOW-IT-WAS-BUILT.md](docs/HOW-IT-WAS-BUILT.md)
 
 ## License

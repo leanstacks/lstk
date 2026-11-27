@@ -19,7 +19,7 @@ The repo's `AGENTS.md`, `CLAUDE.md`, ADRs, and existing plans win over this skil
 
 ## Inputs and mode
 
-- **Accepted input:** a GitHub issue key, a milestone reference in a higher-level plan (for example `Milestone 2 of docs/plans/PLAN-MVP-M1.md`), or free text.
+- **Accepted input:** a GitHub issue key, a milestone reference in a higher-level plan (for example `Milestone 2 of docs/plans/PLAN-MVP.md`), or free text.
 - **Mode `phase`:** a detailed plan for one piece of work. Template: [references/phase-template.md](references/phase-template.md). This is the default.
 - **Mode `milestone`:** a high-level roadmap of milestones. Template: [references/milestone-template.md](references/milestone-template.md). Chosen when the user asks for a roadmap or milestones. A milestone reference selects `phase` and the plan is named `PLAN-<id>-M<n>.md`.
 - If the mode is ambiguous, ask once. With no input, ask once what to plan and stop.

@@ -1,377 +1,350 @@
-# lstk — LeanStacks Agentic Toolkit: Implementation Plan
+# PLAN-MVP-M1 — Guardrails Plugin
 
-**Repo:** `github.com/leanstacks/lstk` · **Site:** leanstacks.com · **Status:** Draft v1
-
----
-
-## 1. Purpose and scope
-
-A Claude Code plugin marketplace that helps engineers and architects **research, design, develop, review, and harden** applications, and **prototype** quickly. It is AWS-first and TypeScript-first, and doubles as a public portfolio project.
-
-**Non-goals (for now)**
-
-- Multi-agent portability (Codex, Cursor). Claude Code only.
-- AWS MCP servers. Deferred (see §12).
-- Style enforcement through prose. oxlint and Prettier own style.
-- A large skill catalog on day one. Skills are added from real use.
+**Source:** `docs/plans/PLAN-MVP.md` §5 (M1), with §3, §4, §6, §7, §9, §10 as supporting context. Hook contract: `docs/ARCHITECTURE.md`.
+**Branch:** `3-m1---guardrails-plugin`
+**Starting state:** M0 is merged. Both plugins are empty. Three legacy assets sit untracked: `plugins/lstk-guardrails/hooks/block-cdk-mutate.sh`, `plugins/lstk-guardrails/hooks/protect-files.sh`, and `docs/settings.json`.
+**Goal:** A working `lstk-guardrails` plugin. Two Node `.mjs` hooks (no dependencies), a settings merge script, an `init` skill, two settings snippets, and tests for all of it. The plugin version moves to `0.1.0-alpha.1` (see Step 11). No legacy file is committed.
 
 ---
 
-## 2. Decisions
+## 1. Scope
 
-| #   | Decision                                                                                                                                         | Rationale                                                                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| D1  | One public repo that is also the marketplace; marketplace name `lstk`                                                                            | Single install source across machines and consultants                                |
-| D2  | Two plugins: **`lstk`** (lifecycle skills and agents) and **`lstk-guardrails`** (hooks plus guardrail bootstrap)                                 | Enforcement posture varies by client, so guardrails must install independently       |
-| D3  | Plugin names double as the skill namespace, so use `lstk` and `lstk-guardrails`, **not** `core` and `guardrails`                                 | Yields `/lstk:adr-author` rather than `/core:adr-author`                             |
-| D4  | Hooks are rewritten in **Node `.mjs`, zero dependencies**                                                                                        | macOS and Linux only, and Node is already guaranteed by your stack. Vitest-testable. |
-| D5  | Permission rules (`deny`/`ask`/`allow`) cannot ship in a plugin. Deliver them via an **`init` skill that merges a vetted snippet into settings** | Plugin `settings.json` supports only the `agent` key                                 |
-| D6  | Stack defaults live in a reference skill and are overridable by the target repo's `AGENTS.md` and config                                         | Degrades gracefully in non-matching repos                                            |
-| D7  | Dogfood the stack: TS ESM, Vitest, oxlint, Prettier, npm                                                                                         | Portfolio coherence                                                                  |
-| D8  | Skills with side effects set `disable-model-invocation: true`                                                                                    | Prevents Claude from creating PRs or commits unprompted                              |
+**In scope**
 
----
+- A committed behavior matrix (`hook-matrix.json`) recording expected allow, ask, and deny results. It is built by running the legacy Bash hooks **locally**. The legacy files themselves are never committed.
+- `block-cdk-mutate.mjs`, `protect-files.mjs`, `hooks.json`, and shared `lib/` helpers.
+- `.claude/lstk.json` per-project configuration for protected patterns.
+- `snippets/baseline.json` and `snippets/convenience.json`.
+- `scripts/merge-settings.mjs` and the `init` skill.
+- README "Guardrail model" section, CHANGELOG, and a documentation review.
 
-## 3. Repository layout
+**Out of scope**
 
-```text
-lstk/
-├── .claude-plugin/
-│   └── marketplace.json              # marketplace "lstk", lists both plugins
-├── plugins/
-│   ├── lstk/
-│   │   ├── .claude-plugin/plugin.json
-│   │   ├── skills/
-│   │   │   ├── commit-messages/SKILL.md
-│   │   │   ├── create-pull-request/SKILL.md
-│   │   │   ├── agents-md-author/SKILL.md
-│   │   │   ├── repo-onboarding/SKILL.md
-│   │   │   ├── local-setup-author/SKILL.md
-│   │   │   └── ...                   # added per milestone (agents-md-author also has scripts/recon.mjs)
-│   │   └── agents/                   # code-reviewer.md, researcher.md (later)
-│   └── lstk-guardrails/
-│       ├── .claude-plugin/plugin.json
-│       ├── hooks/
-│       │   ├── hooks.json
-│       │   ├── protect-files.mjs
-│       │   ├── block-cdk-mutate.mjs
-│       │   └── lib/                  # shared helpers: stdin, decision, run, tokenize, paths, config
-│       ├── skills/init/SKILL.md      # /lstk-guardrails:init
-│       ├── scripts/merge-settings.mjs
-│       └── snippets/
-│           ├── baseline.json         # deny + ask
-│           └── convenience.json      # allow (opt-in)
-├── tests/                            # Vitest: hooks, merge script, frontmatter lint
-├── scripts/lint-plugins.mjs          # manifest and frontmatter validation
-├── docs/                             # ARCHITECTURE.md, CONTRIBUTING.md, HOW-IT-WAS-BUILT.md
-│   ├── guides/                       # user guides (not shipped in the plugins)
-│   ├── examples/                     # worked examples
-│   └── plans/                        # PLAN-MVP-M1.md (this plan), per-milestone plans, README.md index
-├── .github/workflows/ci.yml
-├── package.json                      # devDeps only: vitest, oxlint, prettier
-├── AGENTS.md
-├── CHANGELOG.md
-├── LICENSE                           # MIT or Apache-2.0
-└── README.md
-```
-
-**Packaging constraints to respect**
-
-- Only `plugin.json` goes inside `.claude-plugin/`. `skills/`, `agents/`, and `hooks/` sit at the plugin root.
-- Installed plugins are copied to a cache directory. **A plugin cannot reference files outside its own directory** (no `../`). Shared hook code therefore lives only in `lstk-guardrails`, and nothing is shared across plugins.
-- Hooks reference scripts via `${CLAUDE_PLUGIN_ROOT}`.
-- Hook scripts have no `node_modules` at runtime, so they must use only Node built-ins.
-
-```mermaid
-flowchart TB
-    subgraph Repo["leanstacks/lstk (marketplace: lstk)"]
-        subgraph P1["plugin: lstk"]
-            S1[skills: lifecycle workflows]
-            A1[agents: code-reviewer, researcher]
-        end
-        subgraph P2["plugin: lstk-guardrails"]
-            H[hooks: protect-files, block-cdk-mutate]
-            I[skill: init]
-            SN[snippets: baseline / convenience]
-        end
-    end
-    I -- merges --> ST[(.claude/settings.json<br/>project or user scope)]
-    ST -- deny/ask rules --> L2[Layer 2: permissions]
-    H --> L1[Layer 1: hooks]
-    L1 & L2 --> G[Belt and suspenders]
-```
+- `lstk` plugin skills (M2+).
+- `PostToolUse` and `UserPromptSubmit` hooks (PLAN §12, evaluate after M1 use).
+- Windows support. macOS and Linux only.
 
 ---
 
-## 4. Manifests
+## 2. Findings from the legacy assets
 
-> Schema verified against Claude Code 2.1.319 in M0 (see `docs/ARCHITECTURE.md`). Notes: marketplace `description` is
-> recommended (the validator warns without it), and plugin `author` must be an object with a `name`.
+The legacy hooks do more than PLAN §5 describes. The port must keep this behavior or record a deliberate change.
 
-**`.claude-plugin/marketplace.json`**
+| Area                    | Legacy behavior                                                                                                                                                                                              | Port decision                                                                                                                                                                         |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CDK subcommands         | Denies `deploy`, `destroy`, `watch`. **Asks** on `bootstrap`.                                                                                                                                                | Keep both. PLAN §5 lists only the deny set, so the `ask` tier is an addition to confirm and document.                                                                                 |
+| Invocation forms        | `cdk`, `aws-cdk`, `cdk@2.x`, flags before the subcommand, `bash -c "..."`, `$(...)`, backticks, chained commands.                                                                                            | Keep all of them.                                                                                                                                                                     |
+| Package scripts         | For `npm`/`pnpm`/`yarn`/`bun`, denies a script whose **name** looks like `deploy`/`destroy` (`cdk:deploy`, `deploy:prod`) or whose **body in the nearest `package.json`** runs `cdk deploy\|destroy\|watch`. | Keep. Resolve the nearest `package.json` from `cwd` upward.                                                                                                                           |
+| `make`                  | Denies targets named like `deploy`/`destroy`.                                                                                                                                                                | Keep.                                                                                                                                                                                 |
+| Failure mode            | **Fail closed**: no `jq` or unparseable input exits 2.                                                                                                                                                       | **Conflict.** PLAN §5 says unexpected internal errors **fail open** with a stderr warning. Follow the plan. Note the reversal in the CHANGELOG. The permission layer is the backstop. |
+| Message                 | Tells Claude not to retry or work around, and to run `synth`/`diff`.                                                                                                                                         | Keep the wording intent. It already satisfies the "what, why, instead" rule.                                                                                                          |
+| `protect-files` matcher | Substring match on the raw path for `.env`, `package-lock.json`, `.git/`. Exit 2. Normalizes backslashes.                                                                                                    | Replace with real path matching (see Step 5). The substring match over-blocks (`.environment.ts`, `foo.env.example`) and under-blocks traversal and symlinks.                         |
+| Settings                | `deny`, `ask`, `allow` rules plus personal `model`, `theme`, `defaultMode`, and a `hooks` block pointing at `~/.claude/hooks/*.sh`.                                                                          | Rules go to snippets. `model`, `theme`, `defaultMode`, and `hooks` are excluded (PLAN §7).                                                                                            |
 
-```json
-{
-  "name": "lstk",
-  "description": "LeanStacks Agentic Toolkit: a Claude Code plugin marketplace.",
-  "owner": { "name": "LeanStacks", "url": "https://leanstacks.com" },
-  "plugins": [
-    {
-      "name": "lstk",
-      "source": "./plugins/lstk",
-      "description": "LeanStacks Agentic Toolkit: research, design, develop, review, harden, prototype."
-    },
-    {
-      "name": "lstk-guardrails",
-      "source": "./plugins/lstk-guardrails",
-      "description": "Deterministic guardrail hooks and a settings bootstrap for safer agentic coding."
-    }
-  ]
-}
-```
+**Decisions (resolved).**
 
-**`plugins/lstk-guardrails/hooks/hooks.json`**
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/protect-files.mjs\""
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/block-cdk-mutate.mjs\""
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**Install flow (each machine)**
-
-```text
-/plugin marketplace add leanstacks/lstk
-/plugin install lstk@lstk
-/plugin install lstk-guardrails@lstk
-/lstk-guardrails:init            # once per machine (user scope) or per repo (project scope)
-```
-
-After installing, **remove the `hooks` block from the existing `~/.claude/settings.json`**, otherwise the hooks run twice.
+1. Keep the `ask` tier for `cdk bootstrap` in the hook. **Accepted.**
+2. Keep package-script and `make` inspection. **Accepted.**
+3. Default protected patterns: `.env` files (`.env`, `.env.*`, but not `.env.example`), `package-lock.json`, anything under `.git/`. **Accepted.**
+4. Legacy files inform the port and may be used **locally for the duration of this milestone** to confirm the functionality is ported. They are **never committed, not even as test fixtures**, and are deleted before the milestone pull request is created. **Decided.** Consequences:
+   - No committed test spawns a legacy script, so the committed suite needs no `bash` or `jq`.
+   - Legacy expectations survive only as data in the committed `hook-matrix.json`, recorded from the legacy scripts.
+   - Snippets are written by hand from the legacy `settings.json`, and snippet tests do not read it.
 
 ---
 
-## 5. Milestones
+## 3. Execution order
 
 ```mermaid
 flowchart LR
-    M0[M0 Scaffold] --> M1[M1 Guardrails] --> M2[M2 Migrate skills]
-    M2 --> M3[M3 Research and design]
-    M3 --> M4[M4 Review and harden]
-    M4 --> M5[M5 Prototype]
-    M5 --> M6[M6 Backlog / MCP]
+    A[1. Park legacy assets locally] --> B[2. Record behavior matrix]
+    B --> C[3. Shared lib]
+    C --> D[4. block-cdk-mutate]
+    C --> E[5. protect-files + config]
+    D --> F[6. hooks.json + hook e2e]
+    E --> F
+    A --> G[7. Snippets]
+    G --> H[8. merge-settings]
+    H --> I[9. init skill]
+    F --> J[10. Lint and validate]
+    I --> J
+    J --> K[11. Version, CHANGELOG, smoke test]
+    K --> L[12. README Guardrail model]
+    L --> M[13. Remove legacy assets, docs review]
 ```
 
-### M0 — Scaffold and tooling (done)
+---
 
-| Task                                              | Acceptance criteria                                                                                                |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Repo, license, README skeleton, AGENTS.md         | Public repo exists with a license                                                                                  |
-| Tooling: `package.json`, Vitest, oxlint, Prettier | `npm test`, `npm run lint`, and `npm run format:check` pass on an empty scaffold                                   |
-| `scripts/lint-plugins.mjs`                        | Validates manifests, then checks that every skill has `name` matching its directory and a non-empty `description`  |
-| Manifests and empty plugins                       | `claude plugin validate` (or `/plugin validate`) passes                                                            |
-| CI (GitHub Actions)                               | Runs lint, format check, tests, and plugin lint on PR                                                              |
-| Local install smoke test                          | `/plugin marketplace add ./` then install both plugins; `/reload-plugins` shows them                               |
-| **Verify against current docs**                   | Manifest schema, version and update behavior, and hook JSON contract confirmed and noted in `docs/ARCHITECTURE.md` |
+## 4. Work breakdown
 
-### M1 — Guardrails plugin (done)
+### Step 1 — Park the legacy assets locally (never committed)
 
-_As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package scripts and `make` targets. `.claude/lstk.json` supports `unprotectPatterns` to remove a default, and `.claude/lstk.local.json` adds personal overrides. Hooks block through the JSON `permissionDecision`. See `docs/plans/PLAN-M1.md`.
+- Move `plugins/lstk-guardrails/hooks/*.sh` and `docs/settings.json` into a new `.legacy/` directory at the repo root. Nothing legacy may remain under `plugins/` or `docs/`, because plugin validation and the lint script scan the plugin tree.
+- Exclude the directory **locally** by adding `.legacy/` to `.git/info/exclude`. Do not edit the committed `.gitignore` or `.prettierignore`, so no trace of the legacy files lands in the repo.
+- These files are never pushed. Read them only to inform the port.
+- If `npm run format:check` complains about `.legacy/`, run it with the directory moved aside temporarily.
 
-| Task                                                                                                                                     | Acceptance criteria                                                                                                                                                                               |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Characterization tests first**: run the existing Bash hooks against a fixture matrix of inputs and record expected allow/block results | Fixture table committed, with both blocked and allowed cases                                                                                                                                      |
-| Port `block-cdk-mutate` to `.mjs`                                                                                                        | All fixtures pass. Covers `cdk`, `npx cdk`, `npm exec cdk`, `npm run cdk -- deploy`, and chained commands (`a && cdk deploy`). Blocks `deploy`, `destroy`, and `watch`                            |
-| Port `protect-files` to `.mjs` with config                                                                                               | Default patterns built in. Per-project override in `.claude/lstk.json` (`protectedPatterns` added to the defaults, with an explicit way to remove one)                                            |
-| Hook contract                                                                                                                            | Reads tool-call JSON from stdin, blocks via the documented exit-code or JSON mechanism with an actionable stderr message                                                                          |
-| Failure semantics                                                                                                                        | Matched pattern means block. **Unexpected internal error means fail open with a stderr warning** (a crashing hook must not brick the session). The permission layer is the backstop for that case |
-| `snippets/baseline.json` and `convenience.json`                                                                                          | Derived from the existing settings; see §7                                                                                                                                                        |
-| `merge-settings.mjs` plus `init` skill                                                                                                   | See §7. Idempotent, with a dry-run diff, and tested                                                                                                                                               |
-| README section "Guardrail model"                                                                                                         | Explains the layers, the threat model, and the limits (a hook is not a sandbox)                                                                                                                   |
+**Done when:** `git status` shows no legacy files, `git ls-files | grep -i legacy` is empty, and `npm run check` passes.
 
-### M2 — Migrate existing skills into `lstk`
+### Step 2 — Record the behavior matrix first
 
-| Task                               | Acceptance criteria                                                                                                                                                                                       |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Move the 5 skills                  | Each at `plugins/lstk/skills/<name>/SKILL.md`, invokable as `/lstk:<name>`                                                                                                                                |
-| Normalize frontmatter              | Descriptions state _what_ and _when to trigger_, in third person. `create-pull-request` is `disable-model-invocation: true`. Consider the same for `commit-messages` only if auto-triggering proves noisy |
-| Strip client or personal specifics | Review pass for anything unsafe in a public repo                                                                                                                                                          |
-| Baseline evals                     | At least 3 trigger prompts (should and should not fire) per skill, documented in `tests/evals/`                                                                                                           |
-| Cross-link                         | `repo-onboarding`, `local-setup-author`, and `agents-md-author` reference each other's outputs                                                                                                            |
+Goal: pin down what the Bash hooks do before porting, then keep only the recorded result.
 
-**Status: done (released as `lstk` 0.1.0 and `lstk-guardrails` 0.1.0).** As built, see `docs/plans/PLAN-M2.md`:
+- Create `tests/fixtures/hook-matrix.json`, a table of `{ id, hook, input, legacy, target, reason? }` rows. `legacy` and `target` are `allow`, `deny`, or `ask`. `reason` is required whenever the two differ.
+- Create a **local-only** runner at `.legacy/characterize.mjs` (excluded from git with the rest of `.legacy/`). It spawns each legacy script with every row's `input` on stdin and checks the result against the row's `legacy` value. Run it now to confirm the matrix is accurate, and again at the end of Steps 4 and 5 as a parity check against the ports. It needs `bash` and `jq` locally and is not part of CI.
+- The committed port tests (Steps 4 and 5) assert each row's `target` value. They never run legacy code.
+- Exit-code mapping for the legacy scripts: deny is a JSON `permissionDecision: "deny"` or exit 2, ask is JSON `ask`, allow is exit 0 with empty stdout.
+- Fixture coverage for `block-cdk-mutate` (Bash `tool_input.command`):
 
-- `recon.sh` was ported to `agents-md-author/scripts/recon.mjs` (Node built-ins, tested), because plugins ship no shell scripts.
-- Descriptions are third person and under 500 characters. `lint-plugins` caps them at 1024 and checks relative links.
-- `commit-messages` defers to the repo's own commit convention and keeps the four-prefix format as a fallback.
-- Evals are one `tests/evals/<skill>.json` per skill, with a shape test that requires one for every skill. A manual run is in `tests/evals/RESULTS.md`.
+| Group           | Cases                                                                                                                                                                                                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Deny            | `cdk deploy`, `cdk destroy`, `cdk watch`, `npx cdk deploy`, `npx aws-cdk deploy`, `npm exec cdk deploy`, `npm run cdk -- deploy`, `cdk@2.150.0 deploy`, `cdk -a x deploy`, `cdk deploy --all`, `a && cdk deploy`, `a; cdk destroy`, `a \| cdk deploy`, `bash -c "cdk deploy"`, `echo $(cdk deploy)`, `` `cdk deploy` ``, multi-line commands |
+| Deny (wrappers) | `npm run deploy`, `pnpm cdk:deploy`, `yarn deploy:prod`, `make deploy`, `make infra-destroy`, a package script whose body runs `cdk deploy` (fixture `package.json` in a temp dir)                                                                                                                                                           |
+| Ask             | `cdk bootstrap`, `npx cdk bootstrap aws://1/us-east-1`                                                                                                                                                                                                                                                                                       |
+| Allow           | `cdk synth`, `cdk diff`, `cdk ls`, `cdk doctor`, `npx cdk synth`, `git status`, `echo deploy`, `ls cdk.out`, `cdk-nag deploy-check` (token boundary), `npm test`, `npm run build`, empty command                                                                                                                                             |
 
-### M3 — Research and design
+- Fixture coverage for `protect-files` (`tool_input.file_path`): block `.env`, `apps/api/.env`, `.env.local`, `package-lock.json`, `sub/package-lock.json`, `.git/config`, `.git/hooks/pre-commit`; allow `src/index.ts`, `README.md`, `package.json`.
+- Known legacy flaws get rows where `legacy` and `target` differ, each with a `reason`: `.environment.ts` and `.env.example` (legacy blocks, target allows), and `../x/.env` and symlink cases (legacy relies on the substring, target resolves the path). A row that needs files on disk (package scripts, symlinks) names a small setup recipe that the test builds in a temp directory.
+- A committed `tests/hook-matrix.test.mjs` checks the matrix shape: unique ids, valid values, a `reason` on every divergence, and coverage of each group above.
 
-| Skill / agent                       | Notes                                                                                                                                                                                                                        |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `stack-profile`                     | Reference-only skill carrying the default profile (NestJS-containers, Lambda-serverless, Vite+React, CDK-TS, ESM, Vitest, oxlint, Prettier, npm workspaces). States its precedence rule: **repo `AGENTS.md` and config win** |
-| `tech-eval` plus `researcher` agent | Read-only tools, isolated context, outputs a trade-off matrix and a recommendation section. Matches your "trade-offs first" format                                                                                           |
-| `adr-author`                        | Markdown ADRs in `docs/adr/`, with Mermaid where helpful                                                                                                                                                                     |
-| `solution-outline`                  | Requirements to components, risks, assumptions, and a staffing and effort sketch. Marked as draft output for human review                                                                                                    |
+**Done when:** the matrix is committed with blocked and allowed cases, the local runner passes against the legacy scripts, and the matrix shape test passes.
 
-**Acceptance:** each skill has a trigger eval set and a worked example in `docs/examples/`.
+### Step 3 — Shared hook library
 
-**Status: done (released as `lstk` 0.2.0).** As built, see `docs/plans/PLAN-M3.md`:
+Files under `plugins/lstk-guardrails/hooks/lib/`. Node built-ins only, no `../` outside the plugin.
 
-- `stack-profile` is reference-only (`user-invocable: false`). Consumer skills name it and repeat its precedence rule, and never link its files.
-- `researcher` is read-only (`Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`), runs in the foreground (`background: false`), and defines the report format that `tech-eval` consumes.
-- `lint-plugins` requires agents to declare `tools` without `Bash`, `Write`, `Edit`, or `NotebookEdit`. A test requires a worked example for `tech-eval`, `adr-author`, and `solution-outline`.
-- Worked examples share one fictional scenario (an order-tracking API) in `docs/examples/`. `stack-profile` has none, being reference-only.
+| File           | Responsibility                                                                                                                                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `stdin.mjs`    | Read stdin fully and `JSON.parse`. Return `{}` for empty input. Tolerate missing fields. Throws a typed error on malformed JSON so the caller can fail open with a warning.                                      |
+| `decision.mjs` | `deny(reason)`, `ask(reason)`, `allow()`. Writes the `hookSpecificOutput` JSON to stdout and exits 0 (the documented JSON mechanism). Stdout carries only that object. `warn(msg)` writes to stderr.             |
+| `run.mjs`      | `runHook(handler)`: wraps parse, handler, and a `try/catch`. Any unexpected error prints `lstk-guardrails: <hook> internal error (<msg>); failing open` to stderr and exits 0. A matched rule is never an error. |
+| `tokenize.mjs` | Shell-aware tokenizer for Step 4.                                                                                                                                                                                |
+| `paths.mjs`    | Path normalization and glob matching for Step 5.                                                                                                                                                                 |
+| `config.mjs`   | Loads `.claude/lstk.json` for Step 5.                                                                                                                                                                            |
 
-### M4 — Review and harden
+Design choice: use the JSON `permissionDecision` mechanism for deny and ask (it supports `ask`, and carries the reason to Claude), not exit 2. Exit 2 stays out, because exit 1 and other codes fail open and the two must not be confused.
 
-| Skill / agent                 | Notes                                                                                                          |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `code-reviewer` agent         | Read-only tools. Reviews for correctness, maintainability, and test gaps against the repo's stated conventions |
-| `architecture-review`         | Reviews a design doc or CDK app against Well-Architected-style questions, with trade-offs rather than verdicts |
-| `threat-model`                | STRIDE-style table grounded in actual code and infra, with mitigations and residual risk                       |
-| `cdk-iam-review`              | Least-privilege review of CDK constructs. Evaluate whether cdk-nag output should feed it                       |
-| `dependency-audit` (optional) | Wraps `npm audit` plus triage guidance. Only if it clearly adds value beyond running the command               |
+Unit tests: `tests/hooks/lib/*.test.mjs`. Cover empty stdin, malformed JSON, missing `tool_input`, and the fail-open path (a handler that throws results in exit 0 and a stderr warning).
 
-**Status: done (`lstk` 0.3.0).** `code-reviewer`, `architecture-review`, `threat-model`, and `cdk-iam-review` are built. `dependency-audit` is **not built**: a hand run on the fixture showed only reachability as added value, which a plain prompt already gives (see `docs/plans/PLAN-M4.md`, Phase 6).
+**Done when:** lib tests pass and the fail-open behavior is asserted.
 
-**Acceptance:** each runs on a sample repo (`examples/` or a linked fixture) and produces output that is reproducibly structured.
+### Step 4 — Port `block-cdk-mutate` to `.mjs`
 
-### M5 — Prototype
+File: `plugins/lstk-guardrails/hooks/block-cdk-mutate.mjs`.
 
-| Piece                     | Behavior                                                                                                                                                                                |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prototype` skill         | Scaffolds in `prototypes/<name>/` (Vite+React and mocked API, or a single Lambda handler). Writes a `PROTOTYPE.md` stating **throwaway by default**, what is faked, and known shortcuts |
-| `promote-prototype` skill | Runs a gap analysis against production expectations (tests, auth, error handling, IaC, observability) and emits a **gap list with relative effort**, which feeds estimates              |
-| Guardrail interaction     | Hooks stay active. Prototypes get speed from scaffolding, not from weakened safety                                                                                                      |
+Approach (PLAN §6: tokenize, do not regex the raw string):
 
-**Status: done (`lstk` 0.4.0).** As built, see `docs/plans/PLAN-M5.md`:
+1. Read `tool_input.command` and `cwd`. Empty command means allow.
+2. Split into simple-command segments on `;`, `|`, `||`, `&&`, `&`, newlines, and subshell parens or backticks. Respect quotes.
+3. Unwrap nested shells: for `bash|sh|zsh -c "<string>"` and for `$(...)` and backtick bodies, recurse on the inner string.
+4. Per segment, strip leading `VAR=value` assignments and wrappers (`env`, `time`, `command`, `nohup`, `sudo`).
+5. Detect the CDK executable: a token equal to `cdk`, `aws-cdk`, or `cdk@<version>`, possibly behind `npx`, `npm exec`, `pnpm dlx|exec`, `yarn dlx|exec`, `bunx`, or `npm run <script> --`. Skip option tokens (and their values for known value flags such as `-a`, `--app`, `-c`, `--context`, `--profile`) to find the subcommand. A token after `--` counts.
+6. Subcommand in {`deploy`, `destroy`, `watch`} means **deny**. `bootstrap` means **ask**. Anything else allows.
+7. Package-manager and `make` segments: apply the script-name rule (`^([a-z0-9]+[:_-])*(deploy|destroy)([:_-].*)?$`), and look up the script body in the nearest `package.json` (walk up from `cwd`) and re-check that body with steps 2 to 6. Guard against recursion (depth limit, visited set).
+8. Deny wins over ask across all segments.
 
-- `prototype` scaffolds `web` or `lambda` shapes into `prototypes/<name>/` through `scripts/scaffold.mjs` (Node built-ins only, templates pinned, no CDK app, no deploy). It writes a `PROTOTYPE.md` with seven fixed sections.
-- `promote-prototype` writes `prototypes/<name>/PROMOTION-GAPS.md` using a fixed eight-section contract and a seven-column gap table. Effort is relative (`S`, `M`, `L`, `XL`), never hours or cost.
-- Both skills set `disable-model-invocation: true` and run with the hooks on. No hook changed. `promote-prototype` has an unscoped `Write`, so its one-report-path rule is a prompt rule.
-- A test checks that skill text never tells users to weaken a guardrail. Examples for both skills are in `docs/examples/`.
+Messages (stderr is not used; reasons go in the JSON):
 
-### M6 — Backlog (grow from real use)
+- Deny: "Blocked: `<what>`. Autonomous CDK deploy, destroy, and watch are disabled by lstk-guardrails. Do not retry or wrap it in a script. Run `cdk synth` or `cdk diff` to validate, and ask the user to run the deployment, or leave it to a pipeline."
+- Ask: "`cdk bootstrap` changes shared resources in the target AWS account and region. Confirm before running."
 
-**Status: done (`lstk` 0.4.1).** As built, see `docs/plans/PLAN-M6.md`: user guides in `docs/guides/` with docs tests, a README that routes to them, `keywords` and marketplace metadata, and `docs/HOW-IT-WAS-BUILT.md`. The items below were triaged, not built. Each is a `backlog` issue (#15 `nestjs-module`, #16 `lambda-handler`, #17 `react-feature`, #18 `cdk-construct`, #19 AWS MCP servers, #20 `PostToolUse` hook), tracked by #21 with a review checkpoint of 2026-12-12. The demo is an annotated transcript (`docs/guides/walkthrough-bug-fix.md`). No asciinema recording exists.
+Tests: `tests/hooks/block-cdk-mutate.test.mjs`, table-driven from `hook-matrix.json` using each row's `target` expectation. Also run the local `.legacy/characterize.mjs` parity check, and explain any row where the port differs from `legacy` without a recorded `reason`. Run through both the exported pure function (`evaluate(input) => { decision, reason }`) and one spawned-process test per decision type to cover the stdin and stdout contract.
 
-- **Planning skill, built after M6 (`lstk` 0.5.0).** Issue 23 added `plan-author`, a user-invoked skill that writes milestone and phase plans and adds the plans index row. As built, see `docs/plans/PLAN-0023.md`.
-- Scaffold skills: `nestjs-module`, `lambda-handler`, `react-feature`, `cdk-construct`.
-- AWS docs and CDK MCP servers: off by default, documented credentials surface, verify maintained servers at that time.
-- `PostToolUse` hook to run Prettier and oxlint on edited files. It must detect tool presence and fail soft.
-- Marketplace polish: screenshots or an asciinema demo, plus a "how it was built" doc.
+**Done when:** all matrix rows pass, the local parity check shows no unexplained differences, including `cdk`, `npx cdk`, `npm exec cdk`, `npm run cdk -- deploy`, `a && cdk deploy`, and the deny set `deploy`, `destroy`, `watch`.
+
+### Step 5 — Port `protect-files` to `.mjs` with configuration
+
+File: `plugins/lstk-guardrails/hooks/protect-files.mjs`.
+
+Matching (PLAN §6):
+
+1. Read `tool_input.file_path` (Edit and Write). Absent means allow. Optionally also inspect `notebook_path` if the matcher is extended later. Not in M1.
+2. Resolve to an absolute path against `cwd`, normalize backslashes, resolve `..`, then `realpath` the deepest existing ancestor so symlinks cannot dodge the patterns. If the target does not exist yet (new file), resolve its parent.
+3. Compute the path relative to the project root. Project root is `CLAUDE_PROJECT_DIR` if set, else `cwd`. If the path is outside the root, match on the absolute path.
+4. Match each pattern as a glob against the relative path with gitignore-like semantics: no slash means match the basename anywhere; trailing `/` means a directory anywhere in the path; `*` and `?` wildcards; `!` is not supported in patterns (negation is the separate `unprotect` list below).
+
+Built-in defaults (decision 3): `.env`, `.env.*`, `package-lock.json`, `.git/`. Defaults exempt `.env.example`, `.env.sample`, and `.env.template` through a built-in allow exception.
+
+Configuration, `.claude/lstk.json` in the project root:
+
+```json
+{
+  "protectedPatterns": ["secrets/", "*.pem"],
+  "unprotectPatterns": ["package-lock.json"]
+}
+```
+
+- `protectedPatterns` are **added** to the defaults.
+- `unprotectPatterns` is the explicit way to **remove** a default. It matches a default by its exact pattern string. It also lets a user exempt a path from any pattern.
+- Missing file means defaults. Invalid JSON or wrong types: warn on stderr and use the defaults (fail open on config, never crash). Unknown keys are ignored.
+- Also read `.claude/lstk.local.json` if present (uncommitted personal overrides) and merge after the project file. Add `.claude/lstk.local.json` to the documented `.gitignore` advice. _Optional. Drop it if it adds noise._
+
+Block message: "Blocked: `<rel path>` matches protected pattern `<pattern>`. Protected files are changed by a human. Ask the user to make this edit, or to add the pattern to `unprotectPatterns` in `.claude/lstk.json`."
+
+Tests: `tests/hooks/protect-files.test.mjs` from the matrix, plus config cases (add, remove, local override, invalid JSON, missing file), traversal (`src/../.env`), and symlink (temp dir, `ln -s .env alias`) cases.
+
+**Done when:** matrix rows pass, the local parity check shows no unexplained differences, config behavior is tested, and traversal and symlink cases block.
+
+### Step 6 — `hooks.json` and end-to-end hook test
+
+- Write `plugins/lstk-guardrails/hooks/hooks.json` as in PLAN §4. Use exec form to avoid quoting problems (`"command": "node"`, `"args": ["${CLAUDE_PLUGIN_ROOT}/hooks/protect-files.mjs"]`), after confirming exec form is valid in `docs/ARCHITECTURE.md`. Otherwise use the shell form in PLAN §4. Add a modest `timeout`. Do **not** set `onFailure: "block"`, because failure semantics are fail open by design.
+- Test `tests/hooks/hooks-json.test.mjs`: parse the manifest, assert both matchers, assert every referenced script exists on disk, and assert the command uses `${CLAUDE_PLUGIN_ROOT}` with no `../`.
+- Remove `plugins/lstk-guardrails/hooks/.gitkeep`.
+
+**Done when:** the manifest test passes and `npm run lint:plugins` accepts the hooks directory.
+
+### Step 7 — Settings snippets
+
+Create `plugins/lstk-guardrails/snippets/baseline.json` and `convenience.json`, written by hand from the rules in `.legacy/settings.json`.
+
+- `baseline.json`: `{ "permissions": { "deny": [...], "ask": [...] } }` with all legacy deny and ask rules: force-push, `reset --hard`, `clean -fd`, CDK deploy, destroy, and watch (both the `cdk x` and `cdk * x` forms), CDK bootstrap, `~/.ssh` and `.git/config` reads, `git push*`, `gh release`, `gh repo delete`.
+- `convenience.json`: `{ "permissions": { "allow": [...] } }` with the legacy allow rules. Opt-in.
+- Exclude `model`, `theme`, `defaultMode`, and `hooks`.
+- Local check only: compare the snippet arrays with `.legacy/settings.json` to confirm no rule was dropped. The committed tests never read it.
+- Test `tests/snippets.test.mjs`: valid JSON, only the `permissions` key, arrays of non-empty strings, no duplicates, no entry in `allow` that a `deny` rule also matches textually, and no personal paths.
+
+**Done when:** snippet tests pass.
+
+### Step 8 — `merge-settings.mjs`
+
+File: `plugins/lstk-guardrails/scripts/merge-settings.mjs`. Node built-ins only. Exports pure functions (`mergeSettings(existing, snippets)`, `diffSettings(a, b)`, `findConflicts(merged)`) plus a CLI.
+
+CLI:
+
+```text
+node merge-settings.mjs --scope <user|project> [--include-convenience] [--dry-run] [--project-dir <dir>]
+```
+
+- Scope `user` targets `~/.claude/settings.json`. Scope `project` targets `<project-dir>/.claude/settings.json`. Honor `--settings-file <path>` for tests.
+- Snippets are located relative to the script (`../snippets/`), never outside the plugin.
+- `baseline.json` always applies. `convenience.json` applies only with `--include-convenience`.
+
+Merge rules (all tested, from PLAN §7):
+
+1. Union and deduplicate arrays. Existing entries keep their order and position. New entries append.
+2. Never remove or reorder existing entries.
+3. Idempotent: a second run reports "no changes" and writes nothing.
+4. Preserve unrelated keys and their order. Create the file and parent directory if missing.
+5. Refuse to write if the existing file is not valid JSON, or if `permissions` or its arrays have the wrong type. Exit non-zero with a clear message and leave the file untouched.
+6. Never touch `hooks`.
+7. Report any existing `allow` rule that conflicts with a snippet `deny` rule (deny wins at runtime, but the user should know). Conflict detection is a conservative textual and glob comparison. State that it is best effort.
+8. `--dry-run` prints a readable diff (added entries per array) and writes nothing. Without it, write atomically (temp file, then rename) and preserve a `.bak` of the original on first change. Keep two-space JSON formatting with a trailing newline.
+9. Exit codes: `0` success or no changes, `1` refused (invalid input), `2` unexpected error.
+
+Tests: `tests/merge-settings.test.mjs` with temp directories. Cover each rule, a missing file, invalid JSON, wrong types, idempotency (merge twice, assert byte-equal), unrelated key preservation, existing-user-entry order, conflict report, dry-run writes nothing, and the CLI exit codes.
+
+**Done when:** all rules are covered by passing tests.
+
+### Step 9 — `init` skill
+
+File: `plugins/lstk-guardrails/skills/init/SKILL.md`. Invoked as `/lstk-guardrails:init`.
+
+Frontmatter:
+
+```yaml
+---
+name: init
+description: Bootstraps lstk guardrail permission rules (deny and ask, optional allow) into Claude Code settings at user or project scope. Use when installing lstk-guardrails or when the user asks to set up, apply, or refresh guardrail settings.
+disable-model-invocation: true
+allowed-tools: Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/merge-settings.mjs":*)
+---
+```
+
+Body (short, under 100 lines; the script holds the logic):
+
+1. Ask the scope: **user** (once per machine) or **project** (committed for the team).
+2. Ask whether to include the opt-in `convenience` allow rules (default no).
+3. Run the script with `--dry-run` and show the diff and any conflict report.
+4. On the user's confirmation, run it again without `--dry-run`.
+5. Report what changed. Remind the user to **remove any old `hooks` block** for these scripts from `~/.claude/settings.json`, otherwise hooks run twice (PLAN §4), and that `/reload-plugins` or a restart may be needed.
+6. State the contract: it never touches `hooks`, `model`, `theme`, or unrelated keys.
+
+Verify how `${CLAUDE_PLUGIN_ROOT}` is available to skill content and `allowed-tools` before writing. If it is not substituted there, point Claude at the script path using the documented skill-directory variable instead. Record the finding in `docs/ARCHITECTURE.md`.
+
+Remove `plugins/lstk-guardrails/skills/.gitkeep`.
+
+**Done when:** the lint script accepts the skill (name equals directory, non-empty description) and a manual run on a scratch project walks the flow end to end.
+
+### Step 10 — Lint and validation
+
+- Extend `scripts/lint-plugins.mjs` only if needed: check `hooks/hooks.json` is valid JSON and references scripts that exist, and that no plugin file contains `../`. Add tests to `tests/lint-plugins.test.mjs` for any new rule.
+- Run `npm run check` and `npm run validate`. Fix every warning (`--strict`).
+- Confirm the plugin tree has no `.sh` files and no test fixtures.
+
+**Done when:** `npm run check` and `npm run validate` both pass.
+
+### Step 11 — Version, CHANGELOG, and smoke test
+
+- PLAN §10 says to cut `0.1.0` at the end of M2. M1 is a released change to an installable plugin, so bump `plugins/lstk-guardrails/.claude-plugin/plugin.json` from `0.0.0` to `0.1.0-alpha.1` so installed users receive it.
+- Update `CHANGELOG.md` under `[Unreleased]`: added hooks, snippets, merge script, `init` skill, and `.claude/lstk.json`. Under **Changed**, note the behavior differences from the legacy Bash hooks (fail open on internal error, path-aware matching, `.env.example` no longer blocked, `jq` no longer required). Do not name the legacy files.
+- Local smoke test, recorded in the PR description:
+  1. `/plugin marketplace add ./`, install `lstk-guardrails@lstk`, `/reload-plugins`.
+  2. Ask Claude to run `cdk deploy`. Expect a denial with the actionable message. `cdk synth` runs. `cdk bootstrap` prompts.
+  3. Ask Claude to edit `.env` and `package-lock.json`. Expect a block. Edit a normal file. Expect success.
+  4. Add `.claude/lstk.json` with a custom pattern. Expect the new pattern to block.
+  5. Run `/lstk-guardrails:init` at project scope in a scratch repo. Check the dry-run diff, apply, run again, and expect no changes.
+  6. Confirm the hooks run once (after removing any old `hooks` block from user settings).
+
+**Done when:** every smoke-test item behaves as listed and the results are noted.
+
+### Step 12 — README "Guardrail model"
+
+Replace the placeholder in `README.md` with a section that covers:
+
+- **Layers.** Layer 1 hooks (deterministic, run before the tool call). Layer 2 permission rules (`deny`, `ask`, `allow` in settings, delivered by `init`). Include the Mermaid diagram from `docs/ARCHITECTURE.md`.
+- **What each hook does**, with the deny, ask, and allow behavior, and the `.claude/lstk.json` options and defaults.
+- **Threat model.** Protects against accidental or over-eager autonomous actions: deploying or destroying infrastructure, and editing secrets, lockfiles, and git internals.
+- **Limits.** A hook is not a sandbox. It sees the command string, not its effects. Indirect routes (a script that calls `cdk deploy`, `eval`, env-var-indirected binaries) can evade it. Hooks fail open on internal errors. The real guarantee is a read-only AWS identity and not giving the agent deploy credentials.
+- **Install and init flow**, including removing the old `hooks` block.
+- Update the status banner and the "init skill arrives in M1" line.
+
+**Done when:** the section exists, is accurate against the code, and passes `npm run format:check`.
+
+### Step 13 — Remove legacy assets, then review and update project documentation (final step)
+
+**13a. Remove the legacy files.** Run the local parity check one last time, then delete `.legacy/` and its line in `.git/info/exclude`. Verify with `git status`, `git ls-files | grep -iE 'legacy|\.sh$'` (must be empty), and `ls plugins/lstk-guardrails/hooks docs`. Do this before the milestone pull request is created.
+
+**13b. Documentation review.** Review every existing doc against the as-built M1 and update what is stale. Check each item, and edit only where it is wrong or incomplete.
+
+| Document                    | Review for                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `README.md`                 | Status banner (no longer "M0, both plugins empty"). Install section and `init` mention. Plugin table. Guardrail model section (Step 12). Add a short configuration note and a link to the architecture doc. Accurate commands.                                                                                                                                                                          |
+| `AGENTS.md`                 | Layout (add `hooks/lib/`, `scripts/`, `snippets/`, `tests/fixtures/hook-matrix.json`). Commands (any new npm script). Conventions (hook and script rules: Node built-ins only, fail-open semantics, `.claude/lstk.json`, and the rule that plugins ship no shell scripts or fixtures). Keep it terse and current. Run the `agents-md-author` skill checks if useful.                                    |
+| `docs/ARCHITECTURE.md`      | "Hook contract (for M1)" heading becomes the as-built hook design. Add: the module map under `hooks/lib/`, the decision mechanism chosen (JSON `permissionDecision`), fail-open semantics, `.claude/lstk.json` schema, the merge-settings contract, the `init` skill flow, the `${CLAUDE_PLUGIN_ROOT}` finding from Step 9, and update the "Last verified" line and Claude Code version if re-verified. |
+| `docs/CONTRIBUTING.md`      | How to add a row to `hook-matrix.json` and run the hook tests. How to add a snippet rule. The public-repo review checklist applied to fixtures. Release step: bump the plugin `version` and the CHANGELOG.                                                                                                                                                                                              |
+| `docs/plans/PLAN-MVP.md`    | Reconcile with what was built: §3 layout (`.mjs` files, `lib/`, `scripts/merge-settings.mjs`, `snippets/`), the `ask` tier for `cdk bootstrap` (§5), the package-script and `make` inspection, the `.claude/lstk.json` `unprotectPatterns` key, and the version decision (§10). Mark M1 done. Do not rewrite the plan for later milestones.                                                             |
+| `CHANGELOG.md`              | Matches Step 11 and the final version number.                                                                                                                                                                                                                                                                                                                                                           |
+| `docs/plans/PLAN-MVP-M1.md` | Tick off decisions that changed during implementation. Leave an "As built" note for any deviation.                                                                                                                                                                                                                                                                                                      |
+| `.github/workflows/ci.yml`  | Still runs everything M1 added. No `jq` or `bash` dependency should exist, since no committed test runs legacy code. Confirm that.                                                                                                                                                                                                                                                                      |
+
+Finish with `npm run check` and `npm run validate`, a grep for leaked personal paths or client names (`/home/`, `@moduscreate`, client names), and a final read of the diff. The diff must contain no legacy file.
+
+**Done when:** the legacy files are gone, every document above is either updated or confirmed accurate, and the checks and the leak grep are clean.
 
 ---
 
-## 6. Hook design
+## 5. Exit checklist (M1 acceptance, from PLAN §5)
 
-| Concern                               | Approach                                                                                                                                                                                                                          |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Input parsing                         | `lib/stdin.mjs` reads and parses JSON. Tolerates missing fields                                                                                                                                                                   |
-| Path matching (`protect-files`)       | Normalize to a path relative to the project root. Resolve `..` and symlinks before matching, so a traversal path cannot dodge the patterns                                                                                        |
-| Command matching (`block-cdk-mutate`) | Tokenize rather than regex the raw string. Handle `&&`, `;`, `\|`, subshells, `npx`/`npm exec`/`npm run` wrappers, and `--` argument passthrough                                                                                  |
-| Messages                              | Say _what_ was blocked, _why_, and _what to do instead_ (e.g. "run `cdk synth` or `cdk diff`; deployment is done by a human or a pipeline")                                                                                       |
-| Testing                               | Table-driven Vitest tests, with blocked and allowed cases kept in sync with the characterization matrix                                                                                                                           |
-| Known limit                           | A hook sees the command string, not its effects. An indirect route (a script that calls `cdk deploy`) can evade it. Document this, and rely on the permission layer plus not granting deploy credentials to the agent environment |
+- [ ] `hook-matrix.json` committed, with blocked and allowed cases and a `reason` on every legacy-versus-target divergence.
+- [ ] Local parity check against the legacy hooks shows no unexplained differences.
+- [ ] No legacy file is committed or left in the working tree.
+- [ ] `block-cdk-mutate.mjs` passes all fixtures, covering `cdk`, `npx cdk`, `npm exec cdk`, `npm run cdk -- deploy`, and chained commands. It blocks `deploy`, `destroy`, and `watch`.
+- [ ] `protect-files.mjs` has built-in defaults and a `.claude/lstk.json` override with an explicit removal path.
+- [ ] Hooks read tool-call JSON from stdin and block through the documented JSON mechanism with an actionable message.
+- [ ] A matched pattern blocks. An unexpected internal error fails open with a stderr warning.
+- [ ] `baseline.json` and `convenience.json` exist and carry every rule from the legacy settings (checked locally).
+- [ ] `merge-settings.mjs` is idempotent, has a dry-run diff, and is tested. The `init` skill uses it.
+- [ ] README "Guardrail model" explains layers, threat model, and limits.
+- [ ] `npm run check` and `npm run validate` pass in CI.
+- [ ] Documentation reviewed and updated (Step 13).
 
----
+## 6. Risks specific to M1
 
-## 7. `init` skill and settings merge
-
-**Snippets** (derived from your existing settings; `model` and `theme` excluded as personal preferences)
-
-- `baseline.json`: all current `deny` and `ask` rules (force-push, `reset --hard`, `clean -fd`, CDK deploy, destroy, watch and bootstrap, `~/.ssh` and `.git/config` reads, `gh release`, `gh repo delete`).
-- `convenience.json`: the `allow` rules. These save prompts and add no safety, so they are **opt-in**.
-
-**Behavior of `/lstk-guardrails:init`**
-
-1. Ask the scope: **user** (`~/.claude/settings.json`, once per machine) or **project** (`.claude/settings.json`, committed for the team).
-2. Run `merge-settings.mjs --scope <s> --dry-run` and show the diff.
-3. On confirmation, apply.
-
-**Merge rules (tested)**
-
-- Union and deduplicate arrays. **Never remove or reorder existing user entries.**
-- Idempotent: a second run produces no diff.
-- Preserve unrelated keys. Create the file if it does not exist. Refuse to write if the existing file is invalid JSON.
-- Report any existing `allow` rule that conflicts with a snippet `deny` rule (deny wins at runtime, but the user should know).
-- Never touch `hooks`; the plugin supplies those.
-
----
-
-## 8. Skill authoring conventions
-
-- **Description is the trigger.** Third person, with what it does and when to use it, and concrete trigger phrases. Keep it tight, because every description sits in context permanently.
-- **Progressive disclosure.** `SKILL.md` stays short. Detail goes in `reference.md`, `templates/`, and `examples/` loaded on demand.
-- **Deterministic work goes in scripts, judgment goes in prose.**
-- **Output contracts.** State the exact artifact (path, format, sections) so results are reviewable.
-- **Defer to the repo.** Read `AGENTS.md` and project config first, and apply the `stack-profile` defaults only where the repo is silent.
-- **Side effects need explicit invocation.** Use `disable-model-invocation: true` for anything that commits, pushes, opens PRs, or writes outside the working tree.
-- **Docs and diagrams** are Markdown with Mermaid.
-- **Agent definitions** restrict `tools` to the minimum. Plugin agents cannot carry `hooks`, `mcpServers`, or `permissionMode`, so rely on plugin-level hooks and tool restriction.
-
----
-
-## 9. Testing strategy
-
-| Layer                          | Tool                                        | Runs in CI                                                                              |
-| ------------------------------ | ------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Hook logic, merge script       | Vitest                                      | Yes                                                                                     |
-| Manifest and frontmatter lint  | `scripts/lint-plugins.mjs`                  | Yes                                                                                     |
-| Style                          | oxlint, Prettier                            | Yes                                                                                     |
-| Plugin loads and validates     | `claude plugin validate --strict`           | Yes (CLI installed via npm; runs offline with no credentials)                           |
-| Skill trigger and output evals | `skill-creator` eval workflow, run manually | **No** (needs model access). Results summarized in `tests/evals/RESULTS.md` per release |
-
----
-
-## 10. Release and versioning
-
-- Semver per plugin via `version` in each `plugin.json`, and git tags like `lstk-v0.1.0` and `lstk-guardrails-v0.1.0`.
-- `CHANGELOG.md` per plugin.
-- **Bump the version on every released change.** Verify in M0 how the update check treats versions, since unbumped changes may not propagate to other machines.
-- Pre-1.0 while the skill set is settling. Cut `0.1.0` at the end of M2, which is the first genuinely useful and safe state. M1 ships `lstk-guardrails` as `0.1.0-alpha.1` so installed users receive it.
-
----
-
-## 11. Risks
-
-| Risk                                          | Mitigation                                                                                      |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Hooks give false confidence                   | Document the limits (§6), keep permission rules as a second layer, never claim sandboxing       |
-| Skill sprawl harms triggering                 | Gate new skills on a real recurring workflow and an eval set                                    |
-| Over-opinionated stack defaults               | `stack-profile` yields to repo conventions                                                      |
-| Plugin cache isolation breaks path references | Keep each plugin self-contained, enforce with the lint script (flag `../` references)           |
-| Public-repo leakage (client details)          | Review checklist in `CONTRIBUTING.md`, applied in M2 migration                                  |
-| Docs drift as Claude Code evolves             | M0 verification, plus a "last verified against Claude Code version X" note in `ARCHITECTURE.md` |
-
----
-
-## 12. Deferred and open items
-
-- AWS MCP servers (deferred, issue #19). Scaffold skills (#15 to #18) and the `PostToolUse` hook (#20) are deferred the same way, tracked in #21.
-- Whether to build a small Windows/WSL story (out of scope, macOS and Linux only).
-- Whether a second guardrail layer should include a `UserPromptSubmit` or `PostToolUse` hook (evaluate after M1 use).
-- Public marketplace listing and discoverability (after `0.1.0`).
+| Risk                                                                             | Mitigation                                                                                                                    |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Tokenizer misses a bypass the regex caught (or the reverse)                      | The behavior matrix plus the local parity check is the regression net. Add every divergence as an explicit row with a reason. |
+| Fail-open reversal from the legacy fail-closed behavior weakens protection       | Follows PLAN §5. Document in README and CHANGELOG. Permission rules in `baseline.json` are the backstop.                      |
+| Hooks run twice for users who keep the old `~/.claude/settings.json` hooks block | `init` output and README tell users to remove it.                                                                             |
+| Over-blocking from `.env.*`                                                      | Built-in exemption for `.env.example`, `.sample`, and `.template`, plus `unprotectPatterns`.                                  |
+| `merge-settings` corrupts a user's settings file                                 | Refuse on invalid input, atomic write, `.bak` on first change, dry-run default in the skill flow, and idempotency tests.      |
+| Legacy scripts or personal paths leak into the public repo                       | Step 1 parks them in a locally excluded `.legacy/`. Step 13a deletes them. Step 13b greps and reads the diff.                 |

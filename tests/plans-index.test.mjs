@@ -10,7 +10,7 @@ const PLANS_DIR = path.join(ROOT, 'docs/plans');
  * Plan files linked from the rows of the index tables in a plans README.
  * Only the first link in a row's first cell counts.
  * @param {string} readme
- * @returns {string[]} link targets, such as `PLAN-M0.md`
+ * @returns {string[]} link targets, such as `PLAN-MVP-M0.md`
  */
 export function indexedPlans(readme) {
   const targets = [];

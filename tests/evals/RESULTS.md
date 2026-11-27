@@ -237,7 +237,7 @@ Not a trigger eval: the skill was not built. A hand run of `npm audit --json` on
 `lodash` 4.17.20 pin (SI-08) returned one high finding with four advisories and a `lodash@4.18.1` fix. Triage added one
 thing the raw output lacks: `lodash` is never imported, so the advisories are unreachable and removal is the lowest-risk
 fix. Dev versus runtime, transitive paths, and workspaces were not exercised. A plain prompt gives the same
-reachability result, so the skill was not built. Details in `docs/plans/PLAN-M4.md`, Phase 6.
+reachability result, so the skill was not built. Details in `docs/plans/PLAN-MVP-M4.md`, Phase 6.
 
 ## plan-author (PLAN-0023 Phase 4, 2026-11-27)
 

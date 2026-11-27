@@ -10,7 +10,7 @@
     },
     {
       "id": "plan-author-02",
-      "prompt": "/lstk:plan-author Milestone 2 of docs/plans/PLAN-MVP-M1.md",
+      "prompt": "/lstk:plan-author Milestone 2 of docs/plans/PLAN-MVP.md",
       "shouldTrigger": true,
       "note": "Explicit invocation with a milestone reference; selects phase mode."
     },

@@ -7,7 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SKILLS_DIR = path.join(ROOT, 'plugins/lstk/skills');
 
 // M4 review skills. Each body must have an output contract and a limits section, so a report can never
-// claim more than it checked (PLAN-M4 F5). Grown per phase: architecture-review, threat-model,
+// claim more than it checked (PLAN-MVP-M4 F5). Grown per phase: architecture-review, threat-model,
 // cdk-iam-review, and dependency-audit if built.
 export const REVIEW_SKILLS_REQUIRE_SECTIONS = ['architecture-review', 'threat-model', 'cdk-iam-review'];
 

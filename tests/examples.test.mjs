@@ -22,7 +22,7 @@ const EXAMPLES_REQUIRED = [
 ];
 
 // The code-reviewer agent defines its report format in the agent prompt and has no template file, so
-// its contract headings are listed here (PLAN-M4 7.3).
+// its contract headings are listed here (PLAN-MVP-M4 7.3).
 const AGENT_EXAMPLES = {
   'code-reviewer': ['Scope', 'Summary', 'Findings', 'Test gaps', 'Questions for the author', 'Not reviewed'],
 };
@@ -30,7 +30,7 @@ const AGENT_EXAMPLES = {
 // Review skills whose examples must follow the contract headings in references/output-template.md.
 const CONTRACT_SKILLS = ['architecture-review', 'threat-model', 'cdk-iam-review', 'promote-prototype'];
 
-// `prototype` has no output template file. Its contract is the PROTOTYPE.md section list (PLAN-M5 Phase 1).
+// `prototype` has no output template file. Its contract is the PROTOTYPE.md section list (PLAN-MVP-M5 Phase 1).
 const LITERAL_EXAMPLES = {
   prototype: ['Status', 'Purpose', 'How to run', 'What is faked', 'Known shortcuts', 'Not covered', 'Promotion'],
 };

@@ -94,7 +94,7 @@ Write, Edit`. It writes `docs/plans/PLAN-<id>.md` in one of two fixed shapes, a 
 ### Decided
 
 - `dependency-audit` is not built. A hand run showed only reachability as added value, which a plain prompt already
-  gives. See `docs/plans/PLAN-M4.md`, Phase 6.
+  gives. See `docs/plans/PLAN-MVP-M4.md`, Phase 6.
 
 ## [lstk 0.2.0]
 

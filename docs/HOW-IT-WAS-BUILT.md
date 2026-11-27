@@ -1,7 +1,7 @@
 # How lstk was built
 
 The story of the lstk marketplace, milestone by milestone: what was decided, what was verified instead of assumed, and
-what was cut. The sources are [docs/plans/PLAN-MVP-M1.md](plans/PLAN-MVP-M1.md) and the per-milestone plans in [docs/plans](plans), each of which
+what was cut. The sources are [docs/plans/PLAN-MVP.md](plans/PLAN-MVP.md) and the per-milestone plans in [docs/plans](plans), each of which
 ends with phase records.
 
 ## The method
@@ -41,7 +41,7 @@ Three habits held across every milestone:
 
 ## Decisions that mattered
 
-The full table is in [PLAN-MVP-M1.md](plans/PLAN-MVP-M1.md#2-decisions). The ones that shaped the most work:
+The full table is in [PLAN-MVP.md](plans/PLAN-MVP.md#2-decisions). The ones that shaped the most work:
 
 - **D2, two plugins.** Enforcement posture varies by client, so guardrails install independently of the skills.
 - **D4, Node `.mjs` hooks with no dependencies.** Plugins ship no shell scripts and no `node_modules`. The hooks are
@@ -86,4 +86,4 @@ so in every recipe rather than overselling a skill that does not exist.
 
 - [Getting started](guides/getting-started.md) and the [guides index](guides/README.md)
 - [Walkthrough: a bug fix](guides/walkthrough-bug-fix.md)
-- [PLAN-MVP-M1.md](plans/PLAN-MVP-M1.md) and [ARCHITECTURE.md](ARCHITECTURE.md)
+- [PLAN-MVP.md](plans/PLAN-MVP.md) and [ARCHITECTURE.md](ARCHITECTURE.md)

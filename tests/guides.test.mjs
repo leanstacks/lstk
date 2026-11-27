@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parseFrontmatter } from '../scripts/lint-plugins.mjs';
 
-// Keeps the user guides honest as skills change (PLAN-M6 Phase 1, step 1.5). The guides in
+// Keeps the user guides honest as skills change (PLAN-MVP-M6 Phase 1, step 1.5). The guides in
 // docs/guides/ and the README are the only files checked. Every check passes on an empty docs/guides/.
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

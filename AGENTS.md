@@ -2,7 +2,7 @@
 
 lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) and holds two plugins. All plans are in
 `docs/plans/`, and `docs/plans/README.md` is the index: find a plan there before opening it. The original MVP milestone
-plan is `docs/plans/PLAN-MVP-M1.md`. It covers only the MVP scope, so later work has its own plans. The verified plugin
+plan is `docs/plans/PLAN-MVP.md`. It covers only the MVP scope, so later work has its own plans. The verified plugin
 contract is in `docs/ARCHITECTURE.md`.
 
 ## Layout
