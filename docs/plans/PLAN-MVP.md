@@ -63,10 +63,10 @@ lstk/
 │           └── convenience.json      # allow (opt-in)
 ├── tests/                            # Vitest: hooks, merge script, frontmatter lint
 ├── scripts/lint-plugins.mjs          # manifest and frontmatter validation
-├── docs/                             # ARCHITECTURE.md, CONTRIBUTING.md, HOW-IT-WAS-BUILT.md, this plan
+├── docs/                             # ARCHITECTURE.md, CONTRIBUTING.md, HOW-IT-WAS-BUILT.md
 │   ├── guides/                       # user guides (not shipped in the plugins)
 │   ├── examples/                     # worked examples
-│   └── plans/                        # per-milestone plans
+│   └── plans/                        # PLAN-MVP.md (this plan), per-milestone plans, README.md index
 ├── .github/workflows/ci.yml
 ├── package.json                      # devDeps only: vitest, oxlint, prettier
 ├── AGENTS.md
@@ -197,7 +197,7 @@ flowchart LR
 
 ### M1 — Guardrails plugin (done)
 
-_As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package scripts and `make` targets. `.claude/lstk.json` supports `unprotectPatterns` to remove a default, and `.claude/lstk.local.json` adds personal overrides. Hooks block through the JSON `permissionDecision`. See `docs/plans/PLAN-M1.md`.
+_As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package scripts and `make` targets. `.claude/lstk.json` supports `unprotectPatterns` to remove a default, and `.claude/lstk.local.json` adds personal overrides. Hooks block through the JSON `permissionDecision`. See `docs/plans/PLAN-MVP-M1.md`.
 
 | Task                                                                                                                                     | Acceptance criteria                                                                                                                                                                               |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -220,7 +220,7 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 | Baseline evals                     | At least 3 trigger prompts (should and should not fire) per skill, documented in `tests/evals/`                                                                                                           |
 | Cross-link                         | `repo-onboarding`, `local-setup-author`, and `agents-md-author` reference each other's outputs                                                                                                            |
 
-**Status: done (released as `lstk` 0.1.0 and `lstk-guardrails` 0.1.0).** As built, see `docs/plans/PLAN-M2.md`:
+**Status: done (released as `lstk` 0.1.0 and `lstk-guardrails` 0.1.0).** As built, see `docs/plans/PLAN-MVP-M2.md`:
 
 - `recon.sh` was ported to `agents-md-author/scripts/recon.mjs` (Node built-ins, tested), because plugins ship no shell scripts.
 - Descriptions are third person and under 500 characters. `lint-plugins` caps them at 1024 and checks relative links.
@@ -238,7 +238,7 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 
 **Acceptance:** each skill has a trigger eval set and a worked example in `docs/examples/`.
 
-**Status: done (released as `lstk` 0.2.0).** As built, see `docs/plans/PLAN-M3.md`:
+**Status: done (released as `lstk` 0.2.0).** As built, see `docs/plans/PLAN-MVP-M3.md`:
 
 - `stack-profile` is reference-only (`user-invocable: false`). Consumer skills name it and repeat its precedence rule, and never link its files.
 - `researcher` is read-only (`Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`), runs in the foreground (`background: false`), and defines the report format that `tech-eval` consumes.
@@ -255,7 +255,7 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 | `cdk-iam-review`              | Least-privilege review of CDK constructs. Evaluate whether cdk-nag output should feed it                       |
 | `dependency-audit` (optional) | Wraps `npm audit` plus triage guidance. Only if it clearly adds value beyond running the command               |
 
-**Status: done (`lstk` 0.3.0).** `code-reviewer`, `architecture-review`, `threat-model`, and `cdk-iam-review` are built. `dependency-audit` is **not built**: a hand run on the fixture showed only reachability as added value, which a plain prompt already gives (see `docs/plans/PLAN-M4.md`, Phase 6).
+**Status: done (`lstk` 0.3.0).** `code-reviewer`, `architecture-review`, `threat-model`, and `cdk-iam-review` are built. `dependency-audit` is **not built**: a hand run on the fixture showed only reachability as added value, which a plain prompt already gives (see `docs/plans/PLAN-MVP-M4.md`, Phase 6).
 
 **Acceptance:** each runs on a sample repo (`examples/` or a linked fixture) and produces output that is reproducibly structured.
 
@@ -267,7 +267,7 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 | `promote-prototype` skill | Runs a gap analysis against production expectations (tests, auth, error handling, IaC, observability) and emits a **gap list with relative effort**, which feeds estimates              |
 | Guardrail interaction     | Hooks stay active. Prototypes get speed from scaffolding, not from weakened safety                                                                                                      |
 
-**Status: done (`lstk` 0.4.0).** As built, see `docs/plans/PLAN-M5.md`:
+**Status: done (`lstk` 0.4.0).** As built, see `docs/plans/PLAN-MVP-M5.md`:
 
 - `prototype` scaffolds `web` or `lambda` shapes into `prototypes/<name>/` through `scripts/scaffold.mjs` (Node built-ins only, templates pinned, no CDK app, no deploy). It writes a `PROTOTYPE.md` with seven fixed sections.
 - `promote-prototype` writes `prototypes/<name>/PROMOTION-GAPS.md` using a fixed eight-section contract and a seven-column gap table. Effort is relative (`S`, `M`, `L`, `XL`), never hours or cost.
@@ -276,8 +276,9 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 
 ### M6 — Backlog (grow from real use)
 
-**Status: done (`lstk` 0.4.1).** As built, see `docs/plans/PLAN-M6.md`: user guides in `docs/guides/` with docs tests, a README that routes to them, `keywords` and marketplace metadata, and `docs/HOW-IT-WAS-BUILT.md`. The items below were triaged, not built. Each is a `backlog` issue (#15 `nestjs-module`, #16 `lambda-handler`, #17 `react-feature`, #18 `cdk-construct`, #19 AWS MCP servers, #20 `PostToolUse` hook), tracked by #21 with a review checkpoint of 2026-12-12. The demo is an annotated transcript (`docs/guides/walkthrough-bug-fix.md`). No asciinema recording exists.
+**Status: done (`lstk` 0.4.1).** As built, see `docs/plans/PLAN-MVP-M6.md`: user guides in `docs/guides/` with docs tests, a README that routes to them, `keywords` and marketplace metadata, and `docs/HOW-IT-WAS-BUILT.md`. The items below were triaged, not built. Each is a `backlog` issue (#15 `nestjs-module`, #16 `lambda-handler`, #17 `react-feature`, #18 `cdk-construct`, #19 AWS MCP servers, #20 `PostToolUse` hook), tracked by #21 with a review checkpoint of 2026-12-12. The demo is an annotated transcript (`docs/guides/walkthrough-bug-fix.md`). No asciinema recording exists.
 
+- **Planning skill, built after M6 (`lstk` 0.5.0).** Issue 23 added `plan-author`, a user-invoked skill that writes milestone and phase plans and adds the plans index row. As built, see `docs/plans/PLAN-0023.md`.
 - Scaffold skills: `nestjs-module`, `lambda-handler`, `react-feature`, `cdk-construct`.
 - AWS docs and CDK MCP servers: off by default, documented credentials surface, verify maintained servers at that time.
 - `PostToolUse` hook to run Prettier and oxlint on edited files. It must detect tool presence and fail soft.

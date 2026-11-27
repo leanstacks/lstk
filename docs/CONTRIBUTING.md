@@ -72,6 +72,13 @@ yourself and ask Claude to check, for each advisory, whether the vulnerable pack
 dev or runtime dependency, and whether removing or upgrading is the lowest-risk fix. Never run `npm audit fix --force`
 without reading what it changes.
 
+## Plans
+
+Every implementation plan lives in `docs/plans/`. Add a row to `docs/plans/README.md` in the same change that adds a
+plan, and update the row's status when the plan's state changes. `tests/plans-index.test.mjs` fails when a plan has no
+row. The `plan-author` skill adds the row for you when the repo has an index, but check it, because it may need
+`npm run format`.
+
 ## Plugin rules
 
 - Each plugin is self-contained. Never use `../` to reach outside a plugin directory.

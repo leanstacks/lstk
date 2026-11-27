@@ -18,10 +18,11 @@ const EXAMPLES_REQUIRED = [
   'cdk-iam-review',
   'prototype',
   'promote-prototype',
+  'plan-author',
 ];
 
 // The code-reviewer agent defines its report format in the agent prompt and has no template file, so
-// its contract headings are listed here (PLAN-M4 7.3).
+// its contract headings are listed here (PLAN-MVP-M4 7.3).
 const AGENT_EXAMPLES = {
   'code-reviewer': ['Scope', 'Summary', 'Findings', 'Test gaps', 'Questions for the author', 'Not reviewed'],
 };
@@ -29,10 +30,20 @@ const AGENT_EXAMPLES = {
 // Review skills whose examples must follow the contract headings in references/output-template.md.
 const CONTRACT_SKILLS = ['architecture-review', 'threat-model', 'cdk-iam-review', 'promote-prototype'];
 
-// `prototype` has no output template file. Its contract is the PROTOTYPE.md section list (PLAN-M5 Phase 1).
+// `prototype` has no output template file. Its contract is the PROTOTYPE.md section list (PLAN-MVP-M5 Phase 1).
 const LITERAL_EXAMPLES = {
   prototype: ['Status', 'Purpose', 'How to run', 'What is faked', 'Known shortcuts', 'Not covered', 'Promotion'],
 };
+
+// `plan-author` has no output-template.md. Its contract is the phase plan section list in references/phase-template.md.
+LITERAL_EXAMPLES['plan-author'] = [
+  '1. Scope',
+  '2. Findings and decisions',
+  '3. Execution order',
+  '4. Phases',
+  '5. Exit checklist',
+  '6. Risks specific to this plan',
+];
 
 const h2 = (text) => [...text.matchAll(/^## (.+?)\s*$/gm)].map((m) => m[1]);
 
@@ -68,7 +79,7 @@ describe('worked examples', () => {
     expect(inOrder(expected, h2(example)), `${skill}.md headings vs ${expected.join(' > ')}`).toBe(true);
   });
 
-  it.each(Object.keys(LITERAL_EXAMPLES))('%s example shows every PROTOTYPE.md section in order', (skill) => {
+  it.each(Object.keys(LITERAL_EXAMPLES))('%s example shows every contract section in order', (skill) => {
     const example = readFileSync(path.join(EXAMPLES_DIR, `${skill}.md`), 'utf8');
     expect(inOrder(LITERAL_EXAMPLES[skill], h2(example))).toBe(true);
   });

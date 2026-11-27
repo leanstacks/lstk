@@ -1,6 +1,7 @@
 # Architecture
 
 > **Last verified against Claude Code 2.1.319 on 2026-11-08**, using the official docs and `claude plugin validate`.
+> The plan-mode finding under "Plan mode and user-invoked writing skills" was verified on 2.1.332 on 2026-11-27.
 > Re-verify when Claude Code changes the plugin contract.
 
 ## Layers
@@ -211,6 +212,18 @@ Verified in M3 Phase 1 (Claude Code 2.1.322, 2026-11-11) against the sub-agents 
   `--plugin-dir`: a skill whose body said "apply the `ref-skill` skill" caused Claude to call the Skill tool with
   `scr:ref-skill`, and a `user-invocable: false` skill loaded and returned its content. Skills therefore refer to
   each other by name, never by file path.
+
+### Plan mode and user-invoked writing skills
+
+- Verified in Phase 1 of PLAN-0023 (Claude Code 2.1.332, 2026-11-27) with a scratch plugin loaded through
+  `--plugin-dir`: a `disable-model-invocation: true` skill with `allowed-tools: Read, Write, Edit` that writes
+  `out.md`. Outside plan mode (`claude -p "/scr:writer"`), the file is written. Under `--permission-mode plan`, the skill
+  loads and runs, but the write is refused: Claude says it can only edit the plan file, writes its plan there, and
+  creates no `out.md`.
+- A skill that writes files (`plan-author`, and the other user-invoked writers) therefore cannot write while plan mode
+  is on. `allowed-tools` does not override plan mode. The skill text tells the user to leave plan mode first.
+- `allowed-tools` pre-approves the listed tools. It is not documented here as a deny list, so other tools stay subject to
+  the normal permission rules.
 
 ### Validation
 

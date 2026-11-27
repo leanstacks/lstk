@@ -3,9 +3,9 @@
 A [Claude Code](https://code.claude.com) plugin marketplace that helps engineers and architects research, design,
 develop, review, and harden applications, and prototype quickly. It is AWS-first and TypeScript-first.
 
-> **Status:** pre-1.0. `lstk` is `0.4.1` and `lstk-guardrails` is `0.1.0`. `lstk` ships fourteen skills and two agents.
+> **Status:** pre-1.0. `lstk` is `0.5.0` and `lstk-guardrails` is `0.1.0`. `lstk` ships fifteen skills and two agents.
 > Deferred ideas are tracked in the [backlog review](https://github.com/leanstacks/lstk/issues/21). See
-> [docs/PLAN.md](docs/PLAN.md).
+> [docs/plans/PLAN-MVP.md](docs/plans/PLAN-MVP.md).
 
 ## Start here
 
@@ -82,6 +82,7 @@ The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 | `cdk-iam-review`      | User-invoked only                              | Static IAM review of CDK TypeScript, with shown-only diffs. Writes `docs/reviews/`.          |
 | `prototype`           | User-invoked only                              | Throwaway web or Lambda prototype in `prototypes/<name>/`, with a `PROTOTYPE.md`.            |
 | `promote-prototype`   | User-invoked only                              | Cited gap list with relative effort for taking a prototype to production.                    |
+| `plan-author`         | User-invoked only                              | Implementation plan (milestone or phase) in `docs/plans/`, added to the plans index.         |
 
 ### Agents
 
@@ -90,7 +91,7 @@ The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 | `researcher`    | `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch` | Read-only research that returns a sourced report. Used by `tech-eval`. |
 | `code-reviewer` | `Read`, `Grep`, `Glob`                          | Read-only change review. The caller supplies the diff or paths.        |
 
-See [docs/examples](docs/examples/README.md) for worked examples of the design, review, and prototype skills.
+See [docs/examples](docs/examples/README.md) for worked examples of the design, review, prototype, and planning skills.
 
 Skills defer to the target repo: its `AGENTS.md`, `CONTRIBUTING.md`, and templates win over the skill's defaults.
 
@@ -187,7 +188,7 @@ The prototype workflow (`/lstk:prototype`, `/lstk:promote-prototype`) runs with 
 These documents are for people changing lstk, not for people using it:
 
 - [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- [docs/PLAN.md](docs/PLAN.md) and the per-milestone plans in [docs/plans](docs/plans)
+- [docs/plans/PLAN-MVP.md](docs/plans/PLAN-MVP.md) and the per-milestone plans in [docs/plans](docs/plans)
 - [docs/HOW-IT-WAS-BUILT.md](docs/HOW-IT-WAS-BUILT.md)
 
 ## License

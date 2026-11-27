@@ -1,6 +1,6 @@
-# PLAN-M5 — Prototype
+# PLAN-MVP-M5 — Prototype
 
-**Source:** `docs/PLAN.md` §5 (M5), with §6 (hook design), §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context.
+**Source:** `docs/plans/PLAN-MVP.md` §5 (M5), with §6 (hook design), §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context.
 **Branch:** `<issue>-m5-prototype` (create from `main` after M4 is merged)
 **Starting state:** M0 to M4 are done. `lstk` is `0.3.0` with twelve skills and two agents (`code-reviewer`, `researcher`). `lstk-guardrails` is `0.1.0`. `lint-plugins.mjs` validates manifests, frontmatter, and agent tools. `tests/review-skills.test.mjs` requires an output contract and a limits section for the review skills. `docs/examples/` holds the Example Orders worked examples. `tests/fixtures/sample-repo/` is the review fixture.
 **Goal:** Two skills in the `lstk` plugin: `prototype` (scaffold a throwaway prototype in `prototypes/<name>/`) and `promote-prototype` (gap analysis against production expectations, with relative effort). Hooks stay active throughout. The plugin is released as `0.4.0`.
@@ -19,7 +19,7 @@
 - Trigger evals in `tests/evals/` for both skills.
 - Worked examples in `docs/examples/`, continuing the Example Orders scenario.
 - Small `lint-plugins.mjs` and test extensions.
-- The `0.4.0` release: version bump, CHANGELOG, README, `docs/ARCHITECTURE.md` notes, `PLAN.md` status.
+- The `0.4.0` release: version bump, CHANGELOG, README, `docs/ARCHITECTURE.md` notes, `PLAN-MVP.md` status.
 
 **Out of scope**
 
@@ -209,18 +209,18 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 **Context to load:** this plan, `AGENTS.md`, `docs/examples/README.md`, all prior handoffs, `CHANGELOG.md`, `plugins/lstk/.claude-plugin/plugin.json`, `README.md`, `docs/CONTRIBUTING.md`, `tests/examples.test.mjs`.
 
-| Step | Work                                                                                                                                                                                                                                                                                                                                    |
-| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 6.1  | Write `docs/examples/prototype.md` (Example Orders: an order-status dashboard on the web shape, with the file tree and the `PROTOTYPE.md` it produced) and `docs/examples/promote-prototype.md` (the gap list for that prototype, in the exact contract shape). Trim, but keep every contract section.                                  |
-| 6.2  | Update `docs/examples/README.md` and the lifecycle diagram: `solution-outline` or `tech-eval` leads to `prototype`, then either `promote-prototype` into `solution-outline` estimates and the build, or a throwaway end.                                                                                                                |
-| 6.3  | Add both skills to `EXAMPLES_REQUIRED`. Extend the structure test so each example's `##` headings match the skill's output contract, in order (as in M4). `prototype` has no template headings, so use a small literal map for it.                                                                                                      |
-| 6.4  | Update `tests/evals/RESULTS.md` with an M5 summary: found and missed items per manual run, and tuning applied.                                                                                                                                                                                                                          |
-| 6.5  | Public-safety review of every new file, including templates and examples (names, paths, account IDs, secrets). Run `/code-review` and `/security-review` on the branch. Fix confirmed findings.                                                                                                                                         |
-| 6.6  | Release: bump `lstk` to `0.4.0` in `plugin.json`, add the CHANGELOG entry (note the template pin date), update the README skills table (fourteen skills), add `docs/ARCHITECTURE.md` notes (the two contracts, the effort scale, the no-deploy rule), and mark M5 done in `docs/PLAN.md` with an "As built" summary in the style of M4. |
-| 6.7  | Local install smoke test: `/plugin marketplace add ./`, install both plugins, `/reload-plugins`, confirm `/lstk:prototype` and `/lstk:promote-prototype` appear, and run each once.                                                                                                                                                     |
-| 6.8  | After merge, tag `lstk-v0.4.0`.                                                                                                                                                                                                                                                                                                         |
+| Step | Work                                                                                                                                                                                                                                                                                                                                              |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 6.1  | Write `docs/examples/prototype.md` (Example Orders: an order-status dashboard on the web shape, with the file tree and the `PROTOTYPE.md` it produced) and `docs/examples/promote-prototype.md` (the gap list for that prototype, in the exact contract shape). Trim, but keep every contract section.                                            |
+| 6.2  | Update `docs/examples/README.md` and the lifecycle diagram: `solution-outline` or `tech-eval` leads to `prototype`, then either `promote-prototype` into `solution-outline` estimates and the build, or a throwaway end.                                                                                                                          |
+| 6.3  | Add both skills to `EXAMPLES_REQUIRED`. Extend the structure test so each example's `##` headings match the skill's output contract, in order (as in M4). `prototype` has no template headings, so use a small literal map for it.                                                                                                                |
+| 6.4  | Update `tests/evals/RESULTS.md` with an M5 summary: found and missed items per manual run, and tuning applied.                                                                                                                                                                                                                                    |
+| 6.5  | Public-safety review of every new file, including templates and examples (names, paths, account IDs, secrets). Run `/code-review` and `/security-review` on the branch. Fix confirmed findings.                                                                                                                                                   |
+| 6.6  | Release: bump `lstk` to `0.4.0` in `plugin.json`, add the CHANGELOG entry (note the template pin date), update the README skills table (fourteen skills), add `docs/ARCHITECTURE.md` notes (the two contracts, the effort scale, the no-deploy rule), and mark M5 done in `docs/plans/PLAN-MVP.md` with an "As built" summary in the style of M4. |
+| 6.7  | Local install smoke test: `/plugin marketplace add ./`, install both plugins, `/reload-plugins`, confirm `/lstk:prototype` and `/lstk:promote-prototype` appear, and run each once.                                                                                                                                                               |
+| 6.8  | After merge, tag `lstk-v0.4.0`.                                                                                                                                                                                                                                                                                                                   |
 
-**Acceptance:** `npm run check` and `npm run validate` pass. Examples exist for both skills and the structure test passes. The smoke test is recorded. `PLAN.md` shows M5 as done.
+**Acceptance:** `npm run check` and `npm run validate` pass. Examples exist for both skills and the structure test passes. The smoke test is recorded. `PLAN-MVP.md` shows M5 as done.
 
 **Commit:** `doc: add M5 examples and eval results`, then `chore: release lstk 0.4.0`
 
@@ -253,13 +253,13 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 4: `promote-prototype` skill, output template, evals, manual run
 - [x] Phase 5: guardrail interaction runs and docs
 - [ ] Phase 6: examples, release `lstk` 0.4.0 done. `/code-review`, `/security-review`, the installed-cache smoke test, and the tag are still open (see Phase 6 records)
-- [x] `PLAN.md` M5 status updated
+- [x] `PLAN-MVP.md` M5 status updated
 
 ---
 
 ## 7. Phase records
 
-Append a "As built" and a "Handoff" subsection per phase here as each phase finishes, in the style of `PLAN-M4.md`.
+Append a "As built" and a "Handoff" subsection per phase here as each phase finishes, in the style of `PLAN-MVP-M4.md`.
 
 ### Phase 1 — As built
 
@@ -478,7 +478,7 @@ Wording avoids "ready", "secure", "compliant", and "complete".
   read from its output template). `prototype` uses a literal map of the seven `PROTOTYPE.md` sections.
 - `tests/evals/RESULTS.md` has an M5 summary table at the top.
 - Release: `lstk` is `0.4.0`, with CHANGELOG (template pin date 2026-11-12), README (fourteen skills), `ARCHITECTURE.md`
-  notes (two contracts, effort scale, no-deploy rule), and `PLAN.md` M5 marked done. `npm run check` (560 tests) and
+  notes (two contracts, effort scale, no-deploy rule), and `PLAN-MVP.md` M5 marked done. `npm run check` (560 tests) and
   `npm run validate` pass.
 - Public-safety grep over changed files (personal paths, email, AWS key pattern): no matches.
 

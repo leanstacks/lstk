@@ -22,11 +22,27 @@ Type the command with the plugin prefix:
 | `cdk-iam-review`      | `/lstk:cdk-iam-review`      |
 | `prototype`           | `/lstk:prototype`           |
 | `promote-prototype`   | `/lstk:promote-prototype`   |
+| `plan-author`         | `/lstk:plan-author`         |
 | `create-pull-request` | `/lstk:create-pull-request` |
 | `init`                | `/lstk-guardrails:init`     |
 
 A bare `/<skill>` also works unless another plugin uses the same name. The other skills are **say it**: Claude may load
 them when your words match what the skill is for, and you can still type the slash command to be sure.
+
+## plan-author or plan mode?
+
+Use **plan mode** to think through a change and approve an approach before Claude edits. It is the better choice for a
+small or exploratory change, and it needs no setup. Use **`/lstk:plan-author`** when the plan must outlive the session:
+a multi-session change where each phase gets a "Context to load", a "Done when", an "As built" block, and a handoff,
+saved in `docs/plans/` and listed in the plans index.
+
+Limits to know:
+
+- Plan mode blocks the file write. Leave plan mode, then type `/lstk:plan-author`.
+- It never creates a plans index. If your repo has none, it writes the plan and offers to create one.
+- It never overwrites a plan. If the name is taken, it asks.
+- The new index row may need `npm run format` (or your formatter) to realign the table.
+- It may try `gh issue view` for an issue key. You approve it as usual, or paste the issue text instead.
 
 ## A skill that should trigger did not. What do I check?
 

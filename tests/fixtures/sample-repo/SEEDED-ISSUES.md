@@ -4,7 +4,7 @@ Each row is a deliberate defect in this fixture. `tests/fixtures.test.mjs` check
 its anchor text appears on that line, so this key cannot drift from the code.
 
 Skills: `CR` = code-reviewer, `AR` = architecture-review, `TM` = threat-model, `IAM` = cdk-iam-review,
-`DA` = dependency-audit (not built, see `docs/plans/PLAN-M4.md` Phase 6).
+`DA` = dependency-audit (not built, see `docs/plans/PLAN-MVP-M4.md` Phase 6).
 
 | ID    | Issue                                              | Location                         | Anchor                               | Expected from |
 | ----- | -------------------------------------------------- | -------------------------------- | ------------------------------------ | ------------- |

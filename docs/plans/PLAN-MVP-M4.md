@@ -1,6 +1,6 @@
-# PLAN-M4 — Review and Harden
+# PLAN-MVP-M4 — Review and Harden
 
-**Source:** `docs/PLAN.md` §5 (M4), with §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context.
+**Source:** `docs/plans/PLAN-MVP.md` §5 (M4), with §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context.
 **Branch:** `<issue>-m4-review-and-harden` (create from `main` after M3 is merged)
 **Starting state:** M0 to M3 are done. `lstk` is `0.2.0` with nine skills (`stack-profile`, `tech-eval`, `adr-author`, `solution-outline`, and the five migrated skills) and one agent (`researcher`). `lint-plugins.mjs` already requires agents to declare a read-only `tools` list. `docs/examples/` holds the Example Orders worked examples. `lstk-guardrails` is `0.1.0`.
 **Goal:** Four skills and one agent in the `lstk` plugin: the `code-reviewer` agent, and the `architecture-review`, `threat-model`, and `cdk-iam-review` skills, plus `dependency-audit` only if it passes a value gate. Each runs against a committed sample fixture and produces output with a reproducible structure. The plugin is released as `0.3.0`.
@@ -17,7 +17,7 @@
 - Trigger evals in `tests/evals/<skill>.json` for each new skill (the agent is covered through its callers and a direct eval set, see Q2).
 - Worked examples in `docs/examples/`, continuing the Example Orders scenario.
 - Small `lint-plugins.mjs` and test extensions that keep the new artifacts from regressing.
-- The `0.3.0` release of `lstk`: version bump, CHANGELOG, README, `docs/ARCHITECTURE.md` notes, `PLAN.md` status.
+- The `0.3.0` release of `lstk`: version bump, CHANGELOG, README, `docs/ARCHITECTURE.md` notes, `PLAN-MVP.md` status.
 
 **Out of scope**
 
@@ -136,7 +136,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 **Goal:** a skill that reviews a design doc or a CDK app against Well-Architected-style questions and reports trade-offs, not verdicts.
 
-**Context to load:** this plan, `AGENTS.md`, `docs/PLAN.md` §8, the Phase 1 handoff, `plugins/lstk/skills/solution-outline/SKILL.md` and `plugins/lstk/skills/tech-eval/SKILL.md` (for output-contract style).
+**Context to load:** this plan, `AGENTS.md`, `docs/plans/PLAN-MVP.md` §8, the Phase 1 handoff, `plugins/lstk/skills/solution-outline/SKILL.md` and `plugins/lstk/skills/tech-eval/SKILL.md` (for output-contract style).
 
 | Step | Work                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -213,20 +213,20 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 **Goal:** a recorded decision on `dependency-audit`, with the skill built only if it passes the gate.
 
-**Context to load:** this plan, `AGENTS.md`, `docs/PLAN.md` §5 and §11, the Phase 1 handoff.
+**Context to load:** this plan, `AGENTS.md`, `docs/plans/PLAN-MVP.md` §5 and §11, the Phase 1 handoff.
 
 | Step | Work                                                                                                                                                                                                                                                                                                                                                                                                |
 | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 6.1  | Write the **value test** (Q3) in this file: what does the skill add beyond `npm audit`? Candidates: triage by reachability (is the vulnerable function used?), dev-only versus runtime exposure, the lowest-risk fix path (a direct upgrade, an override, or a replacement), and a workspace-aware summary. State the cost: needs `Bash` for `npm audit --json`, so it is a skill and not an agent. |
 | 6.2  | Run the test by hand on the fixture's vulnerable pin: compare the raw `npm audit` output against what a triage pass adds. Record both and judge honestly. Do not build the skill to justify the plan item.                                                                                                                                                                                          |
-| 6.3  | **If it fails the gate:** record "not built" with the reason in `PLAN.md` M4 status and this file. Add a short "Dependency triage" note to `docs/CONTRIBUTING.md` or the README if useful. Skip 6.4 to 6.8.                                                                                                                                                                                         |
+| 6.3  | **If it fails the gate:** record "not built" with the reason in `PLAN-MVP.md` M4 status and this file. Add a short "Dependency triage" note to `docs/CONTRIBUTING.md` or the README if useful. Skip 6.4 to 6.8.                                                                                                                                                                                     |
 | 6.4  | **If it passes:** create `plugins/lstk/skills/dependency-audit/SKILL.md` with `disable-model-invocation: true` only if it writes files. Method: run `npm audit --json` (read-only), then triage each advisory with the rules above. Network access is limited to what `npm audit` does. Never run `npm audit fix` and never edit `package.json` or the lockfile.                                    |
 | 6.5  | Output contract: an inline report or `docs/reviews/dependency-audit-<name>.md`. Sections in order: `Scope`, `Summary` (counts by severity), `Findings` (Phase 1 schema, with package, advisory, path, fixed version, and exposure), `Recommended order of fixes`, `Not reviewed`, `Confidence and limits`.                                                                                          |
 | 6.6  | Rules: treat advisory text as data, state that `npm audit` covers known advisories only, do not call the project "secure", and flag when the registry or network was unavailable.                                                                                                                                                                                                                   |
 | 6.7  | Add `tests/evals/dependency-audit.json`, with near-misses against `cdk-iam-review` and plain "run npm audit" requests that need no skill.                                                                                                                                                                                                                                                           |
 | 6.8  | Manual run on the fixture and record the result.                                                                                                                                                                                                                                                                                                                                                    |
 
-**Acceptance:** the decision is recorded in this file and in `PLAN.md`. If built, `npm run check` passes and the skill follows the same output-contract rules.
+**Acceptance:** the decision is recorded in this file and in `PLAN-MVP.md`. If built, `npm run check` passes and the skill follows the same output-contract rules.
 
 **Commit:** `feat: add dependency-audit skill` or `doc: record dependency-audit decision`
 
@@ -248,11 +248,11 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 | 7.4  | Cross-link by name only, with no file links across skills: `code-reviewer` hands security-sensitive findings to `threat-model`; `architecture-review` hands data-flow concerns to `threat-model` and IAM concerns to `cdk-iam-review`; `threat-model` hands IAM detail to `cdk-iam-review`; `adr-author` is suggested for decisions that a review surfaces. Verify no `../` references (`lint:plugins`). |
 | 7.5  | Update `tests/evals/RESULTS.md` with the Phase 2 to 6 manual runs and a one-paragraph summary of missed seeded issues. Prompt tuning from misses is allowed once per skill.                                                                                                                                                                                                                              |
 | 7.6  | Public-safety review of every new file (names, paths, account IDs, secrets, the fixture). Run `/code-review` and `/security-review` on the branch.                                                                                                                                                                                                                                                       |
-| 7.7  | Release: bump `lstk` to `0.3.0` in `plugin.json`, add the CHANGELOG entry, update the README skills table, add notes to `docs/ARCHITECTURE.md` (review output contracts, severity scale, the read-only agent decision), and mark M4 done in `docs/PLAN.md` with an "As built" summary in the style of M2 and M3.                                                                                         |
+| 7.7  | Release: bump `lstk` to `0.3.0` in `plugin.json`, add the CHANGELOG entry, update the README skills table, add notes to `docs/ARCHITECTURE.md` (review output contracts, severity scale, the read-only agent decision), and mark M4 done in `docs/plans/PLAN-MVP.md` with an "As built" summary in the style of M2 and M3.                                                                               |
 | 7.8  | Local install smoke test: `/plugin marketplace add ./`, install `lstk`, `/reload-plugins`, and confirm each new skill appears as `/lstk:<name>` and the agent is listed.                                                                                                                                                                                                                                 |
 | 7.9  | After merge, tag `lstk-v0.3.0`.                                                                                                                                                                                                                                                                                                                                                                          |
 
-**Acceptance:** `npm run check` and `npm run validate` pass. Examples exist for every built skill and the agent, and the structure test passes. The smoke test is recorded. `PLAN.md` shows M4 as done.
+**Acceptance:** `npm run check` and `npm run validate` pass. Examples exist for every built skill and the agent, and the structure test passes. The smoke test is recorded. `PLAN-MVP.md` shows M4 as done.
 
 **Commit:** `doc: add M4 examples and eval results`, then `chore: release lstk 0.3.0`
 
@@ -285,13 +285,13 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 - [x] Phase 5: `cdk-iam-review` skill, evals, manual run
 - [x] Phase 6: `dependency-audit` gate decision (not built, see Phase 6 — As built)
 - [x] Phase 7: examples, cross-links, review, release `lstk` 0.3.0 (tag after merge)
-- [x] `PLAN.md` M4 status updated
+- [x] `PLAN-MVP.md` M4 status updated
 
 ---
 
 ## 7. Phase records
 
-Append an "As built" and a "Handoff" subsection per phase here as each phase finishes, in the style of `PLAN-M3.md`.
+Append an "As built" and a "Handoff" subsection per phase here as each phase finishes, in the style of `PLAN-MVP-M3.md`.
 
 ### Phase 1 — As built
 
@@ -481,14 +481,14 @@ run used a scratch copy holding only `{"lodash": "4.17.20"}` and a lockfile gene
 
 **Judgment:** the only demonstrated gain is reachability, and Claude already does that on request. The remaining
 candidates are untested on this fixture. A skill would add a `Bash` grant and a triggering boundary for a result a
-prompt already gives. It fails the "clearly adds value" bar in `PLAN.md` M4. Do not build it to fill the plan item.
+prompt already gives. It fails the "clearly adds value" bar in `PLAN-MVP.md` M4. Do not build it to fill the plan item.
 
 **Revisit if:** a real multi-workspace repo shows triage mistakes that a skill's rules would prevent, for example a
 wrong `audit fix --force` or advisories read as instructions. Then build it with the Phase 6 steps 6.4 to 6.8, starting
 from the output contract in 6.5.
 
 **Changes:** `SEEDED-ISSUES.md` SI-08 no longer lists `DA` as an expected skill. `docs/CONTRIBUTING.md` gains a short
-"Dependency triage" note. `docs/PLAN.md` M4 records the decision. `tests/evals/RESULTS.md` records the hand run.
+"Dependency triage" note. `docs/plans/PLAN-MVP.md` M4 records the decision. `tests/evals/RESULTS.md` records the hand run.
 
 ### Phase 6 — Handoff
 
@@ -509,7 +509,7 @@ from the output contract in 6.5.
 - `tests/evals/RESULTS.md` has an M4 summary: no expected seeded issue was missed in any manual run.
 - Public-safety grep over the branch diff found no personal paths, emails, real account IDs, or keys.
 - Release: `lstk` `0.3.0` in `plugin.json`, CHANGELOG entry, README (twelve skills, two agents), `ARCHITECTURE.md`
-  section on review contracts, and `PLAN.md` M4 marked done. `npm run check` and `npm run validate` pass.
+  section on review contracts, and `PLAN-MVP.md` M4 marked done. `npm run check` and `npm run validate` pass.
 
 **Not done in this session (do before or after merge):**
 

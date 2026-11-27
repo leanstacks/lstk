@@ -1,6 +1,6 @@
-# PLAN-M6 — Marketplace polish and user documentation (backlog triaged)
+# PLAN-MVP-M6 — Marketplace polish and user documentation (backlog triaged)
 
-**Source:** `docs/PLAN.md` §5 (M6), with §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context. Work issue: #10 ("M6 — Backlog"). It tracks this milestone's implementation only and closes when the pull request merges. Deferred work is tracked in new issues created in Phase 7.
+**Source:** `docs/plans/PLAN-MVP.md` §5 (M6), with §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context. Work issue: #10 ("M6 — Backlog"). It tracks this milestone's implementation only and closes when the pull request merges. Deferred work is tracked in new issues created in Phase 7.
 **Branch:** `10-m6-docs-and-polish` (create from `main`)
 **Starting state:** M0 to M5 are done. `lstk` is `0.4.0` with fourteen skills and two agents. `lstk-guardrails` is `0.1.0`. The README documents every skill and the guardrail model but has no task-oriented guidance. `docs/examples/` holds worked examples of the design, review, and prototype skills. There are no user guides.
 **Goal:** A new or existing user can open the repo and learn which skill or agent to use for each everyday workflow, and in what order. Marketplace polish is done. The remaining M6 backlog items are triaged into GitHub issues with explicit promotion criteria, not built.
@@ -41,7 +41,7 @@ Rules that follow:
 
 1. **README owns:** the pitch, install, the skill and agent reference tables, the guardrail model, and a "Start here" block that links to the guides. It gets one new section, "Workflows at a glance", with the lifecycle diagram and a six-line table.
 2. **`docs/guides/` owns:** all task-first recipes. Guides link to skills by name and never copy a skill's description. The skill table exists only in the README, so there is one place to update.
-3. **Maintainer docs stay separate.** `docs/PLAN.md`, `docs/plans/`, `docs/ARCHITECTURE.md`, and `docs/CONTRIBUTING.md` are for contributors. `docs/guides/` is for plugin users. The README links to both, in separate sections.
+3. **Maintainer docs stay separate.** `docs/plans/PLAN-MVP.md`, `docs/plans/`, `docs/ARCHITECTURE.md`, and `docs/CONTRIBUTING.md` are for contributors. `docs/guides/` is for plugin users. The README links to both, in separate sections.
 4. **Each guide is a recipe set, not prose.** Each recipe has: when to use it, the ordered steps (skill, agent, or native Claude Code), a copy-paste prompt for each step, the artifact it produces, and when to skip a step.
 
 **Guide set** (each is a clean-session unit in Phases 2 to 5)
@@ -140,7 +140,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 **Goal:** the skill and agent facts the guides depend on are written down once, Q1 to Q4 are decided, and tests exist that will catch guide drift.
 
-**Context to load:** this plan, `AGENTS.md`, `README.md`, `docs/PLAN.md`, `docs/ARCHITECTURE.md`, `docs/examples/README.md`, `docs/CONTRIBUTING.md`, every `plugins/lstk/skills/*/SKILL.md` frontmatter and its "Use when" and "Not for" lines, both agent files, `plugins/lstk-guardrails/skills/init/SKILL.md`, `scripts/lint-plugins.mjs`, `tests/examples.test.mjs`.
+**Context to load:** this plan, `AGENTS.md`, `README.md`, `docs/plans/PLAN-MVP.md`, `docs/ARCHITECTURE.md`, `docs/examples/README.md`, `docs/CONTRIBUTING.md`, every `plugins/lstk/skills/*/SKILL.md` frontmatter and its "Use when" and "Not for" lines, both agent files, `plugins/lstk-guardrails/skills/init/SKILL.md`, `scripts/lint-plugins.mjs`, `tests/examples.test.mjs`.
 
 | Step | Work                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -275,7 +275,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 **Goal:** every deferred M6 item is a new GitHub issue with promotion criteria, all linked from one new backlog tracking issue that carries the dated review checkpoint. Issue #10 is not used for deferred work.
 
-**Context to load:** this plan (§3), the Phase 6 handoff, `docs/PLAN.md` §5 (M6) and §11, `docs/guides/new-projects.md` (the scaffolding limit).
+**Context to load:** this plan (§3), the Phase 6 handoff, `docs/plans/PLAN-MVP.md` §5 (M6) and §11, `docs/guides/new-projects.md` (the scaffolding limit).
 
 | Step | Work                                                                                                                                                                                                                                                                                                                         |
 | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -297,7 +297,7 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 
 **Goal:** the repo reads well to a first-time visitor, the marketplace metadata is complete, and the milestone is released.
 
-**Context to load:** this plan, `AGENTS.md`, all handoffs, `README.md`, both `plugin.json` files, `.claude-plugin/marketplace.json`, `docs/PLAN.md`, `docs/ARCHITECTURE.md`, `docs/plans/PLAN-M0.md` to `PLAN-M5.md` (skim headings and "Phase records").
+**Context to load:** this plan, `AGENTS.md`, all handoffs, `README.md`, both `plugin.json` files, `.claude-plugin/marketplace.json`, `docs/plans/PLAN-MVP.md`, `docs/ARCHITECTURE.md`, `docs/plans/PLAN-MVP-M0.md` to `PLAN-MVP-M5.md` (skim headings and "Phase records").
 
 | Step | Work                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -306,10 +306,10 @@ Each phase ends with `npm run check` passing and one commit. Commit messages use
 | 8.3  | Write `docs/HOW-IT-WAS-BUILT.md`: the milestone-by-milestone story (M0 to M6), the decisions that mattered (D1 to D8), what was verified instead of assumed, what was cut (`dependency-audit`) and why, and how the plan-then-phase method kept each session clean. Source it from the plan files and their phase records. Link it from the README.                                                                   |
 | 8.4  | Add the demo from Phase 6 (Q5) to `docs/guides/` or the README as an annotated transcript. If the maintainer wants an asciinema recording, list the exact commands to record as a **human step**. Do not claim one exists unless it does.                                                                                                                                                                             |
 | 8.5  | Public-safety read of every new file (F7): no client names, personal paths, real account IDs, credentials, or emails. Run `npm run check` and `npm run validate`.                                                                                                                                                                                                                                                     |
-| 8.6  | Update `docs/PLAN.md`: M6 status (done: polish and guides; the rest triaged to issues, with links), the §12 deferred list, and the repo layout (§3) to show `docs/guides/`. Update `docs/ARCHITECTURE.md` with the docs-tests note and the "last verified" versions. Update `AGENTS.md` layout and commands if they changed.                                                                                          |
+| 8.6  | Update `docs/plans/PLAN-MVP.md`: M6 status (done: polish and guides; the rest triaged to issues, with links), the §12 deferred list, and the repo layout (§3) to show `docs/guides/`. Update `docs/ARCHITECTURE.md` with the docs-tests note and the "last verified" versions. Update `AGENTS.md` layout and commands if they changed.                                                                                |
 | 8.7  | Tag the release only if a plugin version changed (`lstk-v0.4.1`, `lstk-guardrails-v0.1.1`). Docs-only changes need no tag and no version bump (`AGENTS.md`: bump only for a released change to a plugin).                                                                                                                                                                                                             |
 
-**Acceptance:** `npm run check` and `npm run validate` pass. A reader who has never seen the repo can, from the README alone, install the plugins and reach the right recipe in two clicks. `docs/PLAN.md` M6 status matches reality.
+**Acceptance:** `npm run check` and `npm run validate` pass. A reader who has never seen the repo can, from the README alone, install the plugins and reach the right recipe in two clicks. `docs/plans/PLAN-MVP.md` M6 status matches reality.
 
 **Commit:** `doc: restructure README and add marketplace polish` (and `chore: release lstk 0.4.1` if versions changed)
 
@@ -525,7 +525,7 @@ Rules: reference skills by name only, never copy a description (the README table
 
 ### Phase 8 record — README, polish, and release
 
-**Done:** `README.md` is a landing page (status line fixed, "Start here", install, "Workflows at a glance" with the lifecycle diagram and a six-row table, the unchanged skill and agent tables, guardrail model, and a "For maintainers" section). `docs/HOW-IT-WAS-BUILT.md` written and linked. `keywords` added to the `lstk` `plugin.json`, which bumps it to `0.4.1`. `lstk-guardrails` has no manifest change, so it stays `0.1.0`. Both marketplace entries gained `homepage`, `repository`, `license`, and `keywords`. `CHANGELOG.md`, `docs/PLAN.md` (M6 status, layout, deferred list), `docs/ARCHITECTURE.md`, `docs/CONTRIBUTING.md`, and `AGENTS.md` updated. `npm run check` and `npm run validate` pass. Public-safety grep over the new docs found nothing.
+**Done:** `README.md` is a landing page (status line fixed, "Start here", install, "Workflows at a glance" with the lifecycle diagram and a six-row table, the unchanged skill and agent tables, guardrail model, and a "For maintainers" section). `docs/HOW-IT-WAS-BUILT.md` written and linked. `keywords` added to the `lstk` `plugin.json`, which bumps it to `0.4.1`. `lstk-guardrails` has no manifest change, so it stays `0.1.0`. Both marketplace entries gained `homepage`, `repository`, `license`, and `keywords`. `CHANGELOG.md`, `docs/plans/PLAN-MVP.md` (M6 status, layout, deferred list), `docs/ARCHITECTURE.md`, `docs/CONTRIBUTING.md`, and `AGENTS.md` updated. `npm run check` and `npm run validate` pass. Public-safety grep over the new docs found nothing.
 
 **Demo (Q5):** the annotated transcript `docs/guides/walkthrough-bug-fix.md`, linked from the README. No asciinema recording exists. Human step if wanted: record `claude` on a copy of `tests/fixtures/sample-repo` running the "fix a bug" recipe prompts.
 

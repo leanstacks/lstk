@@ -1,7 +1,9 @@
 # AGENTS.md
 
-lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) and holds two plugins. The plan is in
-`docs/PLAN.md`, and the verified plugin contract is in `docs/ARCHITECTURE.md`.
+lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) and holds two plugins. All plans are in
+`docs/plans/`, and `docs/plans/README.md` is the index: find a plan there before opening it. The original MVP milestone
+plan is `docs/plans/PLAN-MVP.md`. It covers only the MVP scope, so later work has its own plans. The verified plugin
+contract is in `docs/ARCHITECTURE.md`.
 
 ## Layout
 
@@ -13,8 +15,10 @@ lstk is a Claude Code plugin marketplace. The repo is the marketplace (`lstk`) a
 - `scripts/lint-plugins.mjs`: manifest and frontmatter linter.
 - `tests/`: Vitest tests. `tests/fixtures/hook-matrix.json` is the allow, ask, and deny matrix for the hooks.
   `tests/evals/<skill>.json` holds each skill's trigger evals.
-- `docs/`: plan, architecture, and contributing guides. `docs/guides/` holds user guides, and `tests/guides.test.mjs`
-  checks their links and that every skill and agent is mapped.
+- `docs/`: architecture and contributing guides. `docs/guides/` holds user guides, and `tests/guides.test.mjs` checks
+  their links and that every skill and agent is mapped.
+- `docs/plans/`: every implementation plan, plus `README.md`, a table that indexes them (plan, title, type, status,
+  source).
 
 ## Commands
 
@@ -43,6 +47,8 @@ npm run validate       # claude plugin validate --strict (needs the claude CLI)
 - Skills with side effects set `disable-model-invocation: true`.
 - Every skill needs a trigger eval file in `tests/evals/`. `tests/evals.test.mjs` fails without one.
 - Bump a plugin's `version` in its `plugin.json` for every released change, or installed users will not receive it.
+- Add a row to `docs/plans/README.md` in the same change that adds a plan, and update the row's status when the plan's
+  state changes.
 - Docs are Markdown with Mermaid diagrams. Style is owned by Prettier and oxlint, not by prose.
 - Commit messages use the prefixes `feat`, `fix`, `chore`, and `doc`.
 - This is a public repo. Never commit client names, personal paths, or credentials.

@@ -37,15 +37,15 @@ with its own tools and context. A **hook** is a script that runs before a tool c
 
 ## Stage map
 
-| Stage            | lstk skills and agents                                                                                                                                       | Plain Claude Code                                          |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| **Discover**     | `repo-onboarding` [say it], `agents-md-author` [say it], `local-setup-author` [say it], `researcher` [delegate it], `tech-eval` [say it]                     | Reading and searching the code.                            |
-| **Plan**         | `solution-outline` [say it], `adr-author` [say it], `tech-eval` [say it], `prototype` [type it], `promote-prototype` [type it], `stack-profile` (background) | Plan mode: Claude proposes, you approve.                   |
-| **Implement**    | None. `stack-profile` supplies defaults where the repo is silent.                                                                                            | Writing code, fixing bugs, writing tests.                  |
-| **Review**       | `code-reviewer` [delegate it], `architecture-review` [type it], `cdk-iam-review` [type it]                                                                   | Running the repo's checks (`npm run check` or equivalent). |
-| **Commit**       | `commit-messages` [say it]                                                                                                                                   | `git add` and `git commit`.                                |
-| **Pull request** | `create-pull-request` [type it]                                                                                                                              | None.                                                      |
-| **Harden**       | `threat-model` [type it], `cdk-iam-review` [type it], `architecture-review` [type it]                                                                        | Dependency triage by hand.                                 |
+| Stage            | lstk skills and agents                                                                                                                                                                | Plain Claude Code                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Discover**     | `repo-onboarding` [say it], `agents-md-author` [say it], `local-setup-author` [say it], `researcher` [delegate it], `tech-eval` [say it]                                              | Reading and searching the code.                            |
+| **Plan**         | `solution-outline` [say it], `adr-author` [say it], `tech-eval` [say it], `prototype` [type it], `promote-prototype` [type it], `plan-author` [type it], `stack-profile` (background) | Plan mode: Claude proposes, you approve.                   |
+| **Implement**    | None. `stack-profile` supplies defaults where the repo is silent.                                                                                                                     | Writing code, fixing bugs, writing tests.                  |
+| **Review**       | `code-reviewer` [delegate it], `architecture-review` [type it], `cdk-iam-review` [type it]                                                                                            | Running the repo's checks (`npm run check` or equivalent). |
+| **Commit**       | `commit-messages` [say it]                                                                                                                                                            | `git add` and `git commit`.                                |
+| **Pull request** | `create-pull-request` [type it]                                                                                                                                                       | None.                                                      |
+| **Harden**       | `threat-model` [type it], `cdk-iam-review` [type it], `architecture-review` [type it]                                                                                                 | Dependency triage by hand.                                 |
 
 `stack-profile` is background knowledge. It is not in the `/` menu, and Claude loads it when a task needs stack
 defaults. The repo's own `AGENTS.md` always wins over it.
@@ -61,6 +61,14 @@ helps around them:
 - `code-reviewer` checks the result, including test gaps.
 
 The recipes say this per task, in a "What is plain Claude Code here" line.
+
+### Plan: `plan-author` or plan mode?
+
+Plan mode is the default for a small change: you approve an approach in the session and move on. Type
+`/lstk:plan-author` when the work spans several sessions and the plan must be a file. It writes a milestone plan or a
+phase plan in `docs/plans/`, adds the row to your plans index, and gives each phase a "Context to load", "Done when",
+"As built", and handoff block, so a later session can pick up from the file. Leave plan mode before you run it, because
+plan mode blocks the write.
 
 ## Loop variants
 

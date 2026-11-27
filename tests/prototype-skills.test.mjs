@@ -7,7 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SKILLS_DIR = path.join(ROOT, 'plugins/lstk/skills');
 const TEMPLATES_DIR = path.join(SKILLS_DIR, 'prototype/templates');
 
-// M5 skills. Each body must have an output contract and a limits section (PLAN-M5 F7). Grown per phase:
+// M5 skills. Each body must have an output contract and a limits section (PLAN-MVP-M5 F7). Grown per phase:
 // `prototype` in Phase 3, `promote-prototype` in Phase 4. Starts empty so an in-progress phase never fails.
 export const PROTOTYPE_SKILLS_REQUIRE_SECTIONS = ['prototype', 'promote-prototype'];
 
@@ -16,7 +16,7 @@ const DEPENDENCY_FIELDS = ['dependencies', 'devDependencies', 'optionalDependenc
 const EXACT_VERSION = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/;
 
 /**
- * Dependencies in a parsed package.json that are not pinned to an exact version (PLAN-M5 Q2).
+ * Dependencies in a parsed package.json that are not pinned to an exact version (PLAN-MVP-M5 Q2).
  * @param {Record<string, unknown>} pkg
  * @returns {string[]} entries such as `react@^18.0.0`
  */

@@ -1,6 +1,6 @@
-# PLAN-M3 — Research and Design
+# PLAN-MVP-M3 — Research and Design
 
-**Source:** `docs/PLAN.md` §5 (M3), with §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context.
+**Source:** `docs/plans/PLAN-MVP.md` §5 (M3), with §8 (skill conventions), §9 (testing), §10 (versioning), and §11 (risks) as supporting context.
 **Branch:** `7-m3-research-and-design`
 **Starting state:** M0, M1, and M2 are merged. `lstk` is `0.1.0` with five skills. `plugins/lstk/agents/` exists but is empty. No `docs/examples/` directory exists yet.
 **Goal:** Four new capabilities in the `lstk` plugin: `stack-profile` (reference skill), `tech-eval` skill plus `researcher` agent, `adr-author`, and `solution-outline`. Each has a trigger eval set and a worked example in `docs/examples/`. The plugin is released as `0.2.0`.
@@ -15,7 +15,7 @@
 - Trigger evals in `tests/evals/<skill>.json` for each skill (agents are covered through `tech-eval`).
 - One worked example per skill in `docs/examples/`, built from a neutral, fictional scenario.
 - Small `lint-plugins.mjs` extensions that keep these artifacts from regressing (agent `tools` allowlist, example presence).
-- The `0.2.0` release of `lstk`: version bump, CHANGELOG, README, `docs/ARCHITECTURE.md` notes, `PLAN.md` status.
+- The `0.2.0` release of `lstk`: version bump, CHANGELOG, README, `docs/ARCHITECTURE.md` notes, `PLAN-MVP.md` status.
 
 **Out of scope**
 
@@ -95,7 +95,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 
 **Goal:** a short, accurate default-stack profile that yields to the repo.
 
-**Context to load:** this plan, `AGENTS.md`, `docs/PLAN.md` §2 (D6, D7) and §8, `docs/ARCHITECTURE.md`, the Phase 1 handoff. Also read this repo's own `AGENTS.md` as an example of what a repo-level override looks like.
+**Context to load:** this plan, `AGENTS.md`, `docs/plans/PLAN-MVP.md` §2 (D6, D7) and §8, `docs/ARCHITECTURE.md`, the Phase 1 handoff. Also read this repo's own `AGENTS.md` as an example of what a repo-level override looks like.
 
 | Step | Work                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -143,7 +143,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 
 **Goal:** a skill that writes and maintains Markdown ADRs in the target repo.
 
-**Context to load:** this plan, `AGENTS.md`, `docs/PLAN.md` §8, the Phase 2 and 3 handoffs. Use `agents-md-author` as the model for "audit existing conventions first, then reuse, update, or create".
+**Context to load:** this plan, `AGENTS.md`, `docs/plans/PLAN-MVP.md` §8, the Phase 2 and 3 handoffs. Use `agents-md-author` as the model for "audit existing conventions first, then reuse, update, or create".
 
 | Step | Work                                                                                                                                                                                                                                                                                                                                              |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -202,7 +202,7 @@ Each phase is one clean agentic session. It ends with `npm run check` green and 
 | 6.4  | Public-safety review: apply the CONTRIBUTING checklist to every new file and example. Grep for client names, personal paths, and emails, then do a read-through for anything identifying. Confirm no `../` and no shell scripts.                                                                                                                                             |
 | 6.5  | Description and size review: each description is at most 500 characters and unambiguous against its siblings (read all descriptions together to check for overlap). Move any long `SKILL.md` content into `references/`.                                                                                                                                                     |
 | 6.6  | Run the evals manually (see `tests/evals/README.md`) for the four new skills and record the date, Claude Code version, model, and per-skill pass counts in `tests/evals/RESULTS.md`. Tune descriptions where a trigger fails, and re-run those prompts.                                                                                                                      |
-| 6.7  | Release: bump `plugins/lstk/.claude-plugin/plugin.json` to `0.2.0`, update `CHANGELOG.md`, update the README skill and agent list, add `ARCHITECTURE.md` notes for anything learned, and mark M3 done in `docs/PLAN.md` with an "As built" summary in the style of M1 and M2.                                                                                                |
+| 6.7  | Release: bump `plugins/lstk/.claude-plugin/plugin.json` to `0.2.0`, update `CHANGELOG.md`, update the README skill and agent list, add `ARCHITECTURE.md` notes for anything learned, and mark M3 done in `docs/plans/PLAN-MVP.md` with an "As built" summary in the style of M1 and M2.                                                                                      |
 | 6.8  | Final gates: `npm run check`, `npm run validate`, and a local install smoke test (`/plugin marketplace add ./`, install both plugins, `/reload-plugins`) showing the new skills and the agent. Open a PR using `/lstk:create-pull-request`. After merge, tag `lstk-v0.2.0`.                                                                                                  |
 
 **Acceptance (M3, from PLAN §5):** each skill has a trigger eval set and a worked example in `docs/examples/`. `npm run check` and `npm run validate` are green. `lstk` is `0.2.0`.
@@ -262,7 +262,7 @@ _Each phase adds an "As built" note and a Handoff block here when it finishes._
 - **Frontmatter:** `name`, `description` (under 500 characters), `user-invocable: false`.
 - **Areas covered:** language and modules, package management, backend (containers and Lambda), frontend, infrastructure, testing, linting, formatting.
 - **Needs owner confirmation:** the Lambda default of "Node.js behind API Gateway" (versus Function URLs or ALB), and the containers-vs-Lambda decision table in `references/defaults.md`. Both are my judgment, not stated in PLAN.
-- Consumer skills must repeat the precedence rule (PLAN-M3 §5).
+- Consumer skills must repeat the precedence rule (PLAN-MVP-M3 §5).
 
 ### Phase 3 — As built
 
@@ -315,7 +315,7 @@ _Each phase adds an "As built" note and a Handoff block here when it finishes._
 - Each new skill already carried a "Related skills" block (by name only). No `../`, personal paths, emails, or shell scripts found in the new files.
 - Descriptions are 375 to 415 characters and distinct in the combined read. No `SKILL.md` needed trimming.
 - Evals run manually on 2026-11-11, all passing after one prompt fix (`solution-outline-03` had no requirements in it). See `tests/evals/RESULTS.md`.
-- Released: `lstk` `0.2.0`, CHANGELOG, README (skills and agent tables), `ARCHITECTURE.md` note, `PLAN.md` M3 status.
+- Released: `lstk` `0.2.0`, CHANGELOG, README (skills and agent tables), `ARCHITECTURE.md` note, `PLAN-MVP.md` M3 status.
 
 ### Phase 6 — Handoff
 
