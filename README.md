@@ -82,6 +82,7 @@ The `lstk` plugin provides these skills. Each runs as `/lstk:<name>`.
 | `cdk-iam-review`      | User-invoked only                              | Static IAM review of CDK TypeScript, with shown-only diffs. Writes `docs/reviews/`.          |
 | `prototype`           | User-invoked only                              | Throwaway web or Lambda prototype in `prototypes/<name>/`, with a `PROTOTYPE.md`.            |
 | `promote-prototype`   | User-invoked only                              | Cited gap list with relative effort for taking a prototype to production.                    |
+| `plan-author`         | User-invoked only                              | Implementation plan (milestone or phase) in `docs/plans/`, added to the plans index.         |
 
 ### Agents
 

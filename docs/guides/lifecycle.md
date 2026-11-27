@@ -37,15 +37,15 @@ with its own tools and context. A **hook** is a script that runs before a tool c
 
 ## Stage map
 
-| Stage            | lstk skills and agents                                                                                                                                       | Plain Claude Code                                          |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| **Discover**     | `repo-onboarding` [say it], `agents-md-author` [say it], `local-setup-author` [say it], `researcher` [delegate it], `tech-eval` [say it]                     | Reading and searching the code.                            |
-| **Plan**         | `solution-outline` [say it], `adr-author` [say it], `tech-eval` [say it], `prototype` [type it], `promote-prototype` [type it], `stack-profile` (background) | Plan mode: Claude proposes, you approve.                   |
-| **Implement**    | None. `stack-profile` supplies defaults where the repo is silent.                                                                                            | Writing code, fixing bugs, writing tests.                  |
-| **Review**       | `code-reviewer` [delegate it], `architecture-review` [type it], `cdk-iam-review` [type it]                                                                   | Running the repo's checks (`npm run check` or equivalent). |
-| **Commit**       | `commit-messages` [say it]                                                                                                                                   | `git add` and `git commit`.                                |
-| **Pull request** | `create-pull-request` [type it]                                                                                                                              | None.                                                      |
-| **Harden**       | `threat-model` [type it], `cdk-iam-review` [type it], `architecture-review` [type it]                                                                        | Dependency triage by hand.                                 |
+| Stage            | lstk skills and agents                                                                                                                                                                | Plain Claude Code                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Discover**     | `repo-onboarding` [say it], `agents-md-author` [say it], `local-setup-author` [say it], `researcher` [delegate it], `tech-eval` [say it]                                              | Reading and searching the code.                            |
+| **Plan**         | `solution-outline` [say it], `adr-author` [say it], `tech-eval` [say it], `prototype` [type it], `promote-prototype` [type it], `plan-author` [type it], `stack-profile` (background) | Plan mode: Claude proposes, you approve.                   |
+| **Implement**    | None. `stack-profile` supplies defaults where the repo is silent.                                                                                                                     | Writing code, fixing bugs, writing tests.                  |
+| **Review**       | `code-reviewer` [delegate it], `architecture-review` [type it], `cdk-iam-review` [type it]                                                                                            | Running the repo's checks (`npm run check` or equivalent). |
+| **Commit**       | `commit-messages` [say it]                                                                                                                                                            | `git add` and `git commit`.                                |
+| **Pull request** | `create-pull-request` [type it]                                                                                                                                                       | None.                                                      |
+| **Harden**       | `threat-model` [type it], `cdk-iam-review` [type it], `architecture-review` [type it]                                                                                                 | Dependency triage by hand.                                 |
 
 `stack-profile` is background knowledge. It is not in the `/` menu, and Claude loads it when a task needs stack
 defaults. The repo's own `AGENTS.md` always wins over it.
