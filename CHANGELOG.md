@@ -5,6 +5,27 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [lstk 0.5.0]
+
+### Added
+
+- `lstk` skill `plan-author`, which sets `disable-model-invocation: true` and has `allowed-tools` of `Read, Glob, Grep,
+Write, Edit`. It writes `docs/plans/PLAN-<id>.md` in one of two fixed shapes, a milestone plan or a phase plan whose
+  phases each carry "Context to load", "Done when", "As built", and a handoff. It follows the repo's plan naming
+  convention, never overwrites a plan, adds one `Draft` row to an existing plans index, and never creates an index. It
+  does not run in plan mode, because plan mode blocks the write (see `docs/ARCHITECTURE.md`).
+- Eval set `tests/evals/plan-author.json` (9 of 9 cases passed in the manual run, recorded in
+  `tests/evals/RESULTS.md`, including an injected instruction in a pasted issue that was treated as data), and a worked
+  example in `docs/examples/plan-author.md`.
+- `docs/plans/README.md`, an index of the implementation plans, and `tests/plans-index.test.mjs`, which fails when a plan
+  has no row. `tests/plan-skill.test.mjs` checks the skill's contract.
+
+### Changed
+
+- The lifecycle guide, FAQ, README, `AGENTS.md`, and `docs/CONTRIBUTING.md` cover `plan-author` and the rule to add an
+  index row with every plan.
+- `lstk` is `0.5.0`. `lstk-guardrails` is unchanged.
+
 ## [lstk 0.4.1]
 
 ### Added

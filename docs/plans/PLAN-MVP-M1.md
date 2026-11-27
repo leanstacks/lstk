@@ -278,6 +278,7 @@ _As built:_ `block-cdk-mutate` also **asks** on `bootstrap` and inspects package
 
 **Status: done (`lstk` 0.4.1).** As built, see `docs/plans/PLAN-M6.md`: user guides in `docs/guides/` with docs tests, a README that routes to them, `keywords` and marketplace metadata, and `docs/HOW-IT-WAS-BUILT.md`. The items below were triaged, not built. Each is a `backlog` issue (#15 `nestjs-module`, #16 `lambda-handler`, #17 `react-feature`, #18 `cdk-construct`, #19 AWS MCP servers, #20 `PostToolUse` hook), tracked by #21 with a review checkpoint of 2026-12-12. The demo is an annotated transcript (`docs/guides/walkthrough-bug-fix.md`). No asciinema recording exists.
 
+- **Planning skill, built after M6 (`lstk` 0.5.0).** Issue 23 added `plan-author`, a user-invoked skill that writes milestone and phase plans and adds the plans index row. As built, see `docs/plans/PLAN-0023.md`.
 - Scaffold skills: `nestjs-module`, `lambda-handler`, `react-feature`, `cdk-construct`.
 - AWS docs and CDK MCP servers: off by default, documented credentials surface, verify maintained servers at that time.
 - `PostToolUse` hook to run Prettier and oxlint on edited files. It must detect tool presence and fail soft.

@@ -1,6 +1,7 @@
 # Architecture
 
 > **Last verified against Claude Code 2.1.319 on 2026-11-08**, using the official docs and `claude plugin validate`.
+> The plan-mode finding under "Plan mode and user-invoked writing skills" was verified on 2.1.332 on 2026-11-27.
 > Re-verify when Claude Code changes the plugin contract.
 
 ## Layers
