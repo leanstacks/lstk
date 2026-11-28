@@ -5,6 +5,27 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [lstk 0.6.0]
+
+### Changed
+
+- `repo-onboarding` writes `docs/ARCHITECTURE.md` by default, one document for humans and coding agents, instead of
+  `docs/PROJECT_OVERVIEW.md`. The template (`references/architecture-template.md`) leads with the purpose, the
+  architecture, the repository structure, and the central contracts and invariants. "Getting started" and "Development
+  workflow" are now links to `docs/LOCAL_SETUP.md`, `AGENTS.md`, and the CI workflow, not copies.
+- `repo-onboarding` has a purpose check: an existing `ARCHITECTURE.md` that documents something other than the repo's
+  structure (for example a plugin contract) is not edited, and the output goes under another name.
+- Existing `docs/PROJECT_OVERVIEW.md` files, and any other primary doc, are still edited in place. Renaming is the
+  user's choice.
+- `agents-md-author` and `local-setup-author` use `docs/ARCHITECTURE.md` in their ownership tables. `AGENTS.md` links to
+  it with a plain link, never an `@` import.
+
+### Added
+
+- Two `repo-onboarding` trigger evals, `tests/repo-onboarding.test.mjs` (the template contract), a worked example in
+  `docs/examples/repo-onboarding.md`, and an FAQ entry for existing overview and architecture files.
+- `lstk` is `0.6.0`. `lstk-guardrails` is unchanged.
+
 ## [lstk 0.5.0]
 
 ### Added
