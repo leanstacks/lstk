@@ -7,6 +7,8 @@ Recipes for changing a codebase that already exists.
 > The `repo-onboarding` step was re-run on 2026-11-28 (output file `docs/ARCHITECTURE.md`) against `lstk` 0.6.0 and Claude Code 2.1.332, on the sample fixture. The other recipes keep the earlier stamp.
 >
 > Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: the `code-reviewer` hand-off with a pasted diff, the test-gaps prompt, `commit-messages` choosing `fix`, `repo-onboarding` from plain words, and plan mode. `create-pull-request` was not run in this walkthrough (the scratch repo had no remote), but the maintainer uses it on every `lstk` branch. The bug-reproduction and coverage steps are plain Claude Code.
+>
+> The `plan-author` branches (added for `lstk` 0.5.0) were not part of that walkthrough. They follow the skill's own eval run and [worked example](../examples/plan-author.md), and have not been re-verified by hand in this guide.
 
 Every recipe here runs the [shared implementation loop](#shared-implementation-loop) and adds a few steps at the front
 or the back. Read the loop first. lstk has **no skill for implementing, bug fixing, or test coverage**. Those steps are
@@ -26,9 +28,12 @@ below all point back here.
 1. **Ground.** Make sure Claude knows your conventions. If the repo has no `AGENTS.md`, run `agents-md-author` first
    (see the note at the end of this section). If the repo is unfamiliar to you, run `repo-onboarding`. [say it]
 2. **Plan.** Switch to plan mode (`Shift+Tab` until the status bar shows it, or start a prompt with `/plan`). Claude
-   reads the code and proposes a plan. Edits stay blocked until you approve. [plain Claude Code]
+   reads the code and proposes a plan. Edits stay blocked until you approve. [plain Claude Code] If the work will span
+   several sessions, or the team needs to review the plan as a file, leave plan mode and run `/lstk:plan-author`
+   instead. It saves a phase plan in `docs/plans/`. See [plan-author or plan mode](faq.md#plan-author-or-plan-mode).
+   [type it]
 3. **Implement.** Approve the plan, then work in small steps with the hooks on. Ask for one step at a time and read each
-   diff. [plain Claude Code]
+   diff. With a saved plan, run one phase per session and read the plan file first. [plain Claude Code]
 4. **Check.** Run `npm run check`, or your repo's equivalent (lint, format, tests). [plain Claude Code]
 5. **Review.** Delegate the diff to `code-reviewer`. [delegate it]
 6. **Commit.** Ask for a commit with `commit-messages`. [say it]
@@ -51,6 +56,13 @@ Step 2, in plan mode:
 Plan this change: <what and why>. Read the code that is involved first. List the files you expect to touch, the tests
 you will add, and anything you are unsure about. Do not edit anything yet.
 ```
+
+```text
+Step 2, instead, when the plan must outlive the session (leave plan mode first):
+/lstk:plan-author
+```
+
+Then give it the issue key or a short brief of the change when it asks.
 
 ```text
 Step 3:
@@ -78,13 +90,15 @@ Step 7:
 /lstk:create-pull-request
 ```
 
-**Produces.** Commits on your branch and a draft pull request. `code-reviewer` writes no file. Its report appears in
+**Produces.** Commits on your branch and a draft pull request. If you ran `plan-author`, also
+`docs/plans/PLAN-<id>.md` and a `Draft` row in your plans index, which you commit. `code-reviewer` writes no file. Its report appears in
 your session, so copy anything you want to keep into the PR description.
 
 **Skip it when.**
 
 - Step 1: the repo has a current `AGENTS.md` and you already know the area.
 - Step 2: the change is one or two lines and you can describe the diff in a sentence.
+- `plan-author` in step 2: the change fits one session. Plan mode is enough.
 - Step 5: the change is a typo or a comment. Review everything that touches logic, tests, or infrastructure.
 
 **What lstk adds here.**
@@ -92,6 +106,9 @@ your session, so copy anything you want to keep into the PR description.
 - `agents-md-author` and `repo-onboarding` ground Claude in the repo. They write `AGENTS.md` and
   `docs/ARCHITECTURE.md`, both worth committing. `AGENTS.md` links to the architecture doc, so Claude reads it when
   it needs the structure.
+- `plan-author` (optional, step 2) writes a plan that a later session can pick up from the file. Each phase carries the
+  context to load, a "Done when" check, an "As built" record, and a handoff. It fixes what the plan contains, not how
+  Claude explores.
 - `code-reviewer` checks correctness, test gaps, maintainability, and drift from the repo's stated conventions. It is
   read-only and never fixes code. Its report ends with a "Not reviewed" section. Read it, because it states what the
   review did not cover.
@@ -101,10 +118,11 @@ your session, so copy anything you want to keep into the PR description.
   `watch`. If one blocks a call, ask Claude what was blocked and why, then decide as a human. Never turn the hook off.
   See the [guardrail model](../../README.md#guardrail-model).
 
-**What is plain Claude Code here.** Planning, implementing, running checks, and fixing review findings. `code-reviewer`
-only reports. You ask Claude to fix a finding in the main session.
+**What is plain Claude Code here.** Planning in plan mode (unless you chose `plan-author`), implementing, running
+checks, and fixing review findings. `code-reviewer` only reports. You ask Claude to fix a finding in the main session.
 
-**Example.** A review report in the format to expect: [code-reviewer example](../examples/code-reviewer.md).
+**Example.** A review report in the format to expect: [code-reviewer example](../examples/code-reviewer.md). A saved
+plan: [plan-author example](../examples/plan-author.md).
 
 **If the repo has no `AGENTS.md`.** Run `agents-md-author` before anything else. Until it exists, Claude falls back to
 the `stack-profile` defaults (TypeScript ESM, NestJS, Lambda, Vite and React, CDK, Vitest, oxlint, Prettier). The repo
@@ -127,7 +145,8 @@ as it is) and a larger one (design first).
 4. **Check the trust boundaries.** If the feature adds an endpoint, a new data store, a new caller, or an IAM change,
    run `threat-model` on the design. [type it]
 5. **Run the loop.** Follow the [shared implementation loop](#shared-implementation-loop) from step 2, using the outline
-   as the input to the plan. [plain Claude Code]
+   as the input to the plan. For a larger feature, use `/lstk:plan-author` for that plan, so each phase fits one session
+   and the plan is a file the team can review. [plain Claude Code, or type it for `plan-author`]
 
 **Prompt.**
 
@@ -159,6 +178,13 @@ Step 5, in plan mode:
 Plan the feature from docs/design/<name>.md. Split it into steps that each leave the tests passing.
 ```
 
+```text
+Step 5, larger feature, as a saved plan (leave plan mode first):
+/lstk:plan-author
+```
+
+Then name `docs/design/<name>.md` as the source when it asks.
+
 **Produces.** Nothing for a small feature beyond the loop's commits and PR. A larger feature adds files you commit:
 `docs/design/<name>.md` (only when you ask for it, and mark it as a draft until a human reviews it),
 `docs/adr/NNNN-<title>.md`, and `docs/threat-models/<name>.md` (a team choice, usually yes).
@@ -175,7 +201,7 @@ feature changes a public contract, or when `threat-model` returns a high-severit
 with sources. `adr-author` records the decision in your repo's ADR convention. `threat-model` finds trust-boundary
 risks in the design. The loop adds `code-reviewer`, `commit-messages`, and `create-pull-request`.
 
-**What is plain Claude Code here.** Planning in plan mode and all of the implementation.
+**What is plain Claude Code here.** Planning in plan mode for a small feature, and all of the implementation.
 
 **Example.** [solution-outline](../examples/solution-outline.md), [tech-eval](../examples/tech-eval.md),
 [adr-author](../examples/adr-author.md), and [threat-model](../examples/threat-model.md).
@@ -191,7 +217,8 @@ risks in the design. The loop adds `code-reviewer`, `commit-messages`, and `crea
 2. **Pin the behavior.** Ask Claude to write characterization tests that capture what the code does now, including
    quirks. Run them and confirm they pass before any change. [plain Claude Code]
 3. **Run the loop.** Follow the [shared implementation loop](#shared-implementation-loop) from step 2. Change the tests
-   that must change, and explain each one in the commit. [plain Claude Code]
+   that must change, and explain each one in the commit. For a large enhancement, use `plan-author` in step 2.
+   [plain Claude Code]
 4. **Read the drift check.** In the `code-reviewer` report, look at the convention-drift findings. An enhancement is
    where new code most often stops matching the code around it. [delegate it]
 
