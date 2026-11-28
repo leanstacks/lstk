@@ -3,7 +3,7 @@
 Install lstk, turn on the guardrails, and get your first useful results in an existing repo in about five minutes.
 
 > Last verified against `lstk` 0.4.0 and Claude Code 2.1.323 on 2026-11-13. Step 2 of section 3 (`repo-onboarding` and
-> `docs/ARCHITECTURE.md`) was re-run on 2026-11-28 against `lstk` 0.5.0 plus the unreleased 0.6.0 changes and Claude Code
+> `docs/ARCHITECTURE.md`) was re-run on 2026-11-28 against `lstk` 0.6.0 changes and Claude Code
 > 2.1.332, on the sample fixture. The other steps keep the earlier stamp.
 
 ## 1. Install

@@ -4,8 +4,7 @@ Recipes for changing a codebase that already exists.
 
 > Last verified against `lstk` 0.4.0 and Claude Code 2.1.325 on 2026-11-13.
 >
-> The `repo-onboarding` step was re-run on 2026-11-28 (output file `docs/ARCHITECTURE.md`) against `lstk` 0.5.0 plus the
-> unreleased 0.6.0 changes and Claude Code 2.1.332, on the sample fixture. The other recipes keep the earlier stamp.
+> The `repo-onboarding` step was re-run on 2026-11-28 (output file `docs/ARCHITECTURE.md`) against `lstk` 0.6.0 and Claude Code 2.1.332, on the sample fixture. The other recipes keep the earlier stamp.
 >
 > Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: the `code-reviewer` hand-off with a pasted diff, the test-gaps prompt, `commit-messages` choosing `fix`, `repo-onboarding` from plain words, and plan mode. `create-pull-request` was not run in this walkthrough (the scratch repo had no remote), but the maintainer uses it on every `lstk` branch. The bug-reproduction and coverage steps are plain Claude Code.
 
