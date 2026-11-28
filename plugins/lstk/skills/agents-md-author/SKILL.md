@@ -25,16 +25,16 @@ These govern every decision below. Violating them produces files that agents ign
 
 This skill owns `AGENTS.md`. Two sibling skills in this plugin own the other documents below.
 
-| Document                   | Owns                                                          | Does not contain (lives in)                                                              |
-| :------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
-| `AGENTS.md`                | Rules, commands, and boundaries for coding agents             | What the system is (`PROJECT_OVERVIEW.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
-| `docs/PROJECT_OVERVIEW.md` | What the system is and how it is organized                    | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                         |
-| `docs/LOCAL_SETUP.md`      | Fresh clone to running app and a working edit-build-test loop | Architecture and domain (`PROJECT_OVERVIEW.md`); agent rules (`AGENTS.md`)               |
+| Document               | Owns                                                              | Does not contain (lives in)                                                          |
+| :--------------------- | :---------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| `AGENTS.md`            | Rules, commands, and boundaries for coding agents                 | What the system is (`ARCHITECTURE.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
+| `docs/ARCHITECTURE.md` | What the system is and how it is organized, for humans and agents | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                     |
+| `docs/LOCAL_SETUP.md`  | Fresh clone to running app and a working edit-build-test loop     | Architecture and domain (`ARCHITECTURE.md`); agent rules (`AGENTS.md`)               |
 
-- `/lstk:repo-onboarding` writes `docs/PROJECT_OVERVIEW.md`.
+- `/lstk:repo-onboarding` writes `docs/ARCHITECTURE.md`.
 - `/lstk:local-setup-author` writes `docs/LOCAL_SETUP.md`.
 
-Treat their outputs as inputs: when either document exists, link to it from `AGENTS.md` instead of repeating its content, and never modify it. When one is missing and the user would benefit, offer the matching skill rather than writing that content into `AGENTS.md`.
+Treat their outputs as inputs: when either document exists, link to it from `AGENTS.md` instead of repeating its content, and never modify it. Link to `docs/ARCHITECTURE.md` with a plain Markdown link, never an `@` import: an import loads the whole file every session and saves no context. Generate a single pointer line, such as `Architecture: docs/ARCHITECTURE.md`. When one is missing and the user would benefit, offer the matching skill rather than writing that content into `AGENTS.md`.
 
 ---
 

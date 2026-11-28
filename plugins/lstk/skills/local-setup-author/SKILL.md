@@ -9,22 +9,22 @@ Produce a `docs/LOCAL_SETUP.md` that gets a new engineer from fresh clone to a r
 
 This skill is stack-agnostic. Ecosystem-specific detection tables live in `references/setup-signals.md`; the document structure lives in `references/local-setup-template.md`. Load each when its phase calls for it, not before.
 
-Scope boundary: this document covers **how to run and change the code on a laptop**. Architecture, domain concepts, and repo tour belong in a project overview (e.g. `docs/PROJECT_OVERVIEW.md`); link to it if it exists, and do not restate it.
+Scope boundary: this document covers **how to run and change the code on a laptop**. Architecture, domain concepts, and repo tour belong in the architecture doc (e.g. `docs/ARCHITECTURE.md`); link to it if it exists, and do not restate it.
 
 ## Related skills and output ownership
 
 This skill owns `docs/LOCAL_SETUP.md`. Two sibling skills in this plugin own the other documents below.
 
-| Document                   | Owns                                                          | Does not contain (lives in)                                                              |
-| :------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
-| `AGENTS.md`                | Rules, commands, and boundaries for coding agents             | What the system is (`PROJECT_OVERVIEW.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
-| `docs/PROJECT_OVERVIEW.md` | What the system is and how it is organized                    | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                         |
-| `docs/LOCAL_SETUP.md`      | Fresh clone to running app and a working edit-build-test loop | Architecture and domain (`PROJECT_OVERVIEW.md`); agent rules (`AGENTS.md`)               |
+| Document               | Owns                                                              | Does not contain (lives in)                                                          |
+| :--------------------- | :---------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| `AGENTS.md`            | Rules, commands, and boundaries for coding agents                 | What the system is (`ARCHITECTURE.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
+| `docs/ARCHITECTURE.md` | What the system is and how it is organized, for humans and agents | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                     |
+| `docs/LOCAL_SETUP.md`  | Fresh clone to running app and a working edit-build-test loop     | Architecture and domain (`ARCHITECTURE.md`); agent rules (`AGENTS.md`)               |
 
-- `/lstk:repo-onboarding` writes `docs/PROJECT_OVERVIEW.md`.
+- `/lstk:repo-onboarding` writes `docs/ARCHITECTURE.md`.
 - `/lstk:agents-md-author` writes `AGENTS.md`.
 
-Treat their outputs as inputs: link to the overview and to `AGENTS.md` instead of copying them, and never modify them. When the overview is missing and the user wants a repo tour, offer `/lstk:repo-onboarding`.
+Treat their outputs as inputs: link to the architecture doc and to `AGENTS.md` instead of copying them, and never modify them. When the architecture doc is missing and the user wants a repo tour, offer `/lstk:repo-onboarding`.
 
 ## Operating principles
 
@@ -62,7 +62,7 @@ Branching after Phase 0:
 
 ```bash
 # Prefer git so ignored/vendored files are excluded; fall back to find if not a git repo
-git ls-files 2>/dev/null | grep -iE '(^|/)(readme|local[-_]?setup|setup|development|developing|dev[-_]?guide|getting[-_]?started|contributing|onboarding|install|claude|agents|project_overview)[^/]*\.(md|mdx|rst|txt|adoc)$'
+git ls-files 2>/dev/null | grep -iE '(^|/)(readme|local[-_]?setup|setup|development|developing|dev[-_]?guide|getting[-_]?started|contributing|onboarding|install|claude|agents|architecture|project_overview)[^/]*\.(md|mdx|rst|txt|adoc)$'
 ls -d docs doc documentation .devcontainer .github 2>/dev/null
 # Setup-flavored sections buried inside larger docs
 grep -n -iE '^#{1,4} .*(prereq|install|setup|set up|getting started|development|local|running|run |quick ?start|build)' README.md CONTRIBUTING.md 2>/dev/null
@@ -183,7 +183,7 @@ Use `references/local-setup-template.md` for structure and per-section guidance.
 - State _where secrets come from_ only if the repo says so (README, `.env.example` comments, scripts). Otherwise list it under Open Questions. Never invent a team channel, vault name, or wiki link.
 - Troubleshooting entries come from evidence: warnings in docs or scripts, CI workarounds, port collisions derivable from config, version-mismatch failures implied by pins. Label derived-but-unobserved items `(anticipated)`. Never fabricate error messages you did not see in the repo.
 - Add: `_Derived from <files>; not executed during generation._` unless you actually ran the steps.
-- Link to the project overview, README, and CLAUDE.md/AGENTS.md instead of copying them. Mermaid for the local architecture diagram, and only edges you verified.
+- Link to the architecture doc, README, and CLAUDE.md/AGENTS.md instead of copying them. Mermaid for the local architecture diagram, and only edges you verified.
 
 **Verification stamp.** On create or update:
 
