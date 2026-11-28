@@ -5,6 +5,8 @@ Recipes for designing and starting a new system.
 > Last verified against `lstk` 0.4.0 and Claude Code 2.1.325 on 2026-11-13.
 >
 > Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: `solution-outline`, `tech-eval`, `stack-profile` (the repo's `AGENTS.md` won), `adr-author` refusing an undecided ADR, `prototype` with its clarifying question, and `promote-prototype`.
+>
+> The `plan-author` branches (added for `lstk` 0.5.0) were not part of that walkthrough. They follow the skill's own eval run and [worked example](../examples/plan-author.md), and have not been re-verified by hand in this guide.
 
 A new project differs from an existing one at the **front** of the loop. An existing project starts from discovery
 (`repo-onboarding`, `agents-md-author`). A new project starts from design (`solution-outline`, `tech-eval`,
@@ -128,6 +130,9 @@ never a stack taken from a prompt. That is why the skeleton comes before `AGENTS
 3. **Create the skeleton.** Ask Claude to build the repo layout, the package or build files, one example test, and one
    command that runs every check, such as `npm run check`, `make check`, or `uv run pytest`. Use plan mode first and
    read the plan. [plain Claude Code]
+   - _Several milestones ahead?_ The skeleton is one session, so plan mode fits it. To plan the whole build, leave plan
+     mode and run `/lstk:plan-author` in milestone mode against the stack brief and the outline. It saves a roadmap in
+     `docs/plans/`, and you detail each milestone as its own phase plan when you reach it. [type it]
 4. **Run the check.** A new repo should pass it before any feature code exists. [plain Claude Code]
 5. **Document the repo.** Run `agents-md-author`. It records the commands and conventions that now exist in the
    skeleton in `AGENTS.md`, so every later session starts grounded. [say it]
@@ -168,6 +173,13 @@ the lint and format config, one example test, and a single command that runs eve
 ```
 
 ```text
+Step 3, optional, to plan the whole build (leave plan mode first):
+/lstk:plan-author
+```
+
+Then ask for a milestone plan and name `docs/design/stack.md` and the outline as the source.
+
+```text
 Step 5:
 Create an AGENTS.md for this repo with the agents-md-author skill.
 ```
@@ -177,7 +189,9 @@ Step 6:
 Create docs/LOCAL_SETUP.md with the local-setup-author skill and verify each step from a clean checkout.
 ```
 
-**Produces.** The repo skeleton, `AGENTS.md`, and `docs/LOCAL_SETUP.md`. For a bespoke stack also the stack brief
+**Produces.** The repo skeleton, `AGENTS.md`, and `docs/LOCAL_SETUP.md`. If you ran `plan-author`, also
+`docs/plans/PLAN-<id>.md`. It adds a row to a plans index only if the repo already has one, so the first plan has no
+index to update. For a bespoke stack also the stack brief
 (`docs/design/stack.md` or similar), `docs/design/<name>.md` if you asked `solution-outline` to write it, and the ADR
 for the stack choice. Commit all of them. Keep the stack brief only until the repo's own files state the stack. After
 that, `AGENTS.md` is the source and the brief is history.
@@ -193,7 +207,7 @@ that, `AGENTS.md` is the source and the brief is history.
 `local-setup-author` document and verify what you built. The guardrail hooks stay on, and `.env` and lockfiles are
 protected from the first commit.
 
-**What is plain Claude Code here.** The skeleton itself, and all knowledge of a bespoke stack. Treat the generated files
+**What is plain Claude Code here.** The skeleton itself (planned in plan mode, or in `plan-author` for a multi-milestone build), and all knowledge of a bespoke stack. Treat the generated files
 as a first draft, and check the versions of every dependency it pins before you rely on it.
 
 **Example.** The skill outputs for [adr-author](../examples/adr-author.md) and the design recipes above show the
@@ -251,7 +265,8 @@ deployed. `prototype` writes no infrastructure code meant to deploy and never ru
 **Skip it when.**
 
 - Step 4: you are discarding the prototype.
-- Step 5: the gap list is short enough to plan from directly.
+- Step 5: the gap list is short enough to plan from directly. For a long list, `/lstk:plan-author` can turn the
+  estimate into a phase plan.
 - The whole recipe: the question can be answered by reading. Run `tech-eval` instead.
 
 **What lstk adds here.** The templates that make a spike quick, the plainly fake data, and the `PROTOTYPE.md` that says
