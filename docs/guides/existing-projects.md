@@ -4,6 +4,8 @@ Recipes for changing a codebase that already exists.
 
 > Last verified against `lstk` 0.4.0 and Claude Code 2.1.325 on 2026-11-13.
 >
+> The `repo-onboarding` step was re-run on 2026-11-28 (output file `docs/ARCHITECTURE.md`) against `lstk` 0.6.0 and Claude Code 2.1.332, on the sample fixture. The other recipes keep the earlier stamp.
+>
 > Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: the `code-reviewer` hand-off with a pasted diff, the test-gaps prompt, `commit-messages` choosing `fix`, `repo-onboarding` from plain words, and plan mode. `create-pull-request` was not run in this walkthrough (the scratch repo had no remote), but the maintainer uses it on every `lstk` branch. The bug-reproduction and coverage steps are plain Claude Code.
 
 Every recipe here runs the [shared implementation loop](#shared-implementation-loop) and adds a few steps at the front
@@ -88,7 +90,8 @@ your session, so copy anything you want to keep into the PR description.
 **What lstk adds here.**
 
 - `agents-md-author` and `repo-onboarding` ground Claude in the repo. They write `AGENTS.md` and
-  `docs/PROJECT_OVERVIEW.md`, both worth committing.
+  `docs/ARCHITECTURE.md`, both worth committing. `AGENTS.md` links to the architecture doc, so Claude reads it when
+  it needs the structure.
 - `code-reviewer` checks correctness, test gaps, maintainability, and drift from the repo's stated conventions. It is
   read-only and never fixes code. Its report ends with a "Not reviewed" section. Read it, because it states what the
   review did not cover.
@@ -214,7 +217,7 @@ behavior change that is not covered by a test.
 ```
 
 **Produces.** The characterization tests, which you commit in their own commit before the change. Optionally
-`docs/PROJECT_OVERVIEW.md` from `repo-onboarding`, a team document you commit.
+`docs/ARCHITECTURE.md` from `repo-onboarding`, a team document you commit. `AGENTS.md` links to it.
 
 **Skip it when.**
 

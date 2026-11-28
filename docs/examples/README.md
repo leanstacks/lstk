@@ -22,6 +22,7 @@ flowchart LR
     P -. "idea does not survive" .-> X["discard"]
     A -- "approved scope" --> L["plan-author<br/>phase plan"]
     L --> D
+    D --> R["repo-onboarding<br/>architecture doc"]
 ```
 
 | Example                                          | Skill                   | Shows                                                      |
@@ -36,6 +37,7 @@ flowchart LR
 | [prototype.md](prototype.md)                     | `prototype`             | A scaffolded web prototype and its `PROTOTYPE.md`.         |
 | [promote-prototype.md](promote-prototype.md)     | `promote-prototype`     | A cited gap list with relative effort for that prototype.  |
 | [plan-author.md](plan-author.md)                 | `plan-author`           | A phase plan, one finished phase, and its plans-index row. |
+| [repo-onboarding.md](repo-onboarding.md)         | `repo-onboarding`       | An architecture doc for humans and coding agents.          |
 
 `stack-profile` has no example of its own. It is reference-only, and its effect is visible in the **Stack** lines of the
 design examples.
