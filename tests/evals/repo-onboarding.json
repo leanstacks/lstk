@@ -36,6 +36,18 @@
       "prompt": "Generate an AGENTS.md for this repo.",
       "shouldTrigger": false,
       "note": "Belongs to agents-md-author."
+    },
+    {
+      "id": "repo-onboarding-07",
+      "prompt": "Where is the architecture documented for this repo?",
+      "shouldTrigger": false,
+      "note": "Near-miss: a lookup answered from an existing doc, not a request to produce or refresh one."
+    },
+    {
+      "id": "repo-onboarding-08",
+      "prompt": "Refresh our architecture doc.",
+      "shouldTrigger": true,
+      "note": "Refreshing the architecture document is this skill's output."
     }
   ]
 }
