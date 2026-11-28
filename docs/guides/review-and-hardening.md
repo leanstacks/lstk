@@ -225,7 +225,7 @@ checklist of what has and has not been looked at.
 3. **Run the hardening pass if the trust surface changed.** If the release adds an endpoint, a data store, a caller, or
    an IAM change, run [harden a service](#harden-a-service). [type it]
 4. **Check the records.** Confirm that decisions made since the last release have ADRs, and that `AGENTS.md`,
-   `docs/PROJECT_OVERVIEW.md`, and `docs/LOCAL_SETUP.md` still match the code. Ask for a refresh with
+   `docs/ARCHITECTURE.md`, and `docs/LOCAL_SETUP.md` still match the code. Ask for a refresh with
    `agents-md-author`, `repo-onboarding`, and `local-setup-author` where they do not. For a handoff, a new owner needs
    these three most. [say it]
 5. **Write down what was not covered.** Collect the "Not reviewed" and limits sections from each report, plus anything
@@ -236,7 +236,7 @@ checklist of what has and has not been looked at.
 
 ```text
 Step 4:
-Check whether AGENTS.md, docs/PROJECT_OVERVIEW.md, and docs/LOCAL_SETUP.md still match the code. Use the
+Check whether AGENTS.md, docs/ARCHITECTURE.md, and docs/LOCAL_SETUP.md still match the code. Use the
 agents-md-author, repo-onboarding, and local-setup-author skills. Report what is stale before you change anything.
 ```
 
@@ -246,7 +246,7 @@ Collect the "Not reviewed" and "Confidence and limits" sections from the reports
 docs/threat-models/. List them as known limits for the release notes, and do not summarize away any of them.
 ```
 
-**Produces.** Refreshed `AGENTS.md`, `docs/PROJECT_OVERVIEW.md`, and `docs/LOCAL_SETUP.md` (commit them), plus a known
+**Produces.** Refreshed `AGENTS.md`, `docs/ARCHITECTURE.md`, and `docs/LOCAL_SETUP.md` (commit them), plus a known
 limits list for your release notes.
 
 **Skip it when.** The release is a one-line fix. The loop's review is enough.
