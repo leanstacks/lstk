@@ -1,28 +1,28 @@
 ---
 name: repo-onboarding
-description: Onboards a developer to an unfamiliar repository by producing or verifying docs/PROJECT_OVERVIEW.md: reuses it if current, updates it if stale, creates it if missing. Use when the user is new to a codebase or asks "onboard me", "walk me through this repo", "give me an overview", "what is this project", "where do I start", or "explain the architecture", or wants a project overview refreshed or audited.
+description: Onboards a developer to an unfamiliar repository by producing or verifying docs/ARCHITECTURE.md, one document for humans and coding agents: reuses it if current, updates it if stale, creates it if missing. Use when the user is new to a codebase or asks "onboard me", "walk me through this repo", "give me an overview", "what is this project", "where do I start", or "explain the architecture", or wants an architecture doc or project overview refreshed or audited.
 ---
 
 # Repo Onboarding
 
-Get a developer productive in an unfamiliar repo quickly, and leave behind a durable `docs/PROJECT_OVERVIEW.md` so the next newcomer (human or agent) does not repeat the work.
+Get a developer productive in an unfamiliar repo quickly, and leave behind a durable `docs/ARCHITECTURE.md` so the next newcomer (human or agent) does not repeat the work. The document covers what the other documents do not: structure, data flow, central contracts, and invariants.
 
 The skill is stack-agnostic. Stack-specific detection lives in `references/recon-signals.md`; load it only when you need it.
 
 ## Related skills and output ownership
 
-This skill owns `docs/PROJECT_OVERVIEW.md`. Two sibling skills in this plugin own the other documents below.
+This skill owns `docs/ARCHITECTURE.md`. Two sibling skills in this plugin own the other documents below.
 
-| Document                   | Owns                                                          | Does not contain (lives in)                                                              |
-| :------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
-| `AGENTS.md`                | Rules, commands, and boundaries for coding agents             | What the system is (`PROJECT_OVERVIEW.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
-| `docs/PROJECT_OVERVIEW.md` | What the system is and how it is organized                    | Agent rules (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)                         |
-| `docs/LOCAL_SETUP.md`      | Fresh clone to running app and a working edit-build-test loop | Architecture and domain (`PROJECT_OVERVIEW.md`); agent rules (`AGENTS.md`)               |
+| Document               | Owns                                                              | Does not contain (lives in)                                                          |
+| :--------------------- | :---------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| `AGENTS.md`            | Rules, commands, and boundaries for coding agents                 | What the system is (`ARCHITECTURE.md`); a fresh-clone walkthrough (`LOCAL_SETUP.md`) |
+| `docs/ARCHITECTURE.md` | What the system is and how it is organized, for humans and agents | Agent rules and commands (`AGENTS.md`); step-by-step setup (`LOCAL_SETUP.md`)        |
+| `docs/LOCAL_SETUP.md`  | Fresh clone to running app and a working edit-build-test loop     | Architecture and domain (`ARCHITECTURE.md`); agent rules (`AGENTS.md`)               |
 
 - `/lstk:local-setup-author` writes `docs/LOCAL_SETUP.md`.
-- `/lstk:agents-md-author` writes `AGENTS.md`.
+- `/lstk:agents-md-author` writes `AGENTS.md`, which links to `docs/ARCHITECTURE.md` with a plain link, never an `@` import.
 
-Treat their outputs as inputs: when `docs/LOCAL_SETUP.md` exists, link to it from the overview's getting-started section and from the Phase 4 brief instead of repeating setup steps, and never modify it. When it is missing and the user wants to get the project running, offer `/lstk:local-setup-author`. Link to `AGENTS.md` for agent rules, and offer `/lstk:agents-md-author` if the user wants agent instructions.
+Treat their outputs as inputs: when `docs/LOCAL_SETUP.md` exists, link to it from the document's "Where to go next" section and from the Phase 4 brief instead of repeating setup steps, and never modify it. When it is missing and the user wants to get the project running, offer `/lstk:local-setup-author`. Link to `AGENTS.md` for agent rules, and offer `/lstk:agents-md-author` if the user wants agent instructions.
 
 ---
 
@@ -38,19 +38,19 @@ These exist because the failure modes of onboarding docs are well known: they go
 
 ## Workflow overview
 
-| Phase                    | Goal                                            | Output                                     |
-| :----------------------- | :---------------------------------------------- | :----------------------------------------- |
-| 0. Discovery & freshness | Find existing onboarding docs; judge if current | Verdict: `FRESH`, `STALE`, or `MISSING`    |
-| 1. Reconnaissance        | Cheap, structured survey of the repo            | Facts with file evidence                   |
-| 2. Synthesis             | Build a mental model                            | Stack, architecture, getting-started, gaps |
-| 3. Persist               | Create or update `docs/PROJECT_OVERVIEW.md`     | The document                               |
-| 4. Handoff               | Short chat brief + next-step menu               | Conversation                               |
+| Phase                    | Goal                                            | Output                                  |
+| :----------------------- | :---------------------------------------------- | :-------------------------------------- |
+| 0. Discovery & freshness | Find existing onboarding docs; judge if current | Verdict: `FRESH`, `STALE`, or `MISSING` |
+| 1. Reconnaissance        | Cheap, structured survey of the repo            | Facts with file evidence                |
+| 2. Synthesis             | Build a mental model                            | Stack, architecture, contracts, gaps    |
+| 3. Persist               | Create or update `docs/ARCHITECTURE.md`         | The document                            |
+| 4. Handoff               | Short chat brief + next-step menu               | Conversation                            |
 
 Branching after Phase 0:
 
 - `FRESH` → skip to Phase 4 using the existing doc as the source. Do **not** rewrite it.
 - `STALE` → run Phases 1–2 scoped to the sections that drifted, then update in place (Phase 3).
-- `MISSING` → run all phases and create `docs/PROJECT_OVERVIEW.md`.
+- `MISSING` → run all phases and create `docs/ARCHITECTURE.md`.
 
 ---
 
@@ -66,8 +66,9 @@ ls -d docs doc documentation wiki .github 2>/dev/null
 
 Classify what you find:
 
-- **Primary onboarding doc**: `docs/PROJECT_OVERVIEW.md`, `docs/ONBOARDING.md`, `ONBOARDING.md`, `ARCHITECTURE.md`, `docs/architecture.md`, `docs/getting-started.md`, or similar. If one exists, it is the file you verify and (if needed) update. Do not create a second competing doc.
-- **Supporting sources**: `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`, ADRs (`docs/adr/`), package-level READMEs. Read these as inputs and link to them from the overview. A README that is only a blurb or badge list is not an onboarding doc.
+- **Primary onboarding doc**: `docs/ARCHITECTURE.md`, `ARCHITECTURE.md`, `docs/architecture.md`, `docs/ONBOARDING.md`, `ONBOARDING.md`, `docs/getting-started.md`, the legacy name `docs/PROJECT_OVERVIEW.md`, or similar. If one exists, it is the file you verify and (if needed) update, under whatever name it has. Do not create a second competing doc, and do not rename it; renaming is the user's choice.
+- **Purpose check.** Before treating an existing `ARCHITECTURE.md` (or `architecture.md`) as the primary doc, read its first screen. If it documents something other than this repo's structure (for example a plugin, API, or protocol contract), it is not the primary doc: do not edit it, and link to it as a supporting source. Write the output to `docs/ARCHITECTURE.md` only if that name is free; otherwise ask the user for a name.
+- **Supporting sources**: `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`, ADRs (`docs/adr/`), package-level READMEs. Read these as inputs and link to them from the document. A README that is only a blurb or badge list is not an onboarding doc.
 - A primary doc that is a stub, an untouched template, or under ~20 meaningful lines counts as `MISSING`.
 
 ### 0.2 Judge freshness
@@ -81,7 +82,7 @@ git rev-list --count <sha>..HEAD                      # how far behind
 git diff --name-status <sha>..HEAD -- . ':!*.lock' ':!*lock.json' | head -100
 ```
 
-Weigh **structural** changes heavily (Added/Deleted/Renamed): new or removed top-level directories, packages, manifests, entry points, CI, Dockerfiles, IaC. Plain modifications to source files rarely stale an overview.
+Weigh **structural** changes heavily (Added/Deleted/Renamed): new or removed top-level directories, packages, manifests, entry points, CI, Dockerfiles, IaC. Plain modifications to source files rarely stale an architecture doc.
 
 **Signal B: Git-age comparison (no stamp).** Find the doc's last commit, then list structural changes since:
 
@@ -134,22 +135,21 @@ Assemble the following from Phase 1 evidence. Format conventions are in `referen
 
 - **Purpose** (1–3 sentences). Sourced from README or inferred from code; mark inferred.
 - **The stack**: languages, frameworks, build tooling, runtime/hosting, key external services.
-- **Architecture at a glance**: annotated folder map, component relationships, and the end-to-end flow of the primary use case.
-- **Central contracts**: the main shared types, schemas, API definitions, or database models that the rest of the system depends on. Point to the file; do not copy it wholesale.
-- **Getting started recipe**: a link to `docs/LOCAL_SETUP.md` when it exists. Otherwise a short ordered recipe derived strictly from manifests, scripts, `.env.example`, and container files. Mark the recipe as _derived, not executed_ unless you actually ran it.
-- **Development workflow**: how to build, test, lint, and where CI runs them.
-- **Conventions and gotchas**: naming, layering rules, error-handling patterns, generated files, anything that would trip a newcomer. Only include what you observed.
+- **Architecture at a glance**: annotated folder map, component relationships, dependency direction, and the end-to-end flow of the primary use case.
+- **Central contracts and invariants**: the main shared types, schemas, API definitions, or data models the rest of the system depends on, and the rules that break things when violated. Point to the file; do not copy it wholesale. Put these near the top of the document, so an agent that reads only the top still gets them.
+- **Pointers, not copies**: a link to `docs/LOCAL_SETUP.md` for setup when it exists, otherwise a three-line recipe derived strictly from manifests, scripts, `.env.example`, and container files, marked _derived, not executed_ unless you ran it. Link to `AGENTS.md` and the CI workflow for commands. Do not write a command table.
+- **Conventions**: only architectural ones (layering, naming that encodes structure, generated files). Coding rules belong in `AGENTS.md`. Only include what you observed.
 - **Open questions**: things you could not determine. Do not hide these; they are valuable to the maintainers.
 
 ---
 
 ## Phase 3: Persist the document
 
-Use `references/overview-template.md` for structure and per-section guidance.
+Use `references/architecture-template.md` for structure and per-section guidance.
 
-**If `MISSING`:** create `docs/PROJECT_OVERVIEW.md` (create `docs/` if needed). Do not commit; leave that to the user.
+**If `MISSING`:** create `docs/ARCHITECTURE.md` (create `docs/` if needed). Do not commit; leave that to the user.
 
-**If `STALE`:** edit the existing primary doc **in place**, even if it is not named `PROJECT_OVERVIEW.md`. Rules:
+**If `STALE`:** edit the existing primary doc **in place**, even if it is not named `ARCHITECTURE.md` (for example a legacy `docs/PROJECT_OVERVIEW.md`). Do not rename or duplicate it. Rules:
 
 - Make surgical edits. Fix what is wrong; preserve human-authored prose, tone, and structure that remain accurate.
 - Add missing sections from the template only where the evidence supports them.
@@ -175,7 +175,8 @@ Only stamp what you actually verified. If you updated a subset of sections, the 
 - [ ] No secrets, tokens, or internal hostnames copied in
 - [ ] No duplication of README content; links used instead
 - [ ] Scannable: headings, tables, short paragraphs; Mermaid for diagrams
-- [ ] Reasonable length (typically 150–300 lines; longer only for large monorepos)
+- [ ] Setup and commands are links, not copies; invariants and contracts come first
+- [ ] Reasonable length (typically 100–250 lines; longer only for large monorepos)
 
 ---
 
@@ -185,14 +186,14 @@ Keep the chat output shorter than the document: the document is the deliverable,
 
 **Brief structure** (adapt for `FRESH`, where you summarize the existing doc and point to it rather than restating it):
 
-1. **Doc status**: one line. "Created `docs/PROJECT_OVERVIEW.md`", "Updated 4 sections of `docs/ONBOARDING.md` (it referenced removed packages)", or "`docs/PROJECT_OVERVIEW.md` is current as of `abc1234`; here is the short version."
+1. **Doc status**: one line. "Created `docs/ARCHITECTURE.md`", "Updated 4 sections of `docs/ONBOARDING.md` (it referenced removed packages)", or "`docs/ARCHITECTURE.md` is current as of `abc1234`; here is the short version."
 2. **What this is**: 1–2 sentences.
 3. **Stack**: one line.
 4. **Shape**: the 3–6 most important directories/components and how they connect.
 5. **Run it**: the shortest path to a running local environment, with any prerequisites or env setup called out, or a pointer to `docs/LOCAL_SETUP.md` when it exists. State that it is derived, not executed.
 6. **Watch out for**: top 1–3 gotchas or open questions.
 
-Then transition using `references/questionnaire.md`: ask what the developer wants to do next, offering the menu from that file, and calibrate depth to their answer. Offer (do not perform without consent) to run install/build/tests to validate the getting-started recipe, since those commands have side effects and can be slow.
+Then transition using `references/questionnaire.md`: ask what the developer wants to do next, offering the menu from that file, and calibrate depth to their answer. Offer (do not perform without consent) to run install/build/tests to validate the setup steps, since those commands have side effects and can be slow.
 
 ---
 
@@ -200,7 +201,7 @@ Then transition using `references/questionnaire.md`: ask what the developer want
 
 - **Not a git repo / shallow clone:** skip Signals A and B; use Signal C; omit the commit from the stamp (`n/a`) and note it.
 - **Empty or near-empty repo:** report what exists, do not fabricate architecture; create a minimal doc listing what is present and what is unknown.
-- **Multiple apps in one repo:** one overview, one section per app/package under "Repository structure", plus a top-level diagram of how they relate.
+- **Multiple apps in one repo:** one architecture doc, one section per app/package under "Repository structure", plus a top-level diagram of how they relate.
 - **Conflicting sources** (README says one thing, code another): trust the code, note the discrepancy under Open Questions, and mention it to the user.
 - **User only wants a quick look:** still do Phase 0–2 and give the Phase 4 brief; ask before writing the file if they signaled they do not want repo changes.
 - **A `CLAUDE.md` / `AGENTS.md` exists:** read it for conventions and commands; link to it rather than copying. Do not modify it.

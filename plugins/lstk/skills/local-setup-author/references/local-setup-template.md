@@ -23,7 +23,7 @@ This template is a starting point, not a form. Merge, reorder, or drop sections 
 > _Derived from <files read>; not executed during generation._ <!-- remove the italic line only if you ran the steps -->
 > Maintainers: update this file when prerequisites, scripts, services, or environment variables change.
 
-<One sentence: what this guide gets you (a running <thing> on your machine, plus how to build and test it). Link the project overview and README if they exist.>
+<One sentence: what this guide gets you (a running <thing> on your machine, plus how to build and test it). Link the architecture doc and README if they exist.>
 
 **Time to first run:** <estimate only if known, otherwise omit>
 **Recommended path:** <devcontainer | `make setup` | compose + native | manual> (<why, one line>)
@@ -159,7 +159,7 @@ _Expected:_ <status or output, as stated by code or docs>
 
 ## 11. Where to go next
 
-<!-- Required. Link only what exists: project overview, README, CONTRIBUTING, CLAUDE.md/AGENTS.md, ADRs, runbooks. -->
+<!-- Required. Link only what exists: architecture doc, README, CONTRIBUTING, CLAUDE.md/AGENTS.md, ADRs, runbooks. -->
 
 ## 12. Open questions
 

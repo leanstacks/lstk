@@ -109,7 +109,7 @@ down. See [getting started](getting-started.md#3-the-first-five-minutes-in-an-ex
 | Output                                              | Written by                              | Commit?                                 |
 | --------------------------------------------------- | --------------------------------------- | --------------------------------------- |
 | `AGENTS.md`                                         | `agents-md-author`                      | Yes                                     |
-| `docs/PROJECT_OVERVIEW.md`, `docs/LOCAL_SETUP.md`   | `repo-onboarding`, `local-setup-author` | Yes                                     |
+| `docs/ARCHITECTURE.md`, `docs/LOCAL_SETUP.md`       | `repo-onboarding`, `local-setup-author` | Yes                                     |
 | `docs/design/<name>.md` (only when you ask)         | `solution-outline`                      | Yes, marked as a draft                  |
 | `docs/research/<topic>.md` (only when you ask)      | `tech-eval`                             | Yes                                     |
 | `docs/adr/NNNN-<title>.md`                          | `adr-author`                            | Yes                                     |
@@ -118,6 +118,17 @@ down. See [getting started](getting-started.md#3-the-first-five-minutes-in-an-ex
 
 A skill that can write a file offers to give the result inline instead. The `code-reviewer` and `researcher` agents
 never write a file.
+
+## I already have `docs/PROJECT_OVERVIEW.md`, or an `ARCHITECTURE.md` for something else. What happens?
+
+`repo-onboarding` writes `docs/ARCHITECTURE.md` by default, and it edits an existing primary doc in place under any
+name. It does not duplicate or rename it.
+
+- **An existing `docs/PROJECT_OVERVIEW.md`.** It stays and is updated where it is stale. Renaming it to
+  `ARCHITECTURE.md` is your choice. Do it yourself and fix any links.
+- **An `ARCHITECTURE.md` about something else**, for example a plugin or API contract. The skill reads its first
+  screen (the purpose check). If it does not describe this repo's structure, the skill does not edit it. It links to
+  that file, and writes `docs/ARCHITECTURE.md` only if that name is free. Otherwise it asks you for a name.
 
 ## Why is there no skill for implementing a feature, fixing a bug, or test coverage?
 

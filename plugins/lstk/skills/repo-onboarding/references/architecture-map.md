@@ -1,6 +1,6 @@
 # Architecture Map Conventions
 
-This is a deliberate separate copy: skills cannot share files, so `agents-md-author` carries its own `architecture-map.md`. The two agree on tree, annotation, depth, and marker rules. They differ on purpose: the project overview adds diagrams and a primary flow, while `AGENTS.md` stays lean.
+This is a deliberate separate copy: skills cannot share files, so `agents-md-author` carries its own `architecture-map.md`. The two agree on tree, annotation, depth, and marker rules. They differ on purpose: the architecture doc adds diagrams and a primary flow, while `AGENTS.md` stays lean.
 
 How to present repository structure and runtime flow. The goal is that a newcomer can answer three questions in under two minutes: _Where does the code live? How do the parts connect? What happens when the main thing happens?_
 

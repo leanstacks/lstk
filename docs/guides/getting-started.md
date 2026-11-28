@@ -2,7 +2,9 @@
 
 Install lstk, turn on the guardrails, and get your first useful results in an existing repo in about five minutes.
 
-> Last verified against `lstk` 0.4.0 and Claude Code 2.1.323 on 2026-11-13.
+> Last verified against `lstk` 0.4.0 and Claude Code 2.1.323 on 2026-11-13. Step 2 of section 3 (`repo-onboarding` and
+> `docs/ARCHITECTURE.md`) was re-run on 2026-11-28 against `lstk` 0.6.0 changes and Claude Code
+> 2.1.332, on the sample fixture. The other steps keep the earlier stamp.
 
 ## 1. Install
 
@@ -45,7 +47,7 @@ Open Claude Code in the repo. Run these three in order. Each is a skill Claude m
 | Step | Ask for                                           | You get                                                                      |
 | ---- | ------------------------------------------------- | ---------------------------------------------------------------------------- |
 | 1    | `agents-md-author`: the repo's agent instructions | `AGENTS.md`: commands, layout, and conventions Claude will follow.           |
-| 2    | `repo-onboarding`: an overview of the project     | `docs/PROJECT_OVERVIEW.md`: what the system is and how it is organized.      |
+| 2    | `repo-onboarding`: an architecture doc            | `docs/ARCHITECTURE.md`: how the system is organized, for you and for Claude. |
 | 3    | `local-setup-author`: a setup guide               | `docs/LOCAL_SETUP.md`: from a fresh clone to a working edit-build-test loop. |
 
 Copy-paste prompts:
@@ -55,7 +57,7 @@ Create or refresh AGENTS.md for this repo. Judge any existing CLAUDE.md or other
 ```
 
 ```text
-Onboard me to this repo. Produce or update docs/PROJECT_OVERVIEW.md.
+Onboard me to this repo. Produce or update docs/ARCHITECTURE.md.
 ```
 
 ```text
@@ -65,8 +67,9 @@ Check docs/LOCAL_SETUP.md against the repo and update it so a fresh clone reache
 Each skill reuses what is already good and only changes what is stale. Each writes a file you should review and
 commit. They never edit one another's files.
 
-**Why this order.** `AGENTS.md` is read by Claude in every later session, so it pays back first. The overview helps you
-(and Claude) learn the code. The setup guide proves the repo builds and tests.
+**Why this order.** `AGENTS.md` is read by Claude in every later session, so it pays back first. The architecture doc is for
+humans and coding agents. It covers structure, data flow, and the invariants that the code does not show, and links to
+the other two files instead of repeating them. The setup guide proves the repo builds and tests.
 
 If your repo has no `AGENTS.md`, every other skill falls back to the lstk default stack. When the repo has its own
 `AGENTS.md`, it always wins.

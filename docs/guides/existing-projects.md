@@ -4,6 +4,8 @@ Recipes for changing a codebase that already exists.
 
 > Last verified against `lstk` 0.4.0 and Claude Code 2.1.325 on 2026-11-13.
 >
+> The `repo-onboarding` step was re-run on 2026-11-28 (output file `docs/ARCHITECTURE.md`) against `lstk` 0.6.0 and Claude Code 2.1.332, on the sample fixture. The other recipes keep the earlier stamp.
+>
 > Verified on 2026-11-13 and 2026-11-14 against `lstk` 0.4.0 and Claude Code 2.1.325, by headless runs on the sample fixture and interactive checks by the maintainer. Exercised and working as written: the `code-reviewer` hand-off with a pasted diff, the test-gaps prompt, `commit-messages` choosing `fix`, `repo-onboarding` from plain words, and plan mode. `create-pull-request` was not run in this walkthrough (the scratch repo had no remote), but the maintainer uses it on every `lstk` branch. The bug-reproduction and coverage steps are plain Claude Code.
 >
 > The `plan-author` branches (added for `lstk` 0.5.0) were not part of that walkthrough. They follow the skill's own eval run and [worked example](../examples/plan-author.md), and have not been re-verified by hand in this guide.
@@ -102,7 +104,8 @@ your session, so copy anything you want to keep into the PR description.
 **What lstk adds here.**
 
 - `agents-md-author` and `repo-onboarding` ground Claude in the repo. They write `AGENTS.md` and
-  `docs/PROJECT_OVERVIEW.md`, both worth committing.
+  `docs/ARCHITECTURE.md`, both worth committing. `AGENTS.md` links to the architecture doc, so Claude reads it when
+  it needs the structure.
 - `plan-author` (optional, step 2) writes a plan that a later session can pick up from the file. Each phase carries the
   context to load, a "Done when" check, an "As built" record, and a handoff. It fixes what the plan contains, not how
   Claude explores.
@@ -241,7 +244,7 @@ behavior change that is not covered by a test.
 ```
 
 **Produces.** The characterization tests, which you commit in their own commit before the change. Optionally
-`docs/PROJECT_OVERVIEW.md` from `repo-onboarding`, a team document you commit.
+`docs/ARCHITECTURE.md` from `repo-onboarding`, a team document you commit. `AGENTS.md` links to it.
 
 **Skip it when.**
 

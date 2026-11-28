@@ -2,7 +2,7 @@
 
 Used in Phase 2 (to present findings) and Phase 3 (the "Layout" section of `AGENTS.md`).
 
-This is a deliberate separate copy: skills cannot share files, so `repo-onboarding` carries its own `architecture-map.md`. The two agree on tree, annotation, depth, and marker rules. They differ on purpose: `AGENTS.md` stays lean (no diagrams, a placement-rule focus), while the project overview adds diagrams and flows.
+This is a deliberate separate copy: skills cannot share files, so `repo-onboarding` carries its own `architecture-map.md`. The two agree on tree, annotation, depth, and marker rules. They differ on purpose: `AGENTS.md` stays lean (no diagrams, a placement-rule focus), while the architecture doc adds diagrams and flows.
 
 ## Goals
 

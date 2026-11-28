@@ -19,6 +19,7 @@ const EXAMPLES_REQUIRED = [
   'prototype',
   'promote-prototype',
   'plan-author',
+  'repo-onboarding',
 ];
 
 // The code-reviewer agent defines its report format in the agent prompt and has no template file, so
@@ -43,6 +44,17 @@ LITERAL_EXAMPLES['plan-author'] = [
   '4. Phases',
   '5. Exit checklist',
   '6. Risks specific to this plan',
+];
+
+// `repo-onboarding` has no output-template.md. Its contract is the required section list in references/architecture-template.md.
+LITERAL_EXAMPLES['repo-onboarding'] = [
+  'Purpose',
+  'Architecture and data flow',
+  'Repository structure',
+  'Central contracts and invariants',
+  'Tech stack',
+  'Where to go next',
+  'Open questions',
 ];
 
 const h2 = (text) => [...text.matchAll(/^## (.+?)\s*$/gm)].map((m) => m[1]);
