@@ -1,6 +1,6 @@
 # Handoff Questionnaire
 
-Used in Phase 4 after the Welcome Brief. The aim is to convert a static overview into a guided next step. Ask **one** question round, keep it short, and adapt depth to the answer.
+Used in Phase 4 after the Welcome Brief. The aim is to convert a static document into a guided next step. Ask **one** question round, keep it short, and adapt depth to the answer.
 
 ## Opening prompt
 
@@ -28,12 +28,12 @@ Optionally add a calibration line if it is not obvious from context: "Which of t
 | **Tests**                 | Explain test layout, frameworks, naming, fixtures/mocks, and what needs external services. Run the fast subset with consent. Identify gaps or flaky-looking areas only if evidence exists.                                                                                                                                                |
 | **First change**          | Look for `good first issue` labels or TODO/FIXME clusters, small isolated modules, or documentation gaps. Propose 2–3 candidates with files involved, expected blast radius, and how to verify.                                                                                                                                           |
 | **What's active**         | Summarize `git log` themes for the last few weeks, hotspot files, and open PR/branch names if available. Describe direction, not blame.                                                                                                                                                                                                   |
-| **Something else**        | Treat it as a normal request with the overview as context.                                                                                                                                                                                                                                                                                |
+| **Something else**        | Treat it as a normal request with the architecture doc as context.                                                                                                                                                                                                                                                                        |
 
 ## Behavioral rules
 
 - Ask before running anything that installs, builds, starts services, hits the network, or writes files.
 - If the user is clearly experienced, skip language and framework basics; focus on repo-specific structure and conventions.
-- If you discover while answering that the overview is wrong or incomplete, say so and offer a precise doc fix; do not silently diverge.
-- Do not re-explain what the overview already says; reference its sections.
+- If you discover while answering that the document is wrong or incomplete, say so and offer a precise doc fix; do not silently diverge.
+- Do not re-explain what the document already says; reference its sections.
 - Keep a running list of questions you could not answer from the repo. Offer it at the end as a message the user can send to the maintainers.
